@@ -1,15 +1,15 @@
-const Workout = require("../models/workoutModel");
-const mongoose = require("mongoose");
+import Workout from "../models/workoutModel.js";
+import mongoose from "mongoose";
 
 // get all workouts
-const getWorkouts = async (req, res) => {
+export const getWorkouts = async (req, res) => {
   const workouts = await Workout.find({}).sort({ createdAt: -1 });
 
   res.status(200).json(workouts);
 };
 
 // get a single workout
-const getWorkout = async (req, res) => {
+export const getWorkout = async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -26,7 +26,7 @@ const getWorkout = async (req, res) => {
 };
 
 // create new workout
-const createWorkout = async (req, res) => {
+export const createWorkout = async (req, res) => {
   const { title, load, reps } = req.body;
 
   // add doc to db
@@ -39,7 +39,7 @@ const createWorkout = async (req, res) => {
 };
 
 // delete a workout
-const deleteWorkout = async (req, res) => {
+export const deleteWorkout = async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -56,7 +56,7 @@ const deleteWorkout = async (req, res) => {
 };
 
 // update a workout
-const updateWorkout = async (req, res) => {
+export const updateWorkout = async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -70,12 +70,4 @@ const updateWorkout = async (req, res) => {
   }
 
   res.status(200).json(workout)
-};
-
-module.exports = {
-  createWorkout,
-  getWorkout,
-  getWorkouts,
-  deleteWorkout,
-  updateWorkout
 };
