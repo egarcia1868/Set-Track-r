@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-import ConcertDetails from "../components/WorkoutDetails";
-import WorkoutForm from "../components/WorkoutForm";
+import ConcertDetails from "../components/ConcertDetails";
+import ConcertForm from "../components/ConcertForm";
 
 const Home = () => {
   const [concerts, setConcerts] = useState(null);
@@ -35,17 +35,18 @@ const Home = () => {
 
     fetchConcerts();
   }, []);
+
   return (
-    <div className="home">
-      <div className="workouts">
-        {concerts &&
-          concerts.map((concert) => (
-            <ConcertDetails key={concert._id} concert={concert} />
-          ))
-          }
+      <div className="home">
+        <div className="concerts">
+          {concerts &&
+            concerts.map((concert) => (
+              <ConcertDetails key={concert._id} concert={concert} />
+            ))
+            }
+        </div>
+        <ConcertForm />
       </div>
-      <WorkoutForm />
-    </div>
   );
 };
 

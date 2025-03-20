@@ -12,14 +12,11 @@ const ConcertDetails = ({concert}) => {
   });
 
 return (
-  <div className="workout-details">
+  <div className="concert-details">
     <h4>{artist}</h4>
     <p>{city}, {state}, {country}</p>
     <p>{outputDate}</p>
-    {/* <h4>{workout.title}</h4>
-    <p><strong>Load (lb): </strong>{workout.load}</p>
-    <p><strong>Reps: </strong>{workout.reps}</p>
-    <p>{workout.createdAt}</p> */}
+    
   </div>
 )
 }

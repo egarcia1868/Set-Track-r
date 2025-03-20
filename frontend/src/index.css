@@ -38,7 +38,7 @@ header a {
   grid-template-columns: 3fr 1fr;
   gap: 100px;
 }
-.workout-details {
+.concert-details {
   background: #fff;
   border-radius: 4px;
   margin: 20px auto;
@@ -46,17 +46,17 @@ header a {
   position: relative;
   box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
 }
-.workout-details h4 {
+.concert-details h4 {
   margin: 0 0 10px 0;
   font-size: 1.2em;
   color: var(--primary);
 }
-.workout-details p {
+.concert-details p {
   margin: 0;
   font-size: 0.9em;
   color: #555;
 }
-.workout-details span {
+.concert-details span {
   position: absolute;
   top: 20px;
   right: 20px;
@@ -99,4 +99,68 @@ div.error {
 }
 input.error {
   border: 1px solid var(--error);
+}
+
+/* #modal {
+  width: 50%;
+  
+  h2 {
+    text-align: center;
+  }
+} */
+
+
+#modal {
+  width: 50%;
+  /* background: #d3b17b; */
+  border: none;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  animation: fade-slide-in-from-top 0.3s ease-in-out;
+}
+
+#modal::backdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+#modal h2 {
+  font-size: 1.5rem;
+  color: #1aac83;
+  text-transform: uppercase;
+  margin: 0;
+  text-align: center;
+}
+
+#modal form {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+#modal form button {
+  background: transparent;
+  border: none;
+  border-radius: 5px;
+  color: #201e1a;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+#modal form button:hover {
+  color: #453719;
+}
+
+#modal form button:last-of-type {
+  background: black;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  color: #f9efda;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+#modal form button:last-of-type:hover {
+  background: #382e1b;
 }
