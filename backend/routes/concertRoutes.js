@@ -1,12 +1,10 @@
 import express from "express";
-import { getSavedConcert, saveConcert, getConcert } from "../controllers/concertController.js";
+import { getSavedConcert, getSavedConcerts, saveConcert, getConcert } from "../controllers/concertController.js";
 
 const router = express.Router();
 
 // GET all saved concerts
-router.get("/", (req, res) => {
-  res.json({ mssg: "GET all concerts" });
-});
+router.get("/", getSavedConcerts)
 
 // GET a single concert from DB
 router.get("/:id", getSavedConcert);

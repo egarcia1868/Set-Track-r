@@ -2,7 +2,6 @@
 // const Concert = require("../models/concertModel");
 // const mongoose = require("mongoose");
 
-
 // const concertModel = new Concert(process.env.SETLIST_FM_API_KEY);
 
 // // get all workouts
@@ -105,51 +104,80 @@
 //   updateWorkout
 // };
 
-
-
-import Concert from '../models/concertModel.js';
-import { getConcertFromAPI } from '../services/concertService.js';
+import Concert from "../models/concertModel.js";
+import { getConcertFromAPI } from "../services/concertService.js";
 
 export const getConcert = async (req, res) => {
-    try {
-        const { artistName, date } = req.params;
-        const concertData = await getConcertFromAPI(artistName, date);
+  try {
+    const { artistName, date } = req.params;
+    const concertData = await getConcertFromAPI(artistName, date);
 
-        if (!concertData) {
-            return res.status(404).json({ error: "Concert not found from API" });
-        }
-
-        res.json(concertData);
-    } catch (error) {
-        res.status(500).json({ error: "Internal server error" });
+    if (!concertData) {
+      return res.status(404).json({ error: "Concert not found from API" });
     }
+
+    res.json(concertData);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
 };
 
 export const saveConcert = async (req, res) => {
   console.log(req.body);
-    try {
-        const { apiId, artist, eventDate, city, state, country, sets } = req.body;
-        const existingConcert = await Concert.findOne({ apiId });
+  try {
+    const { apiId, artist, sortName, eventDate, city, state, country, sets } =
+      req.body;
+    const existingConcert = await Concert.findOne({ apiId });
 
-        if (existingConcert) {
-            return res.status(409).json({ error: "Concert already saved" });
-        }
-
-        const newConcert = new Concert({ apiId, artist, eventDate, city, state, country, sets });
-        await newConcert.save();
-        res.status(201).json(newConcert);
-    } catch (error) {
-        console.error('error: ', error);
-        res.status(500).json({ error: "Could not save concert" });
+    if (existingConcert) {
+      return res.status(409).json({ error: "Concert already saved" });
     }
+
+    const newConcert = new Concert({
+      apiId,
+      artist,
+      sortName,
+      eventDate,
+      city,
+      state,
+      country,
+      sets,
+    });
+    
+    await newConcert.save();
+    res.status(201).json(newConcert);
+  } catch (error) {
+    console.error("error: ", error);
+    res.status(500).json({ error: "Could not save concert" });
+  }
 };
 
 export const getSavedConcert = async (req, res) => {
-    try {
-      //  const { showId } = req.params;
-        const concerts = await Concert.find();
-        res.json(concerts);
-    } catch (error) {
-        res.status(500).json({ error: "Could not fetch concerts" });
+  try {
+    const { apiId } = req.params;
+
+    if (!apiId) {
+      return res.status(400).json({ error: "apiId is required" });
     }
+
+    const concerts = await Concert.findOne({apiId});
+    if (!concert) {
+      return res.status(404).json({ error: "Concert not found"});
+    }
+
+    res.json(concerts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Could not fetch concert" });
+  }
+};
+
+export const getSavedConcerts = async (req, res) => {
+  try {
+    //  const { showId } = req.params;
+    const concerts = await Concert.find();
+    res.json(concerts);
+  } catch (error) {
+    res.status(500).json({ error: "Could not fetch concerts" });
+  }
 };

@@ -66,6 +66,7 @@ const { Schema, model } = mongoose;
 const concertSchema = new Schema({
   apiId: { type: String, unique: true },
   artist: { type: String, required: true },
+  sortName: { type: String, required: true },
   eventDate: { type: String, required: true },
   city: { type: String, required: true },
   state: { type: String, required: true },

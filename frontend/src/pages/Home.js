@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 
-import WorkoutDetails from "../components/WorkoutDetails";
+import ConcertDetails from "../components/WorkoutDetails";
 import WorkoutForm from "../components/WorkoutForm";
 
 const Home = () => {
-  const [workouts, setWorkouts] = useState(null);
+  const [concerts, setConcerts] = useState(null);
 
   useEffect(() => {
-    const fetchWorkouts = async () => {
+    const fetchConcerts = async () => {
       // const params = new URLSearchParams({
       //   artistName: 'Billy Strings',
       //   date: '14-12-2024'
@@ -25,23 +25,23 @@ const Home = () => {
       // });
 
       // const response = await fetch("/api/concerts/b57b92a");
-      const response = await fetch("/api/workouts");
+      const response = await fetch("/api/concerts");
       const json = await response.json();
 
       if (response.ok) {
-        setWorkouts(json);
+        setConcerts(json);
       }
     };
 
-    fetchWorkouts();
+    fetchConcerts();
   }, []);
   return (
     <div className="home">
       <div className="workouts">
-        {workouts &&
-          // workouts.map((workout) => (
-            <WorkoutDetails key={workouts._id} workout={workouts} />
-          // ))
+        {concerts &&
+          concerts.map((concert) => (
+            <ConcertDetails key={concert._id} concert={concert} />
+          ))
           }
       </div>
       <WorkoutForm />
