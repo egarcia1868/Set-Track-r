@@ -24,7 +24,7 @@ const Home = () => {
       //   headers
       // });
 
-      const response = await fetch("/api/shows/63de4613");
+      const response = await fetch("/api/shows/b57b92a");
       // const response = await fetch("/api/workouts");
       const json = await response.json();
 
