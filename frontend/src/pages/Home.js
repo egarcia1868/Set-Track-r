@@ -6,6 +6,10 @@ import ConcertForm from "../components/ConcertForm";
 const Home = () => {
   const [concerts, setConcerts] = useState(null);
 
+  // TODO:
+  // need to set up a useContext use case to share state between here and modal
+  // to refresh page when new concert added
+
   useEffect(() => {
     const fetchConcerts = async () => {
       // const params = new URLSearchParams({

@@ -123,9 +123,8 @@ export const getConcert = async (req, res) => {
 };
 
 export const saveConcert = async (req, res) => {
-  console.log(req.body);
   try {
-    const { apiId, artist, sortName, eventDate, city, state, country, sets } =
+    const { id: apiId, eventDate, artist, venue, sets, url } =
       req.body;
     const existingConcert = await Concert.findOne({ apiId });
 
@@ -135,13 +134,11 @@ export const saveConcert = async (req, res) => {
 
     const newConcert = new Concert({
       apiId,
-      artist,
-      sortName,
       eventDate,
-      city,
-      state,
-      country,
+      artist,
+      venue,
       sets,
+      url
     });
     
     await newConcert.save();

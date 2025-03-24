@@ -1,5 +1,9 @@
 # MERN
 
+### Fixes needed
+Need to set up useContext to share state (concert info / form entry to remove error on change) throughout app
+"Concert not found from API" error message not going away after change
+
 ### Things to save from set
 Band Name
 data.setlist[0].artist.name

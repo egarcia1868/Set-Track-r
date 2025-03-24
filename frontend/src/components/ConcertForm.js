@@ -9,19 +9,16 @@ const ConcertForm = () => {
   const [concert, setConcert] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // const modal = useRef(null);
-  
-  // useEffect(() => {
-  //   if (modal.current) {
-  //     setModalMounted(true);
-  //   }
-  // }, []);
+  const convertDateFormat = (date) => {
+    const [year, month, day] = date.split("-");
+    return `${day}-${month}-${year}`;
+  };
 
   const getConcertDetails = async () => {
-    // handleConcertDetailsClick();
+    const formattedDate = convertDateFormat(eventDate);
 
     const response = await fetch(
-      `/api/concerts/${encodeURIComponent(artistName)}/${eventDate}`
+      `/api/concerts/${encodeURIComponent(artistName)}/${formattedDate}`
     );
     const json = await response.json();
 
@@ -36,12 +33,11 @@ const ConcertForm = () => {
 
   useEffect(() => {
     if (concert) {
-      setIsModalOpen(true); // Open modal when concert data is set
+      setIsModalOpen(true);
     }
   }, [concert]);
 
   const handleConcertDetailsClick = async () => {
-    // setIsModalOpen(true);
 
     await getConcertDetails();
   }
@@ -57,15 +53,17 @@ const ConcertForm = () => {
       />
       <form className="create">
         <h3>Find new set list</h3>
-        <label>Artist Name (SPELL CORRECTLY!):</label>
+        <label htmlFor="artistName">Artist Name<br /> (use correct spelling):</label>
         <input
+          id="artistName"
           type="text"
           onChange={(e) => setArtistName(e.target.value)}
           value={artistName}
         />
-        <label>Concert Date (in the format of "dd-mm-yyyy"):</label>
+        <label htmlFor="date">Concert Date:</label>
         <input
-          type="text"
+          id="date"
+          type="date"
           onChange={(e) => setEventDate(e.target.value)}
           value={eventDate}
         />
