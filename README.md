@@ -1,8 +1,10 @@
 # MERN
 
 ### Fixes needed
-Need to set up useContext to share state (concert info / form entry to remove error on change) throughout app
-"Concert not found from API" error message not going away after change
+[] Need to set up useContext to share state (concert info / form entry to remove error on change) throughout app
+[] "Concert not found from API" error message not going away after change
+[] Main page not refreshing after new concert has been added
+[] State provided to concert list not updating without refresh.  Potentially related to above fix
 
 ### Things to save from set
 Band Name
