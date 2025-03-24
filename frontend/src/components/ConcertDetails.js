@@ -1,6 +1,5 @@
 const ConcertDetails = ({concert}) => {
-  console.log(concert);
-  const {eventDate, artist: {name: artistName}, venue: {name: venueName, city:{name: cityName, state, country: {name: countryName}}}} = concert;
+  const {eventDate, venue: {name: venueName, city:{name: cityName, state, country: {name: countryName}}}, url} = concert;
   const inputDate = eventDate; 
   const [day, month, year] = inputDate.split("-");
   const formattedDate = new Date(`${year}-${month}-${day}T00:00:00`);
@@ -13,7 +12,6 @@ const ConcertDetails = ({concert}) => {
 
 return (
   <div className="concert-details">
-    <h4>{artistName}</h4>
     <p><strong>{venueName}</strong></p>
     <p>{cityName}, {state}, {countryName}</p>
     <p>{outputDate}</p>

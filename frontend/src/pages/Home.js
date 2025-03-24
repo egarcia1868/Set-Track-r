@@ -1,10 +1,44 @@
 import { useEffect, useState } from "react";
 
-import ConcertDetails from "../components/ConcertDetails";
+import ArtistDetails from "../components/ArtistDetails";
 import ConcertForm from "../components/ConcertForm";
+
+const getUniqueArtists = (concertsArr, addConcertToArtist) => {
+  // Create a Set to track the unique combinations of artist name and id
+  const uniqueArtists = [];
+  const seen = new Set();
+
+  concertsArr.forEach(concert => {
+    const { apiId, artist: {name: artistName}, venue, sets, eventDate, url} = concert;
+
+    if (!seen.has(artistName)) {
+      uniqueArtists.push({ id: apiId, artist: { name: artistName, concerts: [{venue, sets, eventDate, url}] } });
+      seen.add(artistName); // Add artist name to Set to ensure uniqueness
+    } else {
+      addConcertToArtist(uniqueArtists, artistName, {venue, sets, eventDate, url})
+      // findByArtistName(uniqueArtists).artist.concerts.push({venue, sets, eventDate, url})
+    }
+  });
+
+  return uniqueArtists;
+}
+
+const addConcertToArtist = (artists, artistName, newConcert) => {
+  // Find the artist by name
+  const artistEntry = artists.find(artist => artist.artist.name === artistName);
+  
+  if (artistEntry) {
+    // Push the new concert into the artist's concerts array
+    artistEntry.artist.concerts.push(newConcert);
+    console.log(`Added concert for ${artistName}`);
+  } else {
+    console.warn(`Artist "${artistName}" not found.`);
+  }
+};
 
 const Home = () => {
   const [concerts, setConcerts] = useState(null);
+  const [artists, setArtists] = useState(null);
 
   // TODO:
   // need to set up a useContext use case to share state between here and modal
@@ -34,6 +68,7 @@ const Home = () => {
 
       if (response.ok) {
         setConcerts(json);
+        setArtists(getUniqueArtists(json, addConcertToArtist));
       }
     };
 
@@ -43,10 +78,10 @@ const Home = () => {
   return (
       <div className="home">
         <div className="concerts">
-          {concerts &&
-            concerts.map((concert) => (
-              <ConcertDetails key={concert._id} concert={concert} />
-            ))
+            {artists ?
+            artists.map((artist) => (
+              <ArtistDetails key={artist._id} artist={artist} />
+            )) : <h3>No Saved Concerts yet</h3>
             }
         </div>
         <ConcertForm />
