@@ -1,78 +1,25 @@
-import { useState, useRef } from "react";
+import { useState, useEffect } from "react";
 
 import ConcertDetailsModal from "./ConcertDetailsModal";
 
 const ConcertForm = () => {
-  // const [title, setTitle] = useState("");
-  // const [load, setLoad] = useState("");
-  // const [reps, setReps] = useState("");
-  // const [error, setError] = useState(null);
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   const workout = {title, load, reps}
-
-  //   const response = await fetch('/api/workouts',{
-  //     method: 'POST',
-  //     body: JSON.stringify(workout),
-  //     headers: {
-  //       "Content-Type": 'application/json'
-  //     }
-  //   })
-
-  //   const json = await response.json()
-
-  //   if (!response.ok) {
-  //     setError(json.error)
-  //   }
-  //   if (response.ok) {
-  //     setTitle('')
-  //     setLoad('')
-  //     setReps('')
-  //     setError(null)
-  //     console.log('new workout added', json)
-  //   }
-  // }
-
   const [artistName, setArtistName] = useState("");
   const [eventDate, setEventDate] = useState("");
   const [error, setError] = useState(null);
   const [concert, setConcert] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // const modal = useRef(null);
+  
   // useEffect(() => {
-  //   const fetchConcerts = async () => {
-  //     // const params = new URLSearchParams({
-  //     //   artistName: 'Billy Strings',
-  //     //   date: '14-12-2024'
-  //     // });
-  //     // const headers = {
-  //     //   Accept: "application/json",
-  //     //   "x-api-key": process.env.SETLIST_FM_API_KEY
-  //     // };
-
-  //     // try {
-  //     // const response = await fetch(`https://api.setlist.fm/rest/1.0/search/setlists/${params}`, {
-  //     // const response = await fetch(`https://api.setlist.fm/rest/1.0/search/setlist/63de4613`, {
-  //     //   method: 'GET',
-  //     //   headers
-  //     // });
-
-  //     // const response = await fetch("/api/concerts/b57b92a");
-  //     const response = await fetch("/api/concerts");
-  //     const json = await response.json();
-
-  //     if (response.ok) {
-  //       setConcerts(json);
-  //     }
-  //   };
-
-  //   fetchConcerts();
+  //   if (modal.current) {
+  //     setModalMounted(true);
+  //   }
   // }, []);
 
-  const modal = useRef();
-
   const getConcertDetails = async () => {
+    // handleConcertDetailsClick();
+
     const response = await fetch(
       `/api/concerts/${encodeURIComponent(artistName)}/${eventDate}`
     );
@@ -84,18 +31,27 @@ const ConcertForm = () => {
 
     if (response.ok) {
       setConcert(json);
-      handleConcertDetailsClick();
     }
   };
 
-  function handleConcertDetailsClick() {
-    modal.current.open();
+  useEffect(() => {
+    if (concert) {
+      setIsModalOpen(true); // Open modal when concert data is set
+    }
+  }, [concert]);
+
+  const handleConcertDetailsClick = async () => {
+    // setIsModalOpen(true);
+
+    await getConcertDetails();
   }
 
   return (
     <>
       <ConcertDetailsModal
-        ref={modal}
+        // ref={modal}
+        onClose={() => setIsModalOpen(false)}
+        isOpen={isModalOpen}
         concert={concert}
         // actions={modalActions}
       />
@@ -113,7 +69,10 @@ const ConcertForm = () => {
           onChange={(e) => setEventDate(e.target.value)}
           value={eventDate}
         />
-        <button onClick={() => getConcertDetails()} type="button">Look Up Set List</button>
+        <button onClick={() => {
+          handleConcertDetailsClick();
+        }
+          } type="button">Look Up Set List</button>
         {error && <div className="error">{error}</div>}
       </form>
     </>

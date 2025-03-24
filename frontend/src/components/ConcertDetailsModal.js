@@ -1,10 +1,8 @@
-import { forwardRef, useImperativeHandle, useRef } from "react";
-import { createPortal } from "react-dom";
-// import Cart from './Cart';
+import { useRef } from "react";
 
-const ConcertDetailsModal = forwardRef(function Modal({ concert }, ref) {
-  const [
-    {
+const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
+  const setlistEntry = concert?.setlist?.[0] || {};
+  const {
       artist: { name: artistName } = {},
       eventDate = "Unknown Date",
       venue: {
@@ -16,20 +14,26 @@ const ConcertDetailsModal = forwardRef(function Modal({ concert }, ref) {
         } = {},
       } = {},
       sets: { set: sets = [] } = {},
-    } = {},
-  ] = concert?.setlist || [];
+    } = setlistEntry;
 
-  const dialog = useRef(null);
+  const dialogRef = useRef(null);
 
-  useImperativeHandle(ref, () => {
-    return {
-      open: () => {
-        if (dialog.current) {
-          dialog.current.showModal();
-        }
-      },
-    };
-  });
+  // useImperativeHandle(ref, () => {
+  //   console.log('UIH assigned');
+  //   return {
+  //     open: () => {
+  //       if (dialog.current) {
+  //         dialog.current.showModal();
+  //       } else {
+  //         console.warn('Modal dialog reference is not assigned yet')
+  //       }
+  //     },
+  //   };
+  // }, []);
+
+  if (isOpen && dialogRef.current) {
+    dialogRef.current.showModal();
+  }
 
   const inputDate = eventDate;
   const [day, month, year] = inputDate.split("-");
@@ -42,8 +46,8 @@ const ConcertDetailsModal = forwardRef(function Modal({ concert }, ref) {
   });
 
   if (concert) {
-    return createPortal(
-      <dialog id="modal" ref={dialog}>
+    return (
+      <dialog id="modal" ref={dialogRef} onClose={onClose}>
         {concert ? (
           <>
             <h2>{artistName}</h2>
@@ -52,15 +56,18 @@ const ConcertDetailsModal = forwardRef(function Modal({ concert }, ref) {
             </h4>
             {
               // set[0].song[0].name
-              sets.map((set) => (
-                <>
+              sets.map((set, index) => (
+                <div key={index}>
                   <p>
-                    <strong>{set.name ? set.name : "Encore"}</strong>
+                    <strong>{set.name}</strong>
+                    <strong>{set.encore && 'Encore'} {set.encore > 1 && set.encore}</strong>
                   </p>
+                  <ol>
                   {set.song.map((song, i) => (
-                    <p>{i+1}. {song.name}</p>
+                    <li key={i}>{song.name}</li>
                   ))}
-                </>
+                  </ol>
+                </div>
               ))
             }
             <form method="dialog" id="modal-actions">
@@ -71,10 +78,9 @@ const ConcertDetailsModal = forwardRef(function Modal({ concert }, ref) {
         ) : (
           <p>Loading...</p>
         )}
-      </dialog>,
-      document.getElementById("modal")
+      </dialog>
     );
   }
-});
+};
 
 export default ConcertDetailsModal;
