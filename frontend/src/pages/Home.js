@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useArtistsContext } from "../hooks/useArtistsContext";
+import { useConcertsContext } from "../hooks/useConcertsContext";
 
 import ArtistDetails from "../components/ArtistDetails";
 import ConcertForm from "../components/ConcertForm";
@@ -10,10 +10,10 @@ const getUniqueArtists = (concertsArr, addConcertToArtist) => {
   const seen = new Set();
 
   concertsArr.forEach(concert => {
-    const { apiId, artist: {name: artistName}, venue, sets, eventDate, url} = concert;
+    const { concertId, artist: {name: artistName}, venue, sets, eventDate, url} = concert;
 
     if (!seen.has(artistName)) {
-      uniqueArtists.push({ id: apiId, artist: { name: artistName, concerts: [{venue, sets, eventDate, url}] } });
+      uniqueArtists.push({ id: concertId, artist: { name: artistName, concerts: [{venue, sets, eventDate, url}] } });
       seen.add(artistName); // Add artist name to Set to ensure uniqueness
     } else {
       addConcertToArtist(uniqueArtists, artistName, {venue, sets, eventDate, url})
@@ -36,7 +36,7 @@ const addConcertToArtist = (artists, artistName, newConcert) => {
 };
 
 const Home = () => {
-  const {artists, dispatch} = useArtistsContext();
+  const {artists, concerts, dispatch} = useConcertsContext();
 
   useEffect(() => {
     const fetchConcerts = async () => {
@@ -44,12 +44,12 @@ const Home = () => {
       const json = await response.json();
 
       if (response.ok) {
-        dispatch({type: 'UPDATE_ARTISTS', payload: getUniqueArtists(json, addConcertToArtist)});
+        dispatch({type: 'UPDATE_ARTISTS', payload: {concerts, artists: getUniqueArtists(json, addConcertToArtist)}});
       }
     };
 
     fetchConcerts();
-  }, [dispatch]);
+  }, [dispatch, concerts]);
 
   return (
       <div className="home">

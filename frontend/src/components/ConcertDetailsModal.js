@@ -1,6 +1,8 @@
 import { useRef, useState } from "react";
+import { useConcertsContext } from "../hooks/useConcertsContext";
 
 const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
+  const { dispatch } = useConcertsContext();
   const [error, setError] = useState(null);
   const setlistEntry = concert?.setlist?.[0] || {};
   const {
@@ -47,6 +49,9 @@ const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
   
       if (!response.ok) {
         setError(json.error);
+      }
+      if (response.ok) {
+        dispatch({type: 'ADD_CONCERT', payload: json})
       }
     };
   if (error) {
