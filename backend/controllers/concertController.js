@@ -32,7 +32,7 @@ export const saveConcert = async (req, res) => {
       sortName: artist.sortName,
       disambiguation: artist.disambiguation,
       url: artist.url
-    }
+    };
 
     const newConcert = new Concert({
       concertId,
