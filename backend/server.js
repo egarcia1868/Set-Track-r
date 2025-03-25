@@ -38,7 +38,6 @@ import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import concertRoutes from "./routes/concertRoutes.js";
-import workoutRoutes from "./routes/workoutRoutes.js";
 
 dotenv.config();
 
@@ -47,7 +46,6 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use("/api/concerts", concertRoutes);
-app.use("/api/workouts", workoutRoutes);
 
 
 //connect to db

@@ -53,14 +53,12 @@ const ArtistConcerts = () => {
     return dateB - dateA; // Sort descending (most recent first)
   });
 
-  console.log('taco2: ', concerts)
-
   return (<>
         <h3>{artistName}</h3>
         <div className="concerts">
           {sortedConcerts ?
           sortedConcerts.map((concert) => (
-            <ConcertDetails key={concert._id} concert={concert} />
+            <ConcertDetails key={concert.id} concert={concert} />
           )) : <p>No concerts for this artist</p>
           }
         </div>
