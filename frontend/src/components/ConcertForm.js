@@ -57,14 +57,19 @@ const ConcertForm = () => {
         <input
           id="artistName"
           type="text"
-          onChange={(e) => setArtistName(e.target.value)}
+          onChange={(e) => {
+            setError(null)
+            setArtistName(e.target.value)
+          }}
           value={artistName}
         />
         <label htmlFor="date">Concert Date:</label>
         <input
           id="date"
           type="date"
-          onChange={(e) => setEventDate(e.target.value)}
+          onChange={(e) => {
+            setError(null);
+            setEventDate(e.target.value)}}
           value={eventDate}
         />
         <button onClick={() => {
