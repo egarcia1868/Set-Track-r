@@ -1,109 +1,3 @@
-// // const Workout = require("../models/workoutModel");
-// const Concert = require("../models/concertModel");
-// const mongoose = require("mongoose");
-
-// const concertModel = new Concert(process.env.SETLIST_FM_API_KEY);
-
-// // get all workouts
-// const getWorkouts = async (req, res) => {
-//   // const workouts = await Workout.find({}).sort({ createdAt: -1 });
-
-//   // res.status(200).json(workouts);
-// };
-
-// // get a single workout
-// const getConcert = async (req, res) => {
-// //   try {
-// //   const { id } = req.params;
-
-// //   // if (!mongoose.Types.ObjectId.isValid(id)) {
-// //   //   return res.status(404).json({ error: "No such concert" });
-// //   // }
-
-// //   const concert = await Concert.getConcertById(id);
-
-// //   if (!concert) {
-// //     return res.status(404).json({ error: "No such concert" });
-// //   }
-
-// //   res.status(200).json(concert);
-// // }
-// try {
-//   const { id } = req.params; // Get concert ID from request parameters
-
-//   if (!id) {
-//       return res.status(400).json({ error: "Concert ID is required" });
-//   }
-
-//   const concertData = await concertModel.getConcertById(id);
-
-//   if (!concertData) {
-//       return res.status(404).json({ error: "Concert not found" });
-//   }
-
-//   res.json(concertData);
-// }
-//  catch (error) {
-//   console.error("Error in ConcertController:", error);
-//   res.status(500).json({ error: "Internal server error" });
-// }
-// };
-
-// // create new concert
-// const createConcert = async (req, res) => {
-//   const { title, load, reps } = req.body;
-
-//   // // add doc to db
-//   try {
-//     const concert = await Concert.create({ title, load, reps });
-//     res.status(200).json(workout);
-//   } catch (error) {
-//     res.status(400).json({ error: error.message });
-//   }
-// };
-
-// // delete a workout
-// const deleteWorkout = async (req, res) => {
-//   // const { id } = req.params;
-
-//   // if (!mongoose.Types.ObjectId.isValid(id)) {
-//   //   return res.status(404).json({ error: "No such workout" });
-//   // }
-
-//   // const workout = await Workout.findOneAndDelete({ _id: id });
-
-//   // if (!workout) {
-//   //   return res.status(404).json({ error: "No such workout" });
-//   // }
-
-//   // res.status(200).json(workout);
-// };
-
-// // update a workout
-// const updateWorkout = async (req, res) => {
-//   // const { id } = req.params;
-
-//   // if (!mongoose.Types.ObjectId.isValid(id)) {
-//   //   return res.status(404).json({ error: "No such workout" });
-//   // }
-
-//   // const workout = await Workout.findOneAndUpdate({ _id: id }, { ...req.body });
-
-//   // if (!workout) {
-//   //   return res.status(404).json({ error: 'No such workout'})
-//   // }
-
-//   // res.status(200).json(workout)
-// };
-
-// module.exports = {
-//   createConcert,
-//   getConcert,
-//   getWorkouts,
-//   deleteWorkout,
-//   updateWorkout
-// };
-
 import Concert from "../models/concertModel.js";
 import { getConcertFromAPI } from "../services/concertService.js";
 
@@ -124,18 +18,26 @@ export const getConcert = async (req, res) => {
 
 export const saveConcert = async (req, res) => {
   try {
-    const { id: apiId, eventDate, artist, venue, sets, url } =
+    const { id: concertId, eventDate, artist, venue, sets, url } =
       req.body;
-    const existingConcert = await Concert.findOne({ apiId });
+    const existingConcert = await Concert.findOne({ concertId });
 
     if (existingConcert) {
       return res.status(409).json({ error: "Concert already saved" });
     }
 
+    const formattedArtist = {
+      artistId: artist.mbid,
+      name: artist.name,
+      sortName: artist.sortName,
+      disambiguation: artist.disambiguation,
+      url: artist.url
+    }
+
     const newConcert = new Concert({
-      apiId,
+      concertId,
       eventDate,
-      artist,
+      artist: formattedArtist,
       venue,
       sets,
       url
@@ -151,13 +53,13 @@ export const saveConcert = async (req, res) => {
 
 export const getSavedConcert = async (req, res) => {
   try {
-    const { apiId } = req.params;
+    const { concertId } = req.params;
 
-    if (!apiId) {
-      return res.status(400).json({ error: "apiId is required" });
+    if (!concertId) {
+      return res.status(400).json({ error: "concertId is required" });
     }
 
-    const concerts = await Concert.findOne({apiId});
+    const concerts = await Concert.findOne({concertId});
     if (!concert) {
       return res.status(404).json({ error: "Concert not found"});
     }

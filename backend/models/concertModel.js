@@ -4,10 +4,11 @@ const { Schema, model } = mongoose;
 
 const concertSchema = new Schema(
   {
-    apiId: { type: String, unique: true },
+    concertId: { type: String, unique: true },
     eventDate: { type: String, required: true },
     artist: {
       type: {
+        artistId: { type: String, required: true},
         name: { type: String, required: true },
         sortName: { type: String },
         disambiguation: { type: String },
