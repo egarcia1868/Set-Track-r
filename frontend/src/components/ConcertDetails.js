@@ -40,7 +40,7 @@ const ConcertDetails = ({ concert }) => {
         {cityName}, {state}, {countryName}
       </p>
       <p>{outputDate}</p>
-      <p onClick={() => setShowSetList(!showSetList)}>setlist {showSetList ? '▼' : '▲'}</p>
+      <p onClick={() => setShowSetList(prev => !prev)}>setlist {showSetList ? '▼' : '▲'}</p>
       {showSetList && (
         sets ? sets.map((set, index) => (
           <div key={index}>

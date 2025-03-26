@@ -5,6 +5,7 @@ import { useState } from "react";
 const ArtistConcerts = () => {
   const [expandedYear, setExpandedYear] = useState(null); // Track the expanded year
   const [caratState, setCaratState] = useState({});
+  const [expandAll, setExpandAll] = useState(false);
 
   const location = useLocation();
   const { artist: {artistName, concerts} } = location.state || {};
@@ -46,16 +47,17 @@ const ArtistConcerts = () => {
     <>
       <h1>{artistName}</h1>
       <div className="concerts">
+        <h2>Concerts By Year <span style={{fontSize: '.5rem', cursor: 'pointer', color: '#1a0dab'}} onClick={() => setExpandAll(prev => !prev)}>expand all</span></h2>
         {sortedConcertYears ? (
           sortedConcertYears.map((year) => (
             <div key={year}>
-              <h2
+              <h3
                 style={{ cursor: "pointer", margin: "10px 0" }}
                 onClick={() => toggleYear(year)} // Toggle the expanded year
               >
-                {year} {caratState[year] ? "▼" : "▲"}
-              </h2>
-              {expandedYear === year && (
+                {year} {(caratState[year] || expandAll) ? "▼" : "▲"}
+              </h3>
+              {(expandedYear === year || expandAll) && (
                 <div>
                   {sortedConcerts
                     .filter(
