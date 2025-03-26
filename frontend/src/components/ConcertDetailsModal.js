@@ -6,18 +6,14 @@ const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
   const [error, setError] = useState(null);
   const setlistEntry = concert?.setlist?.[0] || {};
   const {
-      artist: { name: artistName } = {},
-      eventDate = "Unknown Date",
-      venue: {
-        name: venueName = "Unknown Venue",
-        city: {
-          name: cityName,
-          state,
-          country: { name: countryName } = {},
-        } = {},
-      } = {},
-      sets: { set: sets = [] } = {},
-    } = setlistEntry;
+    artist: { name: artistName } = {},
+    eventDate = "Unknown Date",
+    venue: {
+      name: venueName = "Unknown Venue",
+      city: { name: cityName, state, country: { name: countryName } = {} } = {},
+    } = {},
+    sets: { set: sets = [] } = {},
+  } = setlistEntry;
 
   const dialogRef = useRef(null);
 
@@ -35,27 +31,26 @@ const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
     day: "numeric",
   });
 
-  const saveConcert = async () => {  
-      const response = await fetch(
-        `/api/concerts/`, {
-          method: 'POST',
-          body: JSON.stringify(concert?.setlist[0]),
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-      const json = await response.json();
-  
-      if (!response.ok) {
-        setError(json.error);
-      }
-      if (response.ok) {
-        dispatch({type: 'ADD_CONCERT', payload: json})
-      }
-    };
+  const saveConcert = async () => {
+    const response = await fetch(`/api/concerts/`, {
+      method: "POST",
+      body: JSON.stringify(concert?.setlist[0]),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const json = await response.json();
+
+    if (!response.ok) {
+      setError(json.error);
+    }
+    if (response.ok) {
+      dispatch({ type: "ADD_CONCERT", payload: json });
+    }
+  };
+
   if (error) {
-    return <p>Error</p>
+    return <p>Error</p>;
   }
 
   if (concert) {
@@ -67,21 +62,21 @@ const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
             <h4>
               {outputDate} -- {venueName} -- {cityName}, {state}, {countryName}
             </h4>
-            {
-              sets.map((set, index) => (
-                <div key={index}>
-                  <p>
-                    <strong>{set.name}</strong>
-                    <strong>{set.encore && 'Encore'} {set.encore > 1 && set.encore}</strong>
-                  </p>
-                  <ol>
+            {sets.map((set, index) => (
+              <div key={index}>
+                <p>
+                  <strong>{set.name}</strong>
+                  <strong>
+                    {set.encore && "Encore"} {set.encore > 1 && set.encore}
+                  </strong>
+                </p>
+                <ol>
                   {set.song.map((song, i) => (
                     <li key={i}>{song.name}</li>
                   ))}
-                  </ol>
-                </div>
-              ))
-            }
+                </ol>
+              </div>
+            ))}
             <form method="dialog" id="modal-actions">
               <button>Close</button>
               <button onClick={saveConcert}>Add show to my list!</button>

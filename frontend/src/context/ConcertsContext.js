@@ -7,13 +7,12 @@ export const concertsReducer = (state, action) => {
     case "UPDATE_ARTISTS":
       return {
         ...state,
-        concerts: action.payload.concerts,
-        artists: action.payload.artists
+        artists: action.payload
       };
     case "ADD_CONCERT":
       return {
         ...state,
-        concerts: [action.payload, ...state.concerts]
+        artists: [action.payload, ...state.artists]
       }
     case "GET_SAVED_ARTISTS":
       return {
@@ -27,8 +26,7 @@ export const concertsReducer = (state, action) => {
 
 export const ConcertsContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(concertsReducer, {
-    concerts: [],
-    artists: null
+    artists: []
   });
 
   return (

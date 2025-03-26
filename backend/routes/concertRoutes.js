@@ -1,5 +1,5 @@
 import express from "express";
-import { getSavedConcert, getSavedConcerts, saveConcert, getConcert } from "../controllers/concertController.js";
+import { getSavedConcert, getSavedConcerts, saveConcert, getConcert } from "../controllers/artistController.js";
 
 const router = express.Router();
 

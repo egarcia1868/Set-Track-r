@@ -1,4 +1,4 @@
-import Concert from "../models/concertModel.js";
+import Artist from "../models/artistModel.js";
 import { getConcertFromAPI } from "../services/concertService.js";
 
 export const getConcert = async (req, res) => {
@@ -18,33 +18,35 @@ export const getConcert = async (req, res) => {
 
 export const saveConcert = async (req, res) => {
   try {
-    const { id: concertId, eventDate, artist, venue, sets, url } =
+    const { id: concertId, eventDate, artist, venue, sets: {set: sets}, url } =
       req.body;
-    const existingConcert = await Concert.findOne({ concertId });
 
+    let artistDoc = await Artist.findOne({ name: artist });
+
+    // If the artist does not exist, create a new artist entry
+    if (!artistDoc) {
+      artistDoc = new Artist({
+        artistName: artist.name,
+        artistId : artist.mbid, // figure out
+        concerts: [],
+      });
+    }
+          
+    const existingConcert = artistDoc.concerts.find(c => c.concertId === concertId);
     if (existingConcert) {
       return res.status(409).json({ error: "Concert already saved" });
     }
 
-    const formattedArtist = {
-      artistId: artist.mbid,
-      name: artist.name,
-      sortName: artist.sortName,
-      disambiguation: artist.disambiguation,
-      url: artist.url
-    };
-
-    const newConcert = new Concert({
+    artistDoc.concerts.push({
       concertId,
       eventDate,
-      artist: formattedArtist,
       venue,
       sets,
       url
     });
     
-    await newConcert.save();
-    res.status(201).json(newConcert);
+    await artistDoc.save();
+    res.status(201).json(artistDoc);
   } catch (error) {
     console.error("error: ", error);
     res.status(500).json({ error: "Could not save concert" });
@@ -74,7 +76,9 @@ export const getSavedConcert = async (req, res) => {
 export const getSavedConcerts = async (req, res) => {
   try {
     //  const { showId } = req.params;
-    const concerts = await Concert.find();
+
+    const concerts = await Artist.find();
+    
     res.json(concerts);
   } catch (error) {
     res.status(500).json({ error: "Could not fetch concerts" });

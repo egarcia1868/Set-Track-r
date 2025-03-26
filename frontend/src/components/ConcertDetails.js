@@ -1,4 +1,9 @@
+import { useState } from "react";
+
 const ConcertDetails = ({ concert }) => {
+  // const [caratState, setCaratState] = useState(true);
+  const [showSetList, setShowSetList] = useState(false);
+
   const {
     eventDate,
     venue: {
@@ -10,6 +15,7 @@ const ConcertDetails = ({ concert }) => {
       },
     },
     url,
+    sets
   } = concert;
   const inputDate = eventDate;
   const [day, month, year] = inputDate.split("-");
@@ -21,6 +27,10 @@ const ConcertDetails = ({ concert }) => {
     day: "numeric",
   });
 
+  // const showSetList = () => {
+
+  // }
+
   return (
     <div className="concert-details">
       <p>
@@ -30,6 +40,25 @@ const ConcertDetails = ({ concert }) => {
         {cityName}, {state}, {countryName}
       </p>
       <p>{outputDate}</p>
+      <p onClick={() => setShowSetList(!showSetList)}>setlist {showSetList ? '▼' : '▲'}</p>
+      {showSetList && (
+        sets ? sets.map((set, index) => (
+          <div key={index}>
+            <p>
+              <strong>{set.name}</strong>
+              <strong>
+                {set.encore && "Encore"} {set.encore > 1 && set.encore}
+              </strong>
+            </p>
+            <ol>
+              {set.song.map((song, i) => (
+                <li key={i}>{song.name}</li>
+              ))}
+            </ol>
+          </div>
+        )) : <p>Setlist unavailable</p>
+      )}
+      <br />
       <a style={{fontSize: '.65rem'}}
         href={url}
         target="_blank"
