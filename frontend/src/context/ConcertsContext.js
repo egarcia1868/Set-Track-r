@@ -10,9 +10,26 @@ export const concertsReducer = (state, action) => {
         artists: action.payload
       };
     case "ADD_CONCERT":
+      const foundArtist = state.artists.some(artist => artist.artistName === action.payload.artistName);
+      const updatedArtists = state.artists.map((artist) =>          
+        artist.artistId === action.payload.artistId
+          ? {
+              ...artist,
+              concerts: [
+                ...artist.concerts,
+                ...action.payload.concerts.filter(newConcert =>
+                  !artist.concerts.some(existingConcert => existingConcert.concertId === newConcert.concertId)
+                ) // Add only new concerts
+              ]
+            }
+          : artist
+      );
+      !foundArtist && updatedArtists.push(action.payload)
+
       return {
         ...state,
-        artists: [action.payload, ...state.artists]
+        artists: updatedArtists,
+        // artists: [action.payload, ...state.artists]
       }
     case "GET_SAVED_ARTISTS":
       return {

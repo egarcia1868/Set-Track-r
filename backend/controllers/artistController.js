@@ -21,7 +21,7 @@ export const saveConcert = async (req, res) => {
     const { id: concertId, eventDate, artist, venue, sets: {set: sets}, url } =
       req.body;
 
-    let artistDoc = await Artist.findOne({ name: artist });
+    let artistDoc = await Artist.findOne({ artistName: artist.name });
 
     // If the artist does not exist, create a new artist entry
     if (!artistDoc) {

@@ -50,7 +50,16 @@ const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
   };
 
   if (error) {
-    return <p>Error</p>;
+    return (
+      <dialog id="modal" ref={dialogRef} onClose={onClose}>
+        <p>Error: {error}</p>
+
+        <form method="dialog" id="modal-actions">
+              <button>Close</button>
+              {/* <button onClick={saveConcert}>Add show to my list!</button> */}
+            </form>
+      </dialog>
+    )
   }
 
   if (concert) {

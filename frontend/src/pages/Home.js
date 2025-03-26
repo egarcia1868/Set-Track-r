@@ -51,7 +51,7 @@ const Home = () => {
     fetchConcerts();
   }, [dispatch]);
 
-  // console.log('homeArt: ', artists)
+  console.log('homeArt: ', artists)
 
   return (
       <div className="home">
