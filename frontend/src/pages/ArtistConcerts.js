@@ -7,8 +7,7 @@ const ArtistConcerts = () => {
   const [caratState, setCaratState] = useState({});
 
   const location = useLocation();
-  console.log('taco: ', location.state || {});
-  const { artistName, concerts } = location.state || {};
+  const { artist: {artistName, concerts} } = location.state || {};
 
   const sortedConcerts = concerts.sort((a, b) => {
     const [dayA, monthA, yearA] = a.eventDate.split("-").map(Number);
