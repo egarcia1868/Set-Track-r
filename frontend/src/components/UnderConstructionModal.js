@@ -14,7 +14,7 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
       onClose={onClose}
       // style={{ backgroundImage: 'url("/caution3.jpg")', backgroundSize: 'cover', filter: 'saturate(60%)'}}
     >
-      <img style={{ display: 'block', margin: '0 auto'}} src="/caution4.jpg" alt="Under Construction" />
+      <img style={{ display: 'block', margin: '0 auto'}} src="/construction.jpg" alt="Under Construction" />
       <h1 style={{ paddingTop: '2rem', textAlign: "center" }}>Site Currently Under Construction</h1>
       <h4 style={{ marginLeft: "1.5rem" }}>Coming updates:</h4>
       <ul>
