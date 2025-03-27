@@ -4,6 +4,7 @@ import { useState } from "react";
 
 const ArtistConcerts = () => {
   const [expandedYear, setExpandedYear] = useState(null); // Track the expanded year
+  const [expandTracks, setExpandTracks] = useState(false);
   const [caratState, setCaratState] = useState({});
   const [expandAll, setExpandAll] = useState(false);
 
@@ -47,6 +48,8 @@ const ArtistConcerts = () => {
     <>
       <h1>{artistName}</h1>
       <div className="concerts">
+        <h2>Songs By # Of Times Seen <span style={{fontSize: '.5rem', cursor: 'pointer', color: '#1a0dab'}} onClick={() => setExpandTracks(prev => !prev)}>expand</span></h2>
+        
         <h2>Concerts By Year <span style={{fontSize: '.5rem', cursor: 'pointer', color: '#1a0dab'}} onClick={() => setExpandAll(prev => !prev)}>expand all</span></h2>
         {sortedConcertYears ? (
           sortedConcertYears.map((year) => (

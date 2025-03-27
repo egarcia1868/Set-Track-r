@@ -1,42 +1,13 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useConcertsContext } from "../hooks/useConcertsContext";
 
+import UnderConstructionModal from "../components/UnderConstructionModal";
 import ArtistDetails from "../components/ArtistDetails";
 import ConcertForm from "../components/ConcertForm";
 
-// const getUniqueArtists = (concertsArr, addConcertToArtist) => {
-//   // Create a Set to track the unique combinations of artist name and id
-//   const uniqueArtists = [];
-//   const seen = new Set();
-
-//   concertsArr.forEach(concert => {
-//     const { concertId, artist: {name: artistName}, venue, sets, eventDate, url} = concert;
-
-//     if (!seen.has(artistName)) {
-//       uniqueArtists.push({ id: concertId, artist: { name: artistName, concerts: [{venue, sets, eventDate, url}] } });
-//       seen.add(artistName); // Add artist name to Set to ensure uniqueness
-//     } else {
-//       addConcertToArtist(uniqueArtists, artistName, {venue, sets, eventDate, url})
-//       // findByArtistName(uniqueArtists).artist.concerts.push({venue, sets, eventDate, url})
-//     }
-//   });
-
-//   return uniqueArtists;
-// }
-
-// const addConcertToArtist = (artists, artistName, newConcert) => {
-//   // Find the artist by name
-//   const artistEntry = artists.find(artist => artist.artist.name === artistName);
-  
-//   if (artistEntry) {
-//     artistEntry.artist.concerts.push(newConcert);
-//   } else {
-//     console.warn(`Artist "${artistName}" not found.`);
-//   }
-// };
-
 const Home = () => {
-  const {artists, dispatch} = useConcertsContext();
+  const { artists, dispatch } = useConcertsContext();
+  const [isModalOpen, setIsModalOpen] = useState(true);
 
   useEffect(() => {
     const fetchConcerts = async () => {
@@ -44,27 +15,28 @@ const Home = () => {
       const json = await response.json();
 
       if (response.ok) {
-        dispatch({type: 'UPDATE_ARTISTS', payload: [...json]});
+        dispatch({ type: "UPDATE_ARTISTS", payload: [...json] });
       }
     };
 
     fetchConcerts();
   }, [dispatch]);
 
-  console.log('homeArt: ', artists)
-
   return (
-      <div className="home">
-        <div className="concerts">
-          {!artists && <h3>No Saved Concerts yet</h3>}
-            {artists &&
-            artists.map((artist) => (
-              <ArtistDetails key={artist.artistId} artist={artist} />
-            ))
-            }
-        </div>
-        <ConcertForm />
+    <div className="home">
+      <UnderConstructionModal
+        onClose={() => setIsModalOpen(false)}
+        isOpen={isModalOpen}
+      />
+      <div className="concerts">
+        {!artists && <h3>No Saved Concerts yet</h3>}
+        {artists &&
+          artists.map((artist) => (
+            <ArtistDetails key={artist.artistId} artist={artist} />
+          ))}
       </div>
+      <ConcertForm />
+    </div>
   );
 };
 
