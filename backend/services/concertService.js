@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const API_URL = "https://api.setlist.fm/rest/1.0/";
+const API_URL = process.env.REACT_APP_API_URL || "https://api.setlist.fm/rest/1.0/";
 const API_KEY = process.env.SETLIST_FM_API_KEY;
 
 export const getConcertFromAPI = async (artistName, date) => {
