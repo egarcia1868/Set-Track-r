@@ -1,0 +1,25 @@
+{
+  "name": "set-track-r",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.5.1"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  },
+  "scripts": {
+    "start": "set NODE_ENV=production && node backend/server.js",
+    "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "dev": "set NODE_ENV=development && nodemon backend/server.js"
+  }
+}
