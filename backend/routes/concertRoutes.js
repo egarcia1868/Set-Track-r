@@ -5,7 +5,7 @@ const router = express.Router();
 
 // GET all saved concerts
 router.get("/", (req, res) => {
-  res.json({ mssg: "backend running"})
+  res.send("backend running");
 })
 
 // GET all saved concerts
