@@ -4,12 +4,7 @@ import { getSavedConcert, getSavedConcerts, saveConcert, getConcert } from "../c
 const router = express.Router();
 
 // GET all saved concerts
-router.get("/", (req, res) => {
-  res.send("backend running");
-})
-
-// GET all saved concerts
-router.get("/concerts", getSavedConcerts)
+router.get("/", getSavedConcerts)
 
 // GET a single concert from DB
 router.get("/:id", getSavedConcert);
