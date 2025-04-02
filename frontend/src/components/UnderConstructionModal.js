@@ -12,7 +12,7 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
       id="modal"
       ref={dialogRef}
       onClose={onClose}
-      className="construction-modal"
+      // className="construction-modal"
       // style={{ backgroundImage: 'url("/caution3.jpg")', backgroundSize: 'cover', filter: 'saturate(60%)'}}
     >
       <img style={{ display: 'block', margin: '0 auto'}} src="/construction.jpg" alt="Under Construction" />

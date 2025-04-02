@@ -32,7 +32,11 @@ const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
   });
 
   const saveConcert = async () => {
-    const response = await fetch(`/api/concerts/`, {
+    const BASE_URL = process.env.NODE_ENV === "production"
+    ? "https://set-trackr-backend.onrender.com" // Deployed backend URL
+    : "http://localhost:4000"; // Local backend URL (adjust port if needed)
+  
+    const response = await fetch(`${BASE_URL}/api/concerts/`, {
       method: "POST",
       body: JSON.stringify(concert?.setlist[0]),
       headers: {

@@ -5,6 +5,10 @@ import UnderConstructionModal from "../components/UnderConstructionModal";
 import ArtistDetails from "../components/ArtistDetails";
 import ConcertForm from "../components/ConcertForm";
 
+const BASE_URL = process.env.NODE_ENV === "production"
+? "https://set-trackr-backend.onrender.com" // Deployed backend URL
+: "http://localhost:4000"; // Local backend URL (adjust port if needed)
+
 const Home = () => {
   const { artists, dispatch } = useConcertsContext();
   const [isModalOpen, setIsModalOpen] = useState(true);
@@ -12,10 +16,7 @@ const Home = () => {
   useEffect(() => {
     const fetchConcerts = async () => {
       // Dynamically determine the base URL based on the environment
-      const BASE_URL = process.env.NODE_ENV === "production"
-        ? "https://set-trackr-backend.onrender.com" // Deployed backend URL
-        : "http://localhost:4000"; // Local backend URL (adjust port if needed)
-  
+
       const response = await fetch(`${BASE_URL}/api/concerts`);
       const json = await response.json();
   
