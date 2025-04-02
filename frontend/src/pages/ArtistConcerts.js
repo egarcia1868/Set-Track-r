@@ -1,7 +1,7 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import ConcertDetails from "../components/ConcertDetails";
 import SongsDetails from "../components/SongsDetails";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 const ArtistConcerts = () => {
   const [expandedYears, setExpandedYears] = useState(new Set());
@@ -9,6 +9,15 @@ const ArtistConcerts = () => {
 
   const location = useLocation();
   const { artist: { artistName, concerts = [] } = {} } = location.state || {};
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!location.state) {
+      navigate("/");
+    }
+  }, [location.state, navigate]);
+
 
   // Sort concerts by date (descending order)
   const sortedConcerts = useMemo(() => 
@@ -34,7 +43,7 @@ const ArtistConcerts = () => {
     setExpandedYears(expandedYears.size > 0 ? new Set() : new Set(sortedConcertYears));
   };
 
-  // console.log('taco: ', concerts);
+  if (!location.state) return null;
 
   return (
     <>
