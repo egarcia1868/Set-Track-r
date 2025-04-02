@@ -7,7 +7,6 @@ import path from "path";
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve('backend', '.env' )});
 
-
 // dotenv.config({ path: path.join(__dirname, '.env') });
 
 const API_URL = process.env.REACT_APP_API_URL || "https://api.setlist.fm/rest/1.0/";

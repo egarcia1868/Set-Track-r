@@ -38,6 +38,13 @@ header a {
   grid-template-columns: 3fr 1fr;
   gap: 100px;
 }
+
+dialog {
+    width: 80%; /* Default width */
+    max-width: 1200px;
+    margin: 0 auto; /* Centering */
+}
+
 .concert-details {
   background: #fff;
   border-radius: 4px;
@@ -163,4 +170,12 @@ input.error {
 
 #modal form button:last-of-type:hover {
   background: #382e1b;
+}
+
+ 
+@media screen and (max-width: 768px) {
+  dialog {
+    min-width: 80%; /* Full width on mobile */
+    padding: 0 10px; /* Optional: Add padding to prevent edge touching */
+  }
 }
