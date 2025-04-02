@@ -23,7 +23,7 @@ const corsOptions = {
 
 if (process.env.NODE_ENV === "production") {
   // Allow only the frontend URL when in production
-  corsOptions.origin = 'https://set-trackr-frontend.onrender.com';
+  corsOptions.origin = 'https://set-trackr.onrender.com';
 } else {
   // Allow local frontend to access the backend during development
   corsOptions.origin = 'http://localhost:3000';  // Update this if your local frontend runs on a different port
