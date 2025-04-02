@@ -3,50 +3,35 @@ import ConcertDetails from "../components/ConcertDetails";
 import { useState, useMemo } from "react";
 
 const ArtistConcerts = () => {
-  const [expandedYears, setExpandedYears] = useState(new Set()); 
+  const [expandedYears, setExpandedYears] = useState(new Set());
   const [expandTracks, setExpandTracks] = useState(false);
-  const [caratState, setCaratState] = useState({});
-  const [expandAllYears, setExpandAllYears] = useState(false);
 
   const location = useLocation();
   const { artist: { artistName, concerts = [] } = {} } = location.state || {};
 
   // Sort concerts by date (descending order)
   const sortedConcerts = useMemo(() => 
-    [...concerts].sort((a, b) => {
-      const [dayA, monthA, yearA] = a.eventDate.split("-").map(Number);
-      const [dayB, monthB, yearB] = b.eventDate.split("-").map(Number);
-      return new Date(yearB, monthB - 1, dayB) - new Date(yearA, monthA - 1, dayA);
-    }), 
+    [...concerts].sort((a, b) => new Date(...b.eventDate.split("-").reverse()) - new Date(...a.eventDate.split("-").reverse())), 
     [concerts]
   );
 
-  // Extract unique years from sortedConcerts
+  // Extract unique years from sorted concerts
   const sortedConcertYears = useMemo(() => 
-    [...new Set(sortedConcerts.map(concert => getYearFromDate(concert.eventDate)))], 
+    [...new Set(sortedConcerts.map(concert => concert.eventDate.split('-')[2]))], 
     [sortedConcerts]
   );
 
-  function getYearFromDate(dateString) {
-    return Number(dateString.split('-')[2]);
-  }
-
-  function toggleYear(year) {
-    setCaratState(prev => ({ ...prev, [year]: !prev[year] }));
-
+  const toggleYear = (year) => {
     setExpandedYears(prev => {
       const newSet = new Set(prev);
       newSet.has(year) ? newSet.delete(year) : newSet.add(year);
       return newSet;
     });
-  }
+  };
 
-  function expandAll() {
-    setExpandedYears(prev => {
-      const newSet = new Set(expandAllYears ? [] : sortedConcertYears);
-      return newSet;
-    });
-  }
+  const expandOrCollapseAll = () => {
+    setExpandedYears(expandedYears.size > 0 ? new Set() : new Set(sortedConcertYears));
+  };
 
   return (
     <>
@@ -58,7 +43,7 @@ const ArtistConcerts = () => {
             style={{ fontSize: ".5rem", cursor: "pointer", color: "#1a0dab" }} 
             onClick={() => setExpandTracks(prev => !prev)}
           >
-            {expandTracks ? "collapse" : "expand"}
+            {expandTracks ? "Collapse" : "Expand"}
           </span>
         </h2>
 
@@ -66,12 +51,9 @@ const ArtistConcerts = () => {
           Concerts By Year{" "}
           <span 
             style={{ fontSize: ".5rem", cursor: "pointer", color: "#1a0dab" }} 
-            onClick={() => {
-              setExpandAllYears(prev => !prev);
-              expandAll();
-            }}
+            onClick={expandOrCollapseAll}
           >
-            {expandAllYears ? "collapse all" : "expand all"}
+            {expandedYears.size > 0 ? "Collapse All" : "Expand All"}
           </span>
         </h2>
 
@@ -88,7 +70,7 @@ const ArtistConcerts = () => {
               {expandedYears.has(year) && (
                 <div>
                   {sortedConcerts
-                    .filter(concert => getYearFromDate(concert.eventDate) === year)
+                    .filter(concert => concert.eventDate.split('-')[2] === year)
                     .map(concert => (
                       <ConcertDetails key={concert.concertId || concert.id} concert={concert} />
                     ))}
