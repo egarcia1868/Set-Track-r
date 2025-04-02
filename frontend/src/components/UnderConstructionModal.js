@@ -28,6 +28,12 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
           add checkboxes to add modal.
         </li>
         <li>
+          add ability to remove concert
+        </li>
+        <li>
+          add ability to specific songs from set (for accurate tracking if arived late/left early)
+        </li>
+        <li>
           set link for individual concerts and for individual songs. probably on
           main page.
         </li>

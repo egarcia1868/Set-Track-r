@@ -4,14 +4,15 @@ import mongoose from "mongoose";
 import path from "path";
 import cors from 'cors';
 // import { connectDB } from "./config/db.js";
-import { fileURLToPath } from 'url';
+// import { fileURLToPath } from 'url';
 import concertRoutes from "./routes/concertRoutes.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // dotenv.config({ path: new URL('./.env', import.meta.url).pathname});
 // dotenv.config();
-dotenv.config({ path: path.join(__dirname, '.env') });
+// dotenv.config({ path: path.join(__dirname, '.env') });
+dotenv.config({ path: path.resolve('backend', '.env' )});
 
 const app = express();
 const PORT = process.env.PORT || 3000;
