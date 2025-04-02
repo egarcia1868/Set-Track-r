@@ -5,7 +5,7 @@ import { useState, useMemo } from "react";
 
 const ArtistConcerts = () => {
   const [expandedYears, setExpandedYears] = useState(new Set());
-  const [expandTracks, setExpandTracks] = useState(true);
+  const [expandTracks, setExpandTracks] = useState(false);
 
   const location = useLocation();
   const { artist: { artistName, concerts = [] } = {} } = location.state || {};
