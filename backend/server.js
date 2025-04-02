@@ -20,13 +20,19 @@ app.use("/api/concerts", concertRoutes);
 
 // const __dirname = path.resolve();
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "/frontend/build")));
+// if (process.env.NODE_ENV === "production") {
+//   app.use(express.static(path.join(__dirname, "/frontend/build")));
 
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
-  });
-}
+//   app.get("*", (req, res) => {
+//     res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
+//   });
+// }
+
+// Add a simple test route for backend
+app.get("/", (req, res) => {
+  res.send("Backend is running!");
+});
+
 
 // console.log("Mongo URI:", process.env.MONGO_URI);
 
