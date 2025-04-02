@@ -16,7 +16,7 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
     >
       <img style={{ display: 'block', margin: '0 auto'}} src="/construction.jpg" alt="Under Construction" />
       <h1 style={{ paddingTop: '2rem', textAlign: "center" }}>Site Currently Under Construction</h1>
-      <h4 style={{ marginLeft: "1.5rem" }}>Coming updates:</h4>
+      <h4 style={{ marginLeft: "1.5rem" }}>Planned improvements:</h4>
       <ul>
         <li>
           Create component that displays all tracks seen live, ranked most to
@@ -38,7 +38,7 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
         <li>create login for tracking personal shows</li>
         <li>create personal page to display shows listed</li>
         <li>update login with OAuth</li>
-        <li>Update and optimize styling</li>
+        <li>Update and optimize styling (general and for mobile)</li>
       </ul>
       <form method="dialog" id="modal-actions">
         <button style={{marginBottom:'2rem'}}>Close</button>
