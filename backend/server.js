@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import path from "path";
+import cors from 'cors';
 // import { connectDB } from "./config/db.js";
 import { fileURLToPath } from 'url';
 import concertRoutes from "./routes/concertRoutes.js";
@@ -15,6 +16,7 @@ dotenv.config({ path: path.join(__dirname, '.env') });
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(cors());
 app.use(express.json());
 app.use("/api/concerts", concertRoutes);
 

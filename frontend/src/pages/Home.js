@@ -11,14 +11,21 @@ const Home = () => {
 
   useEffect(() => {
     const fetchConcerts = async () => {
-      const response = await fetch("/api/concerts");
+      // Dynamically determine the base URL based on the environment
+      const BASE_URL = process.env.NODE_ENV === "production"
+        ? "https://your-backend-url.onrender.com" // Deployed backend URL
+        : "http://localhost:4000"; // Local backend URL (adjust port if needed)
+  
+      const response = await fetch(`${BASE_URL}/api/concerts`);
       const json = await response.json();
-
+  
       if (response.ok) {
         dispatch({ type: "UPDATE_ARTISTS", payload: [...json] });
+      } else {
+        console.error("Error fetching concerts:", json);
       }
     };
-
+  
     fetchConcerts();
   }, [dispatch]);
 
