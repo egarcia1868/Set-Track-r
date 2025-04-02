@@ -16,20 +16,24 @@ const SongsDetails = ({ concerts }) => {
       .sort((a, b) => b.count - a.count); // Sort from highest to lowest count
   }
 
-
   return (
     <table id="shows-table">
-      <tr>
-        <th>Song Title</th>
-        <th>Times Seen</th>
-      </tr>
-        {countSongOccurrences(concerts).map((song) => {
-          return (
-            <tr key={`table-row-${song.name}`}>
-              <td>{song.name}</td> <td>{song.count}</td>
+      <thead>
+        <tr>
+          <th>Song Title</th>
+          <th>Times Seen</th>
+        </tr>
+      </thead>
+      {countSongOccurrences(concerts).map((song) => {
+        return (
+          <tbody key={`table-row-${song.name}`}>
+            <tr>
+              <td>{song.name}</td>
+              <td>{song.count}</td>
             </tr>
-          );
-        })}
+          </tbody>
+        );
+      })}
     </table>
   );
 };
