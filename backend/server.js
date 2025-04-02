@@ -16,7 +16,19 @@ dotenv.config({ path: path.join(__dirname, '.env') });
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+const corsOptions = {
+  methods: ['GET', 'POST'],
+  credentials: true,
+};
+
+if (process.env.NODE_ENV === "production") {
+  // Allow only the frontend URL when in production
+  corsOptions.origin = 'https://set-trackr-frontend.onrender.com';
+} else {
+  // Allow local frontend to access the backend during development
+  corsOptions.origin = 'http://localhost:3000';  // Update this if your local frontend runs on a different port
+}
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use("/api/concerts", concertRoutes);
 
