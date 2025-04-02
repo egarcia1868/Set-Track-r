@@ -13,7 +13,7 @@ const Home = () => {
     const fetchConcerts = async () => {
       // Dynamically determine the base URL based on the environment
       const BASE_URL = process.env.NODE_ENV === "production"
-        ? "https://your-backend-url.onrender.com" // Deployed backend URL
+        ? "https://set-trackr-backend.onrender.com" // Deployed backend URL
         : "http://localhost:4000"; // Local backend URL (adjust port if needed)
   
       const response = await fetch(`${BASE_URL}/api/concerts`);
