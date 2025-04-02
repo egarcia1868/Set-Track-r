@@ -1,10 +1,11 @@
 import { useLocation } from "react-router-dom";
 import ConcertDetails from "../components/ConcertDetails";
+import SongsDetails from "../components/SongsDetails";
 import { useState, useMemo } from "react";
 
 const ArtistConcerts = () => {
   const [expandedYears, setExpandedYears] = useState(new Set());
-  const [expandTracks, setExpandTracks] = useState(false);
+  const [expandTracks, setExpandTracks] = useState(true);
 
   const location = useLocation();
   const { artist: { artistName, concerts = [] } = {} } = location.state || {};
@@ -33,6 +34,8 @@ const ArtistConcerts = () => {
     setExpandedYears(expandedYears.size > 0 ? new Set() : new Set(sortedConcertYears));
   };
 
+  // console.log('taco: ', concerts);
+
   return (
     <>
       <h1>{artistName}</h1>
@@ -46,6 +49,7 @@ const ArtistConcerts = () => {
             {expandTracks ? "Collapse" : "Expand"}
           </span>
         </h2>
+        {expandTracks ? <SongsDetails concerts={concerts} /> : null}
 
         <h2>
           Concerts By Year{" "}

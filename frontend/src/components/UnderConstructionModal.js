@@ -23,7 +23,7 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
           Create component that displays all tracks seen live, ranked most to
           least, with asc/dec switch
         </li>
-        <li>reuse add modal for displaying individual shows -- maybe</li>
+        <li>create separate links from main page to go to either artist's song list or concert lists.</li>
         <li>
           add buttons to save new property that stores live/watched/listened. --
           add checkboxes to add modal.
@@ -32,17 +32,13 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
           add ability to remove concert
         </li>
         <li>
-          add ability to specific songs from set (for accurate tracking if arived late/left early)
+          add ability to specific songs from set (for accurate tracking if arrived late/left early)
         </li>
         <li>
-          set link for individual concerts and for individual songs. probably on
-          main page.
-        </li>
-        <li>
-          change from saving each individual concert to its own entry to
-          updating the entry for that artist to contain a new concert within.
+          create pie chart divided by number of times per song vs total.
         </li>
         <li>create login for tracking personal shows</li>
+        <li>create a song page that displays information about the specific song as well as when you've seen it</li>
         <li>create personal page to display shows listed</li>
         <li>update login with OAuth</li>
         <li>Update and optimize styling (general and for mobile)</li>
