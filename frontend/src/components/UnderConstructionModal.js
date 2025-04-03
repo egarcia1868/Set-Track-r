@@ -20,17 +20,14 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
       <h4 style={{ marginLeft: "1.5rem" }}>Planned improvements:</h4>
       <ul>
         <li>
-          Create component that displays all tracks seen live, ranked most to
-          least, with asc/dec switch
+          add ability to remove concert
         </li>
         <li>create separate links from main page to go to either artist's song list or concert lists.</li>
         <li>
           add buttons to save new property that stores live/watched/listened. --
           add checkboxes to add modal.
         </li>
-        <li>
-          add ability to remove concert
-        </li>
+        <li>Add ability to select multiple dates on the show add form</li>
         <li>
           add ability to specific songs from set (for accurate tracking if arrived late/left early)
         </li>

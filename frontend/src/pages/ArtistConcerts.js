@@ -55,7 +55,7 @@ const ArtistConcerts = () => {
             style={{ fontSize: ".5rem", cursor: "pointer", color: "#1a0dab" }} 
             onClick={() => setExpandTracks(prev => !prev)}
           >
-            {expandTracks ? "Collapse" : "Expand"}
+            {expandTracks ? "collapse" : "expand"}
           </span>
         </h2>
         {expandTracks ? <SongsDetails concerts={concerts} /> : null}
@@ -66,7 +66,7 @@ const ArtistConcerts = () => {
             style={{ fontSize: ".5rem", cursor: "pointer", color: "#1a0dab" }} 
             onClick={expandOrCollapseAll}
           >
-            {expandedYears.size > 0 ? "Collapse All" : "Expand All"}
+            {expandedYears.size > 0 ? "collapse all" : "expand all"}
           </span>
         </h2>
 

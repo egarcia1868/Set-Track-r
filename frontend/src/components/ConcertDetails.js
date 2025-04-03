@@ -58,7 +58,7 @@ const ConcertDetails = ({ concert }) => {
           </div>
         )) : <p>Setlist unavailable</p>
       )}
-      <br />
+      <div className="concert-details-links">
       <a style={{fontSize: '.65rem'}}
         href={url}
         target="_blank"
@@ -66,6 +66,14 @@ const ConcertDetails = ({ concert }) => {
       >
         More Info
       </a>
+      <a style={{fontSize: '.65rem', color: 'red'}}
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Remove Concert
+      </a>
+      </div>
     </div>
   );
 };

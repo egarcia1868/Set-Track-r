@@ -1,6 +1,11 @@
 import { useRef, useState } from "react";
 import { useConcertsContext } from "../hooks/useConcertsContext";
 
+const BASE_URL = process.env.NODE_ENV === "production"
+    ? "https://set-trackr-backend.onrender.com" // Deployed backend URL
+    : "http://localhost:4000"; // Local backend URL (adjust port if needed)
+  
+
 const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
   const { dispatch } = useConcertsContext();
   const [error, setError] = useState(null);
@@ -32,10 +37,6 @@ const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
   });
 
   const saveConcert = async () => {
-    const BASE_URL = process.env.NODE_ENV === "production"
-    ? "https://set-trackr-backend.onrender.com" // Deployed backend URL
-    : "http://localhost:4000"; // Local backend URL (adjust port if needed)
-  
     const response = await fetch(`${BASE_URL}/api/concerts/`, {
       method: "POST",
       body: JSON.stringify(concert?.setlist[0]),

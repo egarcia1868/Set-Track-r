@@ -57,6 +57,13 @@ header a {
   color: white;
 }
 
+.concert-details-links {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%; /* Ensure it takes the full width */
+}
+
 /* homepage */
 .home {
   display: grid;
