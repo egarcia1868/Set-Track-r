@@ -18,7 +18,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const corsOptions = {
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'DELETE', 'UPDATE'],
   credentials: true,
 };
 

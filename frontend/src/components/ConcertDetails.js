@@ -1,10 +1,20 @@
 import { useState } from "react";
+import { useConcertsContext } from "../hooks/useConcertsContext";
 
-const ConcertDetails = ({ concert }) => {
+const BASE_URL = process.env.NODE_ENV === "production"
+? "https://set-trackr-backend.onrender.com" // Deployed backend URL
+: "http://localhost:4000"; // Local backend URL (adjust port if needed)
+
+
+const ConcertDetails = ({ concert, artistObjectId }) => {
   // const [caratState, setCaratState] = useState(true);
+  const { dispatch } = useConcertsContext();
   const [showSetList, setShowSetList] = useState(false);
 
+  console.log('concert: ',concert)
+
   const {
+    concertId,
     eventDate,
     venue: {
       name: venueName,
@@ -27,9 +37,24 @@ const ConcertDetails = ({ concert }) => {
     day: "numeric",
   });
 
-  // const showSetList = () => {
+  const deleteConcert = async (artistObjectId, concertId) => {
+    console.log("Deleting concert for artist:", artistObjectId, "Concert ID:", concertId); // Debugging
 
-  // }
+    const response = await fetch(`${BASE_URL}/api/concerts/${artistObjectId}/${concertId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  
+    const json = await response.json();
+  
+    if (!response.ok) {
+      console.error("Failed to delete concert");
+      return;
+    }
+    dispatch({ type: "DELETE_CONCERT", payload: json });
+  };  
 
   return (
     <div className="concert-details">
@@ -66,13 +91,12 @@ const ConcertDetails = ({ concert }) => {
       >
         More Info
       </a>
-      <a style={{fontSize: '.65rem', color: 'red'}}
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
+      <p
+        style={{fontSize: '.65rem', color: 'red'}}
+        onClick={() => deleteConcert(artistObjectId, concertId)}
       >
         Remove Concert
-      </a>
+      </p>
       </div>
     </div>
   );

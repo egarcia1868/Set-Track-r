@@ -84,3 +84,29 @@ export const getSavedConcerts = async (req, res) => {
     res.status(500).json({ error: "Could not fetch concerts" });
   }
 };
+
+export const deleteConcert = async (req, res) => {
+  const {artistId, concertId} = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(artistId) || !mongoose.Types.ObjectId.isValid(concertId)) {
+    return res.status(400).json({ error: "Invalid artist or concert ID" });
+  }
+
+  const artist = await Artist.findOneAndUpdate(
+    { _id: artistId },
+    { $pull: { concerts: { concertId } } },
+    { new: true }
+  );
+
+  if (!artist) {
+    return res.status(404).json({ error: "Artist not found"})
+  }
+
+  if (artist.concerts.length === 0) {
+    await Artist.findByIdAndDelete(artistId);
+    return res.status(200).json({ message: "Artist deleted as there were no more concerts" });
+  }
+
+  res.status(200).json(concerts)
+  // res.status(200).json({ message: "Concert removed successfully", artist });
+};
