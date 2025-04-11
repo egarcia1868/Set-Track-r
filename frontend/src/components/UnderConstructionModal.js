@@ -17,17 +17,12 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
     >
       <img style={{ display: 'block', margin: '0 auto'}} src="/construction.jpg" alt="Under Construction" />
       <h1 style={{ paddingTop: '2rem', textAlign: "center" }}>Site Currently Under Construction</h1>
-      <h4 style={{ marginLeft: "1.5rem" }}>Planned improvements:</h4>
+      <h4 style={{ marginLeft: "1.5rem" }}>Planned improvements/bug fixes:</h4>
       <ul>
-        <li>
-          add ability to remove concert
-        </li>
+        <li>fix issue with followup concert add after trying to add existing concert</li>
         <li>create separate links from main page to go to either artist's song list or concert lists.</li>
-        <li>
-          add buttons to save new property that stores live/watched/listened. --
-          add checkboxes to add modal.
-        </li>
         <li>Add ability to select multiple dates on the show add form</li>
+        <li>See if ability to bring up selections of concerts by year exists through api.  If so add ability.</li>
         <li>
           add ability to specific songs from set (for accurate tracking if arrived late/left early)
         </li>
@@ -38,6 +33,10 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
         <li>create a song page that displays information about the specific song as well as when you've seen it</li>
         <li>create personal page to display shows listed</li>
         <li>update login with OAuth</li>
+        <li>
+          add buttons to save new property that stores live/watched/listened. --
+          add checkboxes to add modal.
+        </li>
         <li>Update and optimize styling (general and for mobile)</li>
       </ul>
       <form method="dialog" id="modal-actions">

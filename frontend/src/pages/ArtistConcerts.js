@@ -16,8 +16,7 @@ const ArtistConcerts = () => {
   const location = useLocation();
   const { artist = {} } = location.state || {};
   // const { artistName, concerts } = artist;
-  const { artistName, concerts: initialConcerts } = artist;
-  const [concerts, setConcerts] = useState(initialConcerts || []);
+  const { artistName } = artist;
   const [concertList, setConcertList] = useState(artist?.concerts || []);
 
 
