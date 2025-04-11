@@ -6,7 +6,7 @@ const BASE_URL = process.env.NODE_ENV === "production"
 : "http://localhost:4000"; // Local backend URL (adjust port if needed)
 
 
-const ConcertDetails = ({ concert, artistObjectId }) => {
+const ConcertDetails = ({ concert, artistObjectId, onDelete }) => {
   // const [caratState, setCaratState] = useState(true);
   const { dispatch } = useConcertsContext();
   const [showSetList, setShowSetList] = useState(false);
@@ -53,6 +53,7 @@ const ConcertDetails = ({ concert, artistObjectId }) => {
       console.error("Failed to delete concert");
       return;
     }
+    if (onDelete) onDelete(concertId);
     dispatch({ type: "DELETE_CONCERT", payload: json });
   };  
 

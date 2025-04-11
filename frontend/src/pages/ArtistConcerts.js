@@ -15,7 +15,11 @@ const ArtistConcerts = () => {
 
   const location = useLocation();
   const { artist = {} } = location.state || {};
-  const { artistName, concerts } = artist;
+  // const { artistName, concerts } = artist;
+  const { artistName, concerts: initialConcerts } = artist;
+  const [concerts, setConcerts] = useState(initialConcerts || []);
+  const [concertList, setConcertList] = useState(artist?.concerts || []);
+
 
   const navigate = useNavigate();
 
@@ -25,39 +29,46 @@ const ArtistConcerts = () => {
     }
   }, [location.state, navigate]);
 
-    // useEffect(() => {
-    //   const fetchConcerts = async () => {
-    //     // Dynamically determine the base URL based on the environment
-  
-    //     const response = await fetch(`${BASE_URL}/api/concerts`);
-    //     const json = await response.json();
-    
-    //     if (response.ok) {
-    //       dispatch({ type: "UPDATE_ARTISTS", payload: [...json] });
-    //     } else {
-    //       console.error("Error fetching concerts:", json);
-    //     }
-    //   };
-    
-    //   fetchConcerts();
-    // }, [dispatch]);
-  
+  // useEffect(() => {
+  //   const fetchConcerts = async () => {
+  //     // Dynamically determine the base URL based on the environment
 
+  //     const response = await fetch(`${BASE_URL}/api/concerts`);
+  //     const json = await response.json();
+
+  //     if (response.ok) {
+  //       dispatch({ type: "UPDATE_ARTISTS", payload: [...json] });
+  //     } else {
+  //       console.error("Error fetching concerts:", json);
+  //     }
+  //   };
+
+  //   fetchConcerts();
+  // }, [dispatch]);
 
   // Sort concerts by date (descending order)
-  const sortedConcerts = useMemo(() => 
-    [...concerts].sort((a, b) => new Date(...b.eventDate.split("-").reverse()) - new Date(...a.eventDate.split("-").reverse())), 
-    [concerts]
+  const sortedConcerts = useMemo(
+    () =>
+      [...concertList].sort(
+        (a, b) =>
+          new Date(...b.eventDate.split("-").reverse()) -
+          new Date(...a.eventDate.split("-").reverse())
+      ),
+    [concertList]
   );
 
   // Extract unique years from sorted concerts
-  const sortedConcertYears = useMemo(() => 
-    [...new Set(sortedConcerts.map(concert => concert.eventDate.split('-')[2]))], 
+  const sortedConcertYears = useMemo(
+    () => [
+      ...new Set(
+        sortedConcerts.map((concert) => concert.eventDate.split("-")[2])
+      ),
+    ],
     [sortedConcerts]
   );
 
   const toggleYear = (year) => {
-    setExpandedYears(prev => {
+    setExpandedYears((prev) => {
       const newSet = new Set(prev);
       newSet.has(year) ? newSet.delete(year) : newSet.add(year);
       return newSet;
@@ -65,8 +76,16 @@ const ArtistConcerts = () => {
   };
 
   const expandOrCollapseAll = () => {
-    setExpandedYears(expandedYears.size > 0 ? new Set() : new Set(sortedConcertYears));
+    setExpandedYears(
+      expandedYears.size > 0 ? new Set() : new Set(sortedConcertYears)
+    );
   };
+
+  // const handleDeleteConcert = (concertId) => {
+  //   setConcerts((prevConcerts) =>
+  //     prevConcerts.filter((c) => c._id !== concertId)
+  //   );
+  // };
 
   if (!location.state) return null;
 
@@ -76,19 +95,19 @@ const ArtistConcerts = () => {
       <div className="concerts">
         <h2>
           Songs By # Of Times Seen{" "}
-          <span 
-            style={{ fontSize: ".5rem", cursor: "pointer", color: "#1a0dab" }} 
-            onClick={() => setExpandTracks(prev => !prev)}
+          <span
+            style={{ fontSize: ".5rem", cursor: "pointer", color: "#1a0dab" }}
+            onClick={() => setExpandTracks((prev) => !prev)}
           >
             {expandTracks ? "collapse" : "expand"}
           </span>
         </h2>
-        {expandTracks ? <SongsDetails concerts={concerts} /> : null}
+        {expandTracks ? <SongsDetails concerts={concertList} /> : null}
 
         <h2>
           Concerts By Year{" "}
-          <span 
-            style={{ fontSize: ".5rem", cursor: "pointer", color: "#1a0dab" }} 
+          <span
+            style={{ fontSize: ".5rem", cursor: "pointer", color: "#1a0dab" }}
             onClick={expandOrCollapseAll}
           >
             {expandedYears.size > 0 ? "collapse all" : "expand all"}
@@ -98,8 +117,8 @@ const ArtistConcerts = () => {
         {sortedConcertYears.length > 0 ? (
           sortedConcertYears.map((year) => (
             <div key={year}>
-              <h3 
-                style={{ cursor: "pointer", margin: "10px 0" }} 
+              <h3
+                style={{ cursor: "pointer", margin: "10px 0" }}
                 onClick={() => toggleYear(year)}
               >
                 {year} {expandedYears.has(year) ? "▼" : "▲"}
@@ -108,10 +127,18 @@ const ArtistConcerts = () => {
               {expandedYears.has(year) && (
                 <div>
                   {sortedConcerts
-                    .filter(concert => concert.eventDate.split('-')[2] === year)
-                    .map(concert => 
-                      (
-                      <ConcertDetails key={concert.concertId || concert.id} concert={concert} artistObjectId={artist._id} />
+                    .filter(
+                      (concert) => concert.eventDate.split("-")[2] === year
+                    )
+                    .map((concert) => (
+                      <ConcertDetails
+                        key={concert.concertId || concert.id}
+                        concert={concert}
+                        artistObjectId={artist._id}
+                        onDelete={(deletedId) =>
+                          setConcertList(prev => prev.filter(c => c.concertId !== deletedId))
+                        }
+                      />
                     ))}
                 </div>
               )}
