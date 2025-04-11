@@ -1,5 +1,6 @@
 import Artist from "../models/artistModel.js";
 import { getConcertFromAPI } from "../services/concertService.js";
+import mongoose from "mongoose";
 
 export const getConcert = async (req, res) => {
   try {
@@ -88,7 +89,7 @@ export const getSavedConcerts = async (req, res) => {
 export const deleteConcert = async (req, res) => {
   const {artistId, concertId} = req.params;
 
-  if (!mongoose.Types.ObjectId.isValid(artistId) || !mongoose.Types.ObjectId.isValid(concertId)) {
+  if (!mongoose.Types.ObjectId.isValid(artistId)) {
     return res.status(400).json({ error: "Invalid artist or concert ID" });
   }
 
@@ -107,6 +108,6 @@ export const deleteConcert = async (req, res) => {
     return res.status(200).json({ message: "Artist deleted as there were no more concerts" });
   }
 
-  res.status(200).json(concerts)
-  // res.status(200).json({ message: "Concert removed successfully", artist });
+  // res.status(200).json(concerts)
+  res.status(200).json({ message: "Concert removed successfully", artist });
 };

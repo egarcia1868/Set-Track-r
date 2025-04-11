@@ -11,7 +11,7 @@ const ConcertDetails = ({ concert, artistObjectId }) => {
   const { dispatch } = useConcertsContext();
   const [showSetList, setShowSetList] = useState(false);
 
-  console.log('concert: ',concert)
+  // console.log('concert: ',concert)
 
   const {
     concertId,
