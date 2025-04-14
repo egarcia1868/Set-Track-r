@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
 import { useConcertsContext } from "../hooks/useConcertsContext";
+import { BASE_URL } from "../utils/config";
 
 import UnderConstructionModal from "../components/UnderConstructionModal";
 import ArtistDetails from "../components/ArtistDetails";
 import ConcertForm from "../components/ConcertForm";
-
-const BASE_URL = process.env.NODE_ENV === "production"
-? "https://set-trackr-backend.onrender.com" // Deployed backend URL
-: "http://localhost:4000"; // Local backend URL (adjust port if needed)
 
 const Home = () => {
   const { artists, dispatch } = useConcertsContext();
@@ -19,14 +16,14 @@ const Home = () => {
 
       const response = await fetch(`${BASE_URL}/api/concerts`);
       const json = await response.json();
-  
+
       if (response.ok) {
         dispatch({ type: "UPDATE_ARTISTS", payload: [...json] });
       } else {
         console.error("Error fetching concerts:", json);
       }
     };
-  
+
     fetchConcerts();
   }, [dispatch]);
 

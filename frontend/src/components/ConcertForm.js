@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { BASE_URL } from "../utils/config";
 
 import ConcertDetailsModal from "./ConcertDetailsModal";
 
@@ -17,10 +18,6 @@ const ConcertForm = () => {
   const getConcertDetails = async () => {
     const formattedDate = convertDateFormat(eventDate);
 
-    const BASE_URL = process.env.NODE_ENV === "production"
-    ? "https://set-trackr-backend.onrender.com" // Deployed backend URL
-    : "http://localhost:4000"; // Local backend URL (adjust port if needed)
-
     const response = await fetch(
       `${BASE_URL}/api/concerts/${encodeURIComponent(artistName)}/${formattedDate}`
     );
@@ -28,10 +25,12 @@ const ConcertForm = () => {
 
     if (!response.ok) {
       setError(json.error);
+      // setConcert(null);
     }
 
     if (response.ok) {
       setConcert(json);
+      // setError(null);
     }
   };
 

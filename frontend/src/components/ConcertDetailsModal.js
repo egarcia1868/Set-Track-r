@@ -1,10 +1,6 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useConcertsContext } from "../hooks/useConcertsContext";
-
-const BASE_URL = process.env.NODE_ENV === "production"
-    ? "https://set-trackr-backend.onrender.com" // Deployed backend URL
-    : "http://localhost:4000"; // Local backend URL (adjust port if needed)
-  
+import { BASE_URL } from "../utils/config";  
 
 const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
   const { dispatch } = useConcertsContext();
@@ -19,6 +15,17 @@ const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
     } = {},
     sets: { set: sets = [] } = {},
   } = setlistEntry;
+
+  const handleClose = () => {
+    dialogRef.current.close();
+    onClose();
+  }
+
+  useEffect(() => {
+    if (isOpen) {
+      setError(null);
+    }
+  }, [isOpen, concert]);
 
   const dialogRef = useRef(null);
 
@@ -50,6 +57,7 @@ const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
       setError(json.error);
     }
     if (response.ok) {
+      handleClose();
       dispatch({ type: "ADD_CONCERT", payload: json });
     }
   };
@@ -92,8 +100,8 @@ const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
               </div>
             ))}
             <form method="dialog" id="modal-actions">
-              <button>Close</button>
-              <button onClick={saveConcert}>Add show to my list!</button>
+              <button type='button' onClick={handleClose}>Close</button>
+              <button type='button' onClick={saveConcert}>Add show to my list!</button>
             </form>
           </>
         ) : (

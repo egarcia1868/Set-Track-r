@@ -1,10 +1,6 @@
 import { useState } from "react";
 import { useConcertsContext } from "../hooks/useConcertsContext";
-
-const BASE_URL = process.env.NODE_ENV === "production"
-? "https://set-trackr-backend.onrender.com" // Deployed backend URL
-: "http://localhost:4000"; // Local backend URL (adjust port if needed)
-
+import { BASE_URL } from "../utils/config";
 
 const ConcertDetails = ({ concert, artistObjectId, onDelete }) => {
   // const [caratState, setCaratState] = useState(true);

@@ -19,8 +19,6 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
       <h1 style={{ paddingTop: '2rem', textAlign: "center" }}>Site Currently Under Construction</h1>
       <h4 style={{ marginLeft: "1.5rem" }}>Planned improvements/bug fixes:</h4>
       <ul>
-        <li>fix issue with followup concert add after trying to add existing concert</li>
-        <li>create separate links from main page to go to either artist's song list or concert lists.</li>
         <li>Add ability to select multiple dates on the show add form</li>
         <li>See if ability to bring up selections of concerts by year exists through api.  If so add ability.</li>
         <li>
@@ -38,6 +36,8 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
           add checkboxes to add modal.
         </li>
         <li>Update and optimize styling (general and for mobile)</li>
+        <li>create separate links from main page to go to either artist's song list or concert lists.</li>
+        
       </ul>
       <form method="dialog" id="modal-actions">
         <button style={{marginBottom:'2rem'}}>Close</button>

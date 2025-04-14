@@ -2,20 +2,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import ConcertDetails from "../components/ConcertDetails";
 import SongsDetails from "../components/SongsDetails";
 import { useState, useMemo, useEffect } from "react";
-// import { useConcertsContext } from "../hooks/useConcertsContext";
-
-// const BASE_URL = process.env.NODE_ENV === "production"
-// ? "https://set-trackr-backend.onrender.com" // Deployed backend URL
-// : "http://localhost:4000"; // Local backend URL (adjust port if needed)
 
 const ArtistConcerts = () => {
-  // const { dispatch } = useConcertsContext();
   const [expandedYears, setExpandedYears] = useState(new Set());
   const [expandTracks, setExpandTracks] = useState(false);
 
   const location = useLocation();
   const { artist = {} } = location.state || {};
-  // const { artistName, concerts } = artist;
   const { artistName } = artist;
   const [concertList, setConcertList] = useState(artist?.concerts || []);
 
@@ -27,23 +20,6 @@ const ArtistConcerts = () => {
       navigate("/");
     }
   }, [location.state, navigate]);
-
-  // useEffect(() => {
-  //   const fetchConcerts = async () => {
-  //     // Dynamically determine the base URL based on the environment
-
-  //     const response = await fetch(`${BASE_URL}/api/concerts`);
-  //     const json = await response.json();
-
-  //     if (response.ok) {
-  //       dispatch({ type: "UPDATE_ARTISTS", payload: [...json] });
-  //     } else {
-  //       console.error("Error fetching concerts:", json);
-  //     }
-  //   };
-
-  //   fetchConcerts();
-  // }, [dispatch]);
 
   // Sort concerts by date (descending order)
   const sortedConcerts = useMemo(
