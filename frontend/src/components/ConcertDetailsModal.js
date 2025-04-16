@@ -2,19 +2,21 @@ import { useEffect, useRef, useState } from "react";
 import { useConcertsContext } from "../hooks/useConcertsContext";
 import { BASE_URL } from "../utils/config";  
 
-const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
+const ConcertDetailsModal = ({ isOpen, onClose, concerts }) => {
   const { dispatch } = useConcertsContext();
   const [error, setError] = useState(null);
-  const setlistEntry = concert?.setlist?.[0] || {};
-  const {
-    artist: { name: artistName } = {},
-    eventDate = "Unknown Date",
-    venue: {
-      name: venueName = "Unknown Venue",
-      city: { name: cityName, state, country: { name: countryName } = {} } = {},
-    } = {},
-    sets: { set: sets = [] } = {},
-  } = setlistEntry;
+  
+  // const setlistEntry = concert?.setlist?.[0] || {};
+  // const {
+  //   artist: { name: artistName } = {},
+  //   eventDate = "Unknown Date",
+  //   venue: {
+  //     name: venueName = "Unknown Venue",
+  //     city: { name: cityName, state, country: { name: countryName } = {} } = {},
+  //   } = {},
+  //   sets: { set: sets = [] } = {},
+  // } = setlistEntry;
+  console.log('tacos: ', concerts);
 
   const handleClose = () => {
     dialogRef.current.close();
@@ -25,7 +27,7 @@ const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
     if (isOpen) {
       setError(null);
     }
-  }, [isOpen, concert]);
+  }, [isOpen, concerts]);
 
   const dialogRef = useRef(null);
 
@@ -33,20 +35,20 @@ const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
     dialogRef.current.showModal();
   }
 
-  const inputDate = eventDate;
-  const [day, month, year] = inputDate.split("-");
-  const formattedDate = new Date(`${year}-${month}-${day}T00:00:00`);
+  // const inputDate = eventDate;
+  // const [day, month, year] = inputDate.split("-");
+  // const formattedDate = new Date(`${year}-${month}-${day}T00:00:00`);
 
-  const outputDate = formattedDate.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+  // const outputDate = formattedDate.toLocaleDateString("en-US", {
+  //   year: "numeric",
+  //   month: "short",
+  //   day: "numeric",
+  // });
 
   const saveConcert = async () => {
     const response = await fetch(`${BASE_URL}/api/concerts/`, {
       method: "POST",
-      body: JSON.stringify(concert?.setlist[0]),
+      body: JSON.stringify(concerts?.setlist[0]),
       headers: {
         "Content-Type": "application/json",
       },
@@ -75,12 +77,12 @@ const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
     )
   }
 
-  if (concert) {
+  if (concerts) {
     return (
       <dialog id="modal" ref={dialogRef} onClose={onClose}>
-        {concert ? (
+        {concerts ? (
           <>
-            <h2>{artistName}</h2>
+            {/* <h2>{artistName}</h2>
             <h4>
               {outputDate} -- {venueName} -- {cityName}, {state}, {countryName}
             </h4>
@@ -98,7 +100,7 @@ const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
                   ))}
                 </ol>
               </div>
-            ))}
+            ))} */}
             <form method="dialog" id="modal-actions">
               <button type='button' onClick={handleClose}>Close</button>
               <button type='button' onClick={saveConcert}>Add show to my list!</button>
