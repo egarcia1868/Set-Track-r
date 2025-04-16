@@ -1,4 +1,4 @@
-import Artist from "../models/artistModel.js";
+import Artist from "../models/ArtistModel.js";
 import { getConcertFromAPI } from "../services/concertService.js";
 import mongoose from "mongoose";
 

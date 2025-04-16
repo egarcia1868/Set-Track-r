@@ -5,7 +5,7 @@ import {
   getSavedConcerts,
   saveConcert,
   getConcert,
-} from "../controllers/artistController.js";
+} from "../controllers/concertController.js";
 
 const router = express.Router();
 

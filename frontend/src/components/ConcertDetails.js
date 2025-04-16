@@ -3,11 +3,8 @@ import { useConcertsContext } from "../hooks/useConcertsContext";
 import { BASE_URL } from "../utils/config";
 
 const ConcertDetails = ({ concert, artistObjectId, onDelete }) => {
-  // const [caratState, setCaratState] = useState(true);
   const { dispatch } = useConcertsContext();
   const [showSetList, setShowSetList] = useState(false);
-
-  // console.log('concert: ',concert)
 
   const {
     concertId,
