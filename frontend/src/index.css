@@ -140,6 +140,22 @@ input.error {
   border: 1px solid var(--error);
 }
 
+.auth-form{
+  width: 360px;
+  margin: 0 auto;
+  padding: 30px;
+  box-shadow: 1px 2px 3px rgba(0,0,0,0.1);
+  border-radius: 10px;
+  background: white;
+}
+
+.auth-form-error {
+  color: #ff0099;
+  margin: 10px 2px;
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
 /* #modal {
   width: 50%;
   

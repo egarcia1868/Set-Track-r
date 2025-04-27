@@ -5,6 +5,7 @@ import ArtistConcerts from "./pages/ArtistConcerts";
 import Login from "./pages/Login";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Signup from "./pages/Signup";
 
 function App() {
   return (
@@ -15,7 +16,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/artist" element={<ArtistConcerts />} />
-            <Route path="/auth/login" element={<Login />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
           </Routes>
         </div>
         <Footer />

@@ -28,6 +28,7 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
       </h4>
       <ul>
         <li>create login for tracking personal shows</li>
+        <li>re-organize routes and route functions to save users, artists, and concert info to match new db structure.</li>
       </ul>
       <h4 style={{ marginLeft: "1.5rem" }}>
         Planned upcoming improvements/bug fixes:
