@@ -5,6 +5,8 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
 
   if (isOpen && dialogRef.current) {
     dialogRef.current.showModal();
+    dialogRef.current.scrollTop = 0;
+
   }
 
   return (
@@ -28,6 +30,31 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
       </h4>
       <ul>
         <li>create login for tracking personal shows</li>
+        <li>
+          Set up db to be structured something like the following:
+          <pre>
+          <br />
+          settrackr
+          <br /> ├── users
+          <br /> │     ├ _id,
+          <br /> │     ├ username,
+          <br /> │     ├ password: (hashed),
+          <br /> │     └ concertsAttended: [concertId1, concertId2, ...]
+          <br /> │
+          <br /> ├── artists
+          <br /> │     ├ _id,
+          <br /> │     ├ artistName,
+          <br /> │     └ mbid
+          <br /> │
+          <br /> └── concerts
+          <br />       ├ _id,
+          <br />       ├ artistId,
+          <br />       ├ eventDate,
+          <br />       ├ venue,
+          <br />       ├ sets,
+          <br />       └ url
+          </pre>
+        </li>
         <li>re-organize routes and route functions to save users, artists, and concert info to match new db structure.</li>
       </ul>
       <h4 style={{ marginLeft: "1.5rem" }}>
@@ -46,32 +73,6 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
           tracking if arrived late/left early)
         </li>
         <li>create pie chart divided by number of times per song vs total.</li>
-        <li>
-          Set up db to be structured something like the following
-          <br />
-          settrackr
-          <br /> ├── users
-          <br /> │ └──
-          <br /> │ │ _id,
-          <br /> │ │ username,
-          <br /> │ │ password: (hashed),
-          <br /> │ │ concertsAttended: [concertId1, concertId2, ...]
-          <br /> │
-          <br /> ├── artists
-          <br /> │ └──
-          <br /> │ │ _id,
-          <br /> │ │ artistName,
-          <br /> │ │ mbid
-          <br /> │
-          <br /> └── concerts
-          <br /> └──
-          <br /> │ _id,
-          <br /> │ artistId,
-          <br /> │ eventDate,
-          <br /> │ venue,
-          <br /> │ sets,
-          <br /> │ url
-        </li>
         <li>create personal page to display shows listed</li>
         <li>update login with OAuth</li>
         <li>
