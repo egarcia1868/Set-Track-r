@@ -1,4 +1,4 @@
-// const form = document.querySelector('form');
+import { BASE_URL } from "../utils/config";
 
 import { useState } from "react";
 
@@ -6,12 +6,19 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    console.log("taco: ", email, password);
+
+    try {
+      const res = await fetch(`${BASE_URL}/api/auth/signup`, {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (err) {
+      console.log(err);
+    }
   };
-  
 
   return (
     <form className="auth-form" onSubmit={handleSubmit}>

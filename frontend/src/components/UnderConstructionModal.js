@@ -69,6 +69,9 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
           commit from 4/16 for starting point)
         </li>
         <li>
+          Add cityName and year to search fields
+        </li>
+        <li>
           add ability to remove specific songs from "seen" set (for accurate
           tracking if arrived late/left early)
         </li>
