@@ -7,7 +7,7 @@ import concertRoutes from "./routes/concertRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import cookieParser from 'cookie-parser';
 
-dotenv.config({ path: path.resolve("backend", ".env") });
+dotenv.config({ path: path.resolve(".env") });
 
 const app = express();
 const PORT = process.env.PORT || 3000;

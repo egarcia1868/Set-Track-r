@@ -44,6 +44,16 @@ const Signup = () => {
         value={password}
         required
       />
+      <label htmlFor="passwordConfirm">Confirm Password</label>
+      <input
+        type="password"
+        name="password"
+        onChange={(e) => {
+          setPassword(e.target.value);
+        }}
+        value={password}
+        required
+      />
       <div className="password auth-form-error"></div>
       <button>Sign up</button>
     </form>

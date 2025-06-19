@@ -1,4 +1,5 @@
 // const form = document.querySelector('form');
+import { Link } from "react-router-dom";
 
 import { useState } from "react";
 
@@ -39,6 +40,13 @@ const Login = () => {
       />
       <div className="password auth-form-error"></div>
       <button>Log in</button>
+      <Link to="/signup">
+          <button className="signup" onClick={() => {
+          // handleConcertDetailsClick();
+        }
+          } type="button">Create new account</button>
+        </Link>
+      
     </form>
   );
 };

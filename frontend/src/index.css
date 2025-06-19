@@ -128,6 +128,22 @@ form button {
   border-radius: 4px;
   cursor: pointer;
 }
+ button.auth {
+  border: 0;
+  padding: 10px;
+  font-family: "Poppins";
+  border-radius: 4px;
+  cursor: pointer;
+  width: 70px;
+}
+button.login {
+  color: #fff;
+  background: var(--primary);
+}
+button.signup {
+  color: var(--primary);
+  background: none;
+}
 div.error {
   padding: 10px;
   background: #ffefef;
