@@ -1,6 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Navbar = () => {
+  const location = useLocation();
+
   return (
     <header>
       <div className="container">
@@ -8,12 +10,12 @@ const Navbar = () => {
           <h1>Set Track'r</h1>
         </Link>
         <div>
-        <Link to="/login">
+        {location.pathname !== '/login' && <Link to="/login">
           <button className="auth login" onClick={() => {
           // handleConcertDetailsClick();
         }
           } type="button">Log in</button>
-        </Link>
+        </Link> }
         </div>
       </div>
     </header>

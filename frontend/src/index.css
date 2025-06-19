@@ -16,7 +16,6 @@ header {
 }
 header .container {
   max-width: 1400px;
-  margin: 0 auto;
   padding: 10px 20px;
   display: flex;
   align-items: center;
@@ -25,11 +24,6 @@ header .container {
 header a {
   color: #333;
   text-decoration: none;
-}
-.pages{
-  max-width: 1400px;
-  padding: 20px;
-  margin: 0 auto;
 }
 
 #shows-table {
@@ -180,6 +174,26 @@ input.error {
   }
 } */
 
+/* Make sure html, body, and #root fill the full viewport height */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+/* Make your main app container a flex column */
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* full viewport height */
+}
+
+/* Make the "pages" div grow to fill available space */
+.pages {
+  flex: 1; /* This pushes footer down */
+  max-width: 1400px;
+  padding: 20px;
+  /* margin: 0 auto; */
+}
 
 #modal {
   width: 50%;
@@ -241,5 +255,17 @@ input.error {
   dialog {
     min-width: 80%; /* Full width on mobile */
     padding: 0 10px; /* Optional: Add padding to prevent edge touching */
+  }
+}
+
+@media (min-width: 1400px) {
+  .container {
+    margin: 0 auto;
+    min-width: 1400px; /* or whatever width aligns your navbar + main content */
+  }
+  
+  .pages {
+    margin: 0 auto;
+    min-width: 1400px; /* or whatever width aligns your navbar + main content */
   }
 }

@@ -10,7 +10,8 @@ const Signup = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch(`${BASE_URL}/api/auth/signup`, {
+      // const res = 
+      await fetch(`${BASE_URL}/api/auth/signup`, {
         method: "POST",
         body: JSON.stringify({ email, password }),
         headers: { "Content-Type": "application/json" },
