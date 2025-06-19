@@ -61,15 +61,13 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
         Planned upcoming improvements/bug fixes:
       </h4>
       <ul>
+        <li>create new home page with suggestions as to how to add artist</li>
         <li>
-          add ability to bring up selections of concerts by artist and year
+          add ability to bring up selections of concerts by artist, cityName and year (somewhat similar to next item on list).  Set default behavior to present search results with an "add" button, rather than automatically adding it to db.
         </li>
         <li>
           Add ability to select multiple dates on the show add form - (check
           commit from 4/16 for starting point)
-        </li>
-        <li>
-          Add cityName and year to search fields
         </li>
         <li>
           add ability to remove specific songs from "seen" set (for accurate

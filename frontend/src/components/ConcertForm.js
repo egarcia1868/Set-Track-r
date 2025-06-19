@@ -62,6 +62,7 @@ const ConcertForm = () => {
             setError(null)
             setArtistName(e.target.value)
           }}
+          placeholder="e.g. Billy Strings, King Gizzard and the Lizard Wizard, etc."
           value={artistName}
         />
         <label htmlFor="date">Concert Date:</label>
