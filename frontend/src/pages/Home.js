@@ -35,7 +35,7 @@ const Home = () => {
         onClose={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
       />
-      {isAuthenticated ? (
+      {!isAuthenticated ? (
         <>
       <div className="concerts">
         {!artists && <h3>No Saved Concerts yet</h3>}
@@ -48,7 +48,7 @@ const Home = () => {
       </>
         ) : (
         <div className="auth-buttons">
-          <h2>Welcome to Set Trackr!</h2>
+          <h2>Welcome to Set Track'r!</h2>
           <p>Please log in to view and manage your concerts.</p>
           <button onClick={() => loginWithRedirect()}>Log In</button>
           <button onClick={() => logout({ returnTo: window.location.origin })}>

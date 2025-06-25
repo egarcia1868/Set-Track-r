@@ -24,7 +24,7 @@ useEffect(() => {
 
   dialog.addEventListener("click", handleClick);
   return () => dialog.removeEventListener("click", handleClick);
-}, [onClose]);
+}, [onClose, isOpen]);
 
 
   // Close on click outside or Escape
@@ -55,27 +55,6 @@ useEffect(() => {
   }, [onClose]);
 
   return (
-    // <dialog
-    //   ref={dialogRef}
-    //   onClose={onClose}
-    //   style={{
-    //     padding: "2rem",
-    //     border: "none",
-    //     borderRadius: "10px",
-    //     width: "80%",
-    //     maxWidth: "700px",
-    //     background: "#fff",
-    //     zIndex: 1000,
-    //   }}
-    // >
-    //   <img
-    //     style={{ display: "block", margin: "0 auto" }}
-    //     src="/construction.jpg"
-    //     alt="Under Construction"
-    //   />
-    //   <h1 style={{ paddingTop: "2rem", textAlign: "center" }}>
-    //     Site Currently Under Construction
-    //   </h1>
      <dialog
       id="modal"
       ref={dialogRef}
