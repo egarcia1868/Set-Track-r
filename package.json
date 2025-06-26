@@ -20,6 +20,7 @@
     "nodemon": "^3.1.4"
   },
   "scripts": {
+    "pretty": "npx prettier --write .",
     "start": "set NODE_ENV=production && node backend/server.js",
     "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend",
     "test": "react-scripts test",

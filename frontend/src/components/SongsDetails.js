@@ -25,7 +25,7 @@ const SongsDetails = ({ concerts }) => {
         return ascending
           ? a.count - b.count || a.name.localeCompare(b.name)
           : b.count - a.count || a.name.localeCompare(b.name);
-      } 
+      }
       if (sortBy === "name") {
         return ascending
           ? a.name.localeCompare(b.name) || a.count - b.count

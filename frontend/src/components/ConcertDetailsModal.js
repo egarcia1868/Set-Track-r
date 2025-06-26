@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useConcertsContext } from "../hooks/useConcertsContext";
-import { BASE_URL } from "../utils/config";  
+import { BASE_URL } from "../utils/config";
 
 const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
   const { dispatch } = useConcertsContext();
@@ -19,7 +19,7 @@ const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
   const handleClose = () => {
     dialogRef.current.close();
     onClose();
-  }
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -68,11 +68,11 @@ const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
         <p>Error: {error}</p>
 
         <form method="dialog" id="modal-actions">
-              <button>Close</button>
-              {/* <button onClick={saveConcert}>Add show to my list!</button> */}
-            </form>
+          <button>Close</button>
+          {/* <button onClick={saveConcert}>Add show to my list!</button> */}
+        </form>
       </dialog>
-    )
+    );
   }
 
   if (concert) {
@@ -100,8 +100,12 @@ const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
               </div>
             ))}
             <form method="dialog" id="modal-actions">
-              <button type='button' onClick={handleClose}>Close</button>
-              <button type='button' onClick={saveConcert}>Add show to my list!</button>
+              <button type="button" onClick={handleClose}>
+                Close
+              </button>
+              <button type="button" onClick={saveConcert}>
+                Add show to my list!
+              </button>
             </form>
           </>
         ) : (

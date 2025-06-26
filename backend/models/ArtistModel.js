@@ -11,7 +11,7 @@ const artistSchema = new Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default model("Artist", artistSchema);

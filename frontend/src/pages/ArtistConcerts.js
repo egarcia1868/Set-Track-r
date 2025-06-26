@@ -12,7 +12,6 @@ const ArtistConcerts = () => {
   const { artistName } = artist;
   const [concertList, setConcertList] = useState(artist?.concerts || []);
 
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,19 +26,19 @@ const ArtistConcerts = () => {
       [...concertList].sort(
         (a, b) =>
           new Date(...b.eventDate.split("-").reverse()) -
-          new Date(...a.eventDate.split("-").reverse())
+          new Date(...a.eventDate.split("-").reverse()),
       ),
-    [concertList]
+    [concertList],
   );
 
   // Extract unique years from sorted concerts
   const sortedConcertYears = useMemo(
     () => [
       ...new Set(
-        sortedConcerts.map((concert) => concert.eventDate.split("-")[2])
+        sortedConcerts.map((concert) => concert.eventDate.split("-")[2]),
       ),
     ],
-    [sortedConcerts]
+    [sortedConcerts],
   );
 
   const toggleYear = (year) => {
@@ -52,7 +51,7 @@ const ArtistConcerts = () => {
 
   const expandOrCollapseAll = () => {
     setExpandedYears(
-      expandedYears.size > 0 ? new Set() : new Set(sortedConcertYears)
+      expandedYears.size > 0 ? new Set() : new Set(sortedConcertYears),
     );
   };
 
@@ -103,7 +102,7 @@ const ArtistConcerts = () => {
                 <div>
                   {sortedConcerts
                     .filter(
-                      (concert) => concert.eventDate.split("-")[2] === year
+                      (concert) => concert.eventDate.split("-")[2] === year,
                     )
                     .map((concert) => (
                       <ConcertDetails
@@ -111,7 +110,9 @@ const ArtistConcerts = () => {
                         concert={concert}
                         artistObjectId={artist._id}
                         onDelete={(deletedId) =>
-                          setConcertList(prev => prev.filter(c => c.concertId !== deletedId))
+                          setConcertList((prev) =>
+                            prev.filter((c) => c.concertId !== deletedId),
+                          )
                         }
                       />
                     ))}

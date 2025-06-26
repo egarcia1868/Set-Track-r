@@ -8,7 +8,7 @@ import ArtistDetails from "../components/ArtistDetails";
 import ConcertForm from "../components/ConcertForm";
 
 const Home = () => {
-  const { loginWithRedirect, logout, isAuthenticated, user } = useAuth0();
+  const { isAuthenticated, user } = useAuth0();
   const { artists, dispatch } = useConcertsContext();
   const [isModalOpen, setIsModalOpen] = useState(true);
 
@@ -35,28 +35,28 @@ const Home = () => {
         onClose={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
       />
-      {!isAuthenticated ? (
+      {isAuthenticated ? (
         <>
-      <div className="concerts">
-        {!artists && <h3>No Saved Concerts yet</h3>}
-        {artists &&
-          artists.map((artist) => (
-            <ArtistDetails key={artist.artistId} artist={artist} />
-          ))}
-      </div>
-      <ConcertForm />
-      </>
-        ) : (
+          <div className="concerts">
+            {!artists && <h3>No Saved Concerts yet</h3>}
+            {artists &&
+              artists.map((artist) => (
+                <ArtistDetails key={artist.artistId} artist={artist} />
+              ))}
+          </div>
+          <ConcertForm />
+        </>
+      ) : (
         <div className="auth-buttons">
-          <h2>Welcome to Set Track'r!</h2>
           <p>Please log in to view and manage your concerts.</p>
-          <button onClick={() => loginWithRedirect()}>Log In</button>
-          <button onClick={() => logout({ returnTo: window.location.origin })}>
-            Log Out
-          </button>
+          <p className="subtitle">
+            (if you do not wish to setup a login and just want to test this app
+            use demo@gmail.com & Demo!234)
+          </p>
+          {/* <button onClick={() => loginWithRedirect()}>Log In</button> */}
+        </div>
+      )}
     </div>
-        )}
-        </div>    
   );
 };
 

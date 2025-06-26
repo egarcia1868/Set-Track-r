@@ -6,7 +6,7 @@ export const useConcertsContext = () => {
 
   if (!context) {
     throw Error(
-      "useConcertsContext must be used inside an ConcertContextProvider"
+      "useConcertsContext must be used inside an ConcertContextProvider",
     );
   }
   return context;

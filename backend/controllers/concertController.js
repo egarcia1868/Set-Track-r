@@ -19,8 +19,14 @@ export const getConcert = async (req, res) => {
 
 export const saveConcert = async (req, res) => {
   try {
-    const { id: concertId, eventDate, artist, venue, sets: {set: sets}, url } =
-      req.body;
+    const {
+      id: concertId,
+      eventDate,
+      artist,
+      venue,
+      sets: { set: sets },
+      url,
+    } = req.body;
 
     let artistDoc = await Artist.findOne({ artistName: artist.name });
 
@@ -28,12 +34,14 @@ export const saveConcert = async (req, res) => {
     if (!artistDoc) {
       artistDoc = new Artist({
         artistName: artist.name,
-        artistId : artist.mbid, // figure out
+        artistId: artist.mbid, // figure out
         concerts: [],
       });
     }
-          
-    const existingConcert = artistDoc.concerts.find(c => c.concertId === concertId);
+
+    const existingConcert = artistDoc.concerts.find(
+      (c) => c.concertId === concertId,
+    );
     if (existingConcert) {
       return res.status(409).json({ error: "Concert already saved" });
     }
@@ -43,9 +51,9 @@ export const saveConcert = async (req, res) => {
       eventDate,
       venue,
       sets,
-      url
+      url,
     });
-    
+
     await artistDoc.save();
     res.status(201).json(artistDoc);
   } catch (error) {
@@ -62,9 +70,9 @@ export const getSavedConcert = async (req, res) => {
       return res.status(400).json({ error: "concertId is required" });
     }
 
-    const concerts = await Concert.findOne({concertId});
+    const concerts = await Concert.findOne({ concertId });
     if (!concert) {
-      return res.status(404).json({ error: "Concert not found"});
+      return res.status(404).json({ error: "Concert not found" });
     }
 
     res.json(concerts);
@@ -79,7 +87,7 @@ export const getSavedConcerts = async (req, res) => {
     //  const { showId } = req.params;
 
     const concerts = await Artist.find();
-    
+
     res.json(concerts);
   } catch (error) {
     res.status(500).json({ error: "Could not fetch concerts" });
@@ -87,7 +95,7 @@ export const getSavedConcerts = async (req, res) => {
 };
 
 export const deleteConcert = async (req, res) => {
-  const {artistId, concertId} = req.params;
+  const { artistId, concertId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(artistId)) {
     return res.status(400).json({ error: "Invalid artist or concert ID" });
@@ -96,16 +104,18 @@ export const deleteConcert = async (req, res) => {
   const artist = await Artist.findOneAndUpdate(
     { _id: artistId },
     { $pull: { concerts: { concertId } } },
-    { new: true }
+    { new: true },
   );
 
   if (!artist) {
-    return res.status(404).json({ error: "Artist not found"})
+    return res.status(404).json({ error: "Artist not found" });
   }
 
   if (artist.concerts.length === 0) {
     await Artist.findByIdAndDelete(artistId);
-    return res.status(200).json({ message: "Artist deleted as there were no more concerts" });
+    return res
+      .status(200)
+      .json({ message: "Artist deleted as there were no more concerts" });
   }
 
   // res.status(200).json(concerts)

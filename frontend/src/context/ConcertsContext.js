@@ -15,7 +15,7 @@ export const concertsReducer = (state, action) => {
         .map((artist) => {
           if (artist.artistId === artistId) {
             const updatedConcerts = artist.concerts.filter(
-              (concert) => concert.concertId !== concertId
+              (concert) => concert.concertId !== concertId,
             );
             return updatedConcerts.length > 0
               ? { ...artist, concerts: updatedConcerts }
@@ -31,7 +31,7 @@ export const concertsReducer = (state, action) => {
       };
     case "ADD_CONCERT":
       const foundArtist = state.artists.some(
-        (artist) => artist.artistName === action.payload.artistName
+        (artist) => artist.artistName === action.payload.artistName,
       );
       const updatedArtists = state.artists.map((artist) =>
         artist.artistId === action.payload.artistId
@@ -43,12 +43,12 @@ export const concertsReducer = (state, action) => {
                   (newConcert) =>
                     !artist.concerts.some(
                       (existingConcert) =>
-                        existingConcert.concertId === newConcert.concertId
-                    )
+                        existingConcert.concertId === newConcert.concertId,
+                    ),
                 ), // Add only new concerts
               ],
             }
-          : artist
+          : artist,
       );
       !foundArtist && updatedArtists.push(action.payload);
 

@@ -4,28 +4,26 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
   const dialogRef = useRef(null);
 
   // Handle opening and closing the dialog
-useEffect(() => {
-  const dialog = dialogRef.current;
-  if (!dialog) return;
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
 
-  
     if (isOpen && !dialog.open) {
       dialog.showModal();
     } else if (!isOpen && dialog.open) {
       dialog.close();
     }
 
-  const handleClick = (e) => {
-    // If the click target *is* the <dialog> element, it means the user clicked the backdrop
-    if (e.target === dialog) {
-      onClose();
-    }
-  };
+    const handleClick = (e) => {
+      // If the click target *is* the <dialog> element, it means the user clicked the backdrop
+      if (e.target === dialog) {
+        onClose();
+      }
+    };
 
-  dialog.addEventListener("click", handleClick);
-  return () => dialog.removeEventListener("click", handleClick);
-}, [onClose, isOpen]);
-
+    dialog.addEventListener("click", handleClick);
+    return () => dialog.removeEventListener("click", handleClick);
+  }, [onClose, isOpen]);
 
   // Close on click outside or Escape
   useEffect(() => {
@@ -55,7 +53,7 @@ useEffect(() => {
   }, [onClose]);
 
   return (
-     <dialog
+    <dialog
       id="modal"
       ref={dialogRef}
       onClose={onClose}
@@ -78,29 +76,32 @@ useEffect(() => {
         <li>
           Set up db to be structured something like the following:
           <pre>
-          <br />
-          settrackr
-          <br /> ├── users
-          <br /> │     ├ _id,
-          <br /> │     ├ username,
-          <br /> │     ├ password: (hashed),
-          <br /> │     └ concertsAttended: [concertId1, concertId2, ...]
-          <br /> │
-          <br /> ├── artists
-          <br /> │     ├ _id,
-          <br /> │     ├ artistName,
-          <br /> │     └ mbid
-          <br /> │
-          <br /> └── concerts
-          <br />       ├ _id,
-          <br />       ├ artistId,
-          <br />       ├ eventDate,
-          <br />       ├ venue,
-          <br />       ├ sets,
-          <br />       └ url
+            <br />
+            settrackr
+            <br /> ├── users
+            <br /> │ ├ _id,
+            <br /> │ ├ username,
+            <br /> │ ├ password: (hashed),
+            <br /> │ └ concertsAttended: [concertId1, concertId2, ...]
+            <br /> │
+            <br /> ├── artists
+            <br /> │ ├ _id,
+            <br /> │ ├ artistName,
+            <br /> │ └ mbid
+            <br /> │
+            <br /> └── concerts
+            <br /> ├ _id,
+            <br /> ├ artistId,
+            <br /> ├ eventDate,
+            <br /> ├ venue,
+            <br /> ├ sets,
+            <br /> └ url
           </pre>
         </li>
-        <li>re-organize routes and route functions to save users, artists, and concert info to match new db structure.</li>
+        <li>
+          re-organize routes and route functions to save users, artists, and
+          concert info to match new db structure.
+        </li>
       </ul>
       <h4 style={{ marginLeft: "1.5rem" }}>
         Planned upcoming improvements/bug fixes:
@@ -108,7 +109,10 @@ useEffect(() => {
       <ul>
         <li>create new home page with suggestions as to how to add artist</li>
         <li>
-          add ability to bring up selections of concerts by artist, cityName and year (somewhat similar to next item on list).  Set default behavior to present search results with an "add" button, rather than automatically adding it to db.
+          add ability to bring up selections of concerts by artist, cityName and
+          year (somewhat similar to next item on list). Set default behavior to
+          present search results with an "add" button, rather than automatically
+          adding it to db.
         </li>
         <li>
           Add ability to select multiple dates on the show add form - (check
@@ -145,7 +149,6 @@ useEffect(() => {
 };
 
 export default UnderConstructionModal;
-
 
 // import { useRef, useEffect } from "react";
 

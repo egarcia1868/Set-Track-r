@@ -19,7 +19,7 @@ const ConcertForm = () => {
     const formattedDate = convertDateFormat(eventDate);
 
     const response = await fetch(
-      `${BASE_URL}/api/concerts/${encodeURIComponent(artistName)}/${formattedDate}`
+      `${BASE_URL}/api/concerts/${encodeURIComponent(artistName)}/${formattedDate}`,
     );
     const json = await response.json();
 
@@ -41,9 +41,8 @@ const ConcertForm = () => {
   }, [concert]);
 
   const handleConcertDetailsClick = async () => {
-
     await getConcertDetails();
-  }
+  };
 
   return (
     <>
@@ -54,13 +53,16 @@ const ConcertForm = () => {
       />
       <form className="create">
         <h3>Find new set list</h3>
-        <label htmlFor="artistName">Artist Name<br /> (use correct spelling):</label>
+        <label htmlFor="artistName">
+          Artist Name
+          <br /> (use correct spelling):
+        </label>
         <input
           id="artistName"
           type="text"
           onChange={(e) => {
-            setError(null)
-            setArtistName(e.target.value)
+            setError(null);
+            setArtistName(e.target.value);
           }}
           placeholder="e.g. Billy Strings, CAKE, Sturgill Simpson, etc."
           value={artistName}
@@ -71,13 +73,18 @@ const ConcertForm = () => {
           type="date"
           onChange={(e) => {
             setError(null);
-            setEventDate(e.target.value)}}
+            setEventDate(e.target.value);
+          }}
           value={eventDate}
         />
-        <button onClick={() => {
-          handleConcertDetailsClick();
-        }
-          } type="button">Look Up Set List</button>
+        <button
+          onClick={() => {
+            handleConcertDetailsClick();
+          }}
+          type="button"
+        >
+          Look Up Set List
+        </button>
         {error && <div className="error">{error}</div>}
       </form>
     </>

@@ -1,5 +1,5 @@
 const SetlistEntry = () => {
-<>
+  <>
     {/* <h2>{artistName}</h2>
     <h4>
       {outputDate} -- {venueName} -- {cityName}, {state}, {countryName}
@@ -20,10 +20,14 @@ const SetlistEntry = () => {
       </div>
     ))} */}
     <form method="dialog" id="modal-actions">
-      <button type='button' onClick={handleClose}>Close</button>
-      <button type='button' onClick={saveConcert}>Add show to my list!</button>
+      <button type="button" onClick={handleClose}>
+        Close
+      </button>
+      <button type="button" onClick={saveConcert}>
+        Add show to my list!
+      </button>
     </form>
-  </>
+  </>;
 };
 
 export default SetlistEntry;

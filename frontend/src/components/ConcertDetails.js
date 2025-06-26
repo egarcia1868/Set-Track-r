@@ -18,7 +18,7 @@ const ConcertDetails = ({ concert, artistObjectId, onDelete }) => {
       },
     },
     url,
-    sets
+    sets,
   } = concert;
   const inputDate = eventDate;
   const [day, month, year] = inputDate.split("-");
@@ -31,24 +31,32 @@ const ConcertDetails = ({ concert, artistObjectId, onDelete }) => {
   });
 
   const deleteConcert = async (artistObjectId, concertId) => {
-    console.log("Deleting concert for artist:", artistObjectId, "Concert ID:", concertId); // Debugging
+    console.log(
+      "Deleting concert for artist:",
+      artistObjectId,
+      "Concert ID:",
+      concertId,
+    ); // Debugging
 
-    const response = await fetch(`${BASE_URL}/api/concerts/${artistObjectId}/${concertId}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `${BASE_URL}/api/concerts/${artistObjectId}/${concertId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
       },
-    });
-  
+    );
+
     const json = await response.json();
-  
+
     if (!response.ok) {
       console.error("Failed to delete concert");
       return;
     }
     if (onDelete) onDelete(concertId);
     dispatch({ type: "DELETE_CONCERT", payload: json });
-  };  
+  };
 
   return (
     <div className="concert-details">
@@ -59,38 +67,44 @@ const ConcertDetails = ({ concert, artistObjectId, onDelete }) => {
         {cityName}, {state}, {countryName}
       </p>
       <p>{outputDate}</p>
-      <p onClick={() => setShowSetList(prev => !prev)}>setlist {showSetList ? '▼' : '▲'}</p>
-      {showSetList && (
-        sets ? sets.map((set, index) => (
-          <div key={index}>
-            <p>
-              <strong>{set.name}</strong>
-              <strong>
-                {set.encore && "Encore"} {set.encore > 1 && set.encore}
-              </strong>
-            </p>
-            <ol>
-              {set.song.map((song, i) => (
-                <li key={i}>{song.name}</li>
-              ))}
-            </ol>
-          </div>
-        )) : <p>Setlist unavailable</p>
-      )}
-      <div className="concert-details-links">
-      <a style={{fontSize: '.65rem'}}
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        More Info
-      </a>
-      <p
-        style={{fontSize: '.65rem', color: 'red'}}
-        onClick={() => deleteConcert(artistObjectId, concertId)}
-      >
-        Remove Concert
+      <p onClick={() => setShowSetList((prev) => !prev)}>
+        setlist {showSetList ? "▼" : "▲"}
       </p>
+      {showSetList &&
+        (sets ? (
+          sets.map((set, index) => (
+            <div key={index}>
+              <p>
+                <strong>{set.name}</strong>
+                <strong>
+                  {set.encore && "Encore"} {set.encore > 1 && set.encore}
+                </strong>
+              </p>
+              <ol>
+                {set.song.map((song, i) => (
+                  <li key={i}>{song.name}</li>
+                ))}
+              </ol>
+            </div>
+          ))
+        ) : (
+          <p>Setlist unavailable</p>
+        ))}
+      <div className="concert-details-links">
+        <a
+          style={{ fontSize: ".65rem" }}
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          More Info
+        </a>
+        <p
+          style={{ fontSize: ".65rem", color: "red" }}
+          onClick={() => deleteConcert(artistObjectId, concertId)}
+        >
+          Remove Concert
+        </p>
       </div>
     </div>
   );

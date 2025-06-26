@@ -1,5 +1,5 @@
 /* google font */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;800&family=VT323&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;800&family=VT323&display=swap");
 
 /* layout */
 :root {
@@ -21,6 +21,11 @@ header .container {
   align-items: center;
   justify-content: space-between;
 }
+header .nav-greeting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 header a {
   color: #333;
   text-decoration: none;
@@ -32,22 +37,31 @@ header a {
   width: 100%;
 }
 
-#shows-table td, #shows-table th {
+#shows-table td,
+#shows-table th {
   border: 1px solid #ddd;
   padding: 8px;
 }
 
-#shows-table tr:nth-child(even){background-color: #f2f2f2;}
-#shows-table td:nth-child(odd){width: auto}
-#shows-table td:nth-child(even){width: 15%}
+#shows-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+#shows-table td:nth-child(odd) {
+  width: auto;
+}
+#shows-table td:nth-child(even) {
+  width: 15%;
+}
 
-#shows-table tr:hover {background-color: #ddd;}
+#shows-table tr:hover {
+  background-color: #ddd;
+}
 
 #shows-table th {
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;
-  background-color: #04AA6D;
+  background-color: #04aa6d;
   color: white;
 }
 
@@ -65,10 +79,14 @@ header a {
   gap: 100px;
 }
 
+.subtitle {
+  color: slategray;
+}
+
 dialog {
-    width: 80%; /* Default width */
-    max-width: 1200px;
-    margin: 0 auto; /* Centering */
+  width: 80%; /* Default width */
+  max-width: 1200px;
+  margin: 0 auto; /* Centering */
 }
 
 .concert-details {
@@ -78,7 +96,7 @@ dialog {
   padding: 20px;
   position: relative;
   cursor: pointer;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
 }
 .concert-details h4 {
   margin: 0 0 10px 0;
@@ -101,7 +119,8 @@ dialog {
 }
 
 /* new workout form */
-label, input {
+label,
+input {
   display: block;
 }
 input {
@@ -122,21 +141,17 @@ form button {
   border-radius: 4px;
   cursor: pointer;
 }
- button.auth {
+button.auth {
   border: 0;
   padding: 10px;
   font-family: "Poppins";
   border-radius: 4px;
   cursor: pointer;
-  width: 70px;
+  min-width: 70px;
 }
 button.login {
   color: #fff;
   background: var(--primary);
-}
-button.signup {
-  color: var(--primary);
-  background: none;
 }
 div.error {
   padding: 10px;
@@ -150,11 +165,11 @@ input.error {
   border: 1px solid var(--error);
 }
 
-.auth-form{
+.auth-form {
   width: 360px;
   margin: 0 auto;
   padding: 30px;
-  box-shadow: 1px 2px 3px rgba(0,0,0,0.1);
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   background: white;
 }
@@ -175,7 +190,9 @@ input.error {
 } */
 
 /* Make sure html, body, and #root fill the full viewport height */
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   margin: 0;
 }
@@ -250,7 +267,6 @@ html, body, #root {
   background: #382e1b;
 }
 
- 
 @media screen and (max-width: 768px) {
   dialog {
     min-width: 80%; /* Full width on mobile */
@@ -263,7 +279,7 @@ html, body, #root {
     margin: 0 auto;
     min-width: 1400px; /* or whatever width aligns your navbar + main content */
   }
-  
+
   .pages {
     margin: 0 auto;
     min-width: 1400px; /* or whatever width aligns your navbar + main content */

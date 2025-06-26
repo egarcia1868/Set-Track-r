@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 const ArtistDetails = ({ artist }) => {
   // console.log("artist: ", artist)
-  const {artistName, concerts} = artist;
+  const { artistName, concerts } = artist;
 
   const navigate = useNavigate();
 
