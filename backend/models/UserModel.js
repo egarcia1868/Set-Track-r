@@ -8,12 +8,13 @@ const userSchema = new Schema({
     required: true,
     unique: true,
   },
-  attendedConcerts: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "UserConcerts",
+  artistsSeenLive: [{
+    artistId: {
+      type: String,
+      required: true,
     },
-  ],
+    concerts: [String]
+  }],
 });
 
 export default model("User", userSchema);

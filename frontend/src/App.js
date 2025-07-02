@@ -5,7 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import PrivateRoute from "./components/PrivateRoute";
-import ProtectedTest from "./pages/ProtectedTest";
+// import ProtectedTest from "./pages/ProtectedTest";
 import RootRoute from "./pages/RootRoute";
 
 function App() {
@@ -24,7 +24,7 @@ function App() {
                 </PrivateRoute>
               }
             />
-            <Route path="/protected" element={<ProtectedTest />} />
+            {/* <Route path="/protected" element={<ProtectedTest />} /> */}
             <Route
               path="/artist"
               element={

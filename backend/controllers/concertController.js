@@ -1,7 +1,11 @@
 import Artist from "../models/ArtistModel.js";
+import User from "../models/UserModel.js";
 import { getConcertFromAPI } from "../services/concertService.js";
 import mongoose from "mongoose";
 
+// TODO: Fix structure to use services/controllers pattern correctly.
+
+// TODO: setup to accept other search fields
 export const getConcert = async (req, res) => {
   try {
     const { artistName, date } = req.params;
@@ -18,7 +22,6 @@ export const getConcert = async (req, res) => {
 };
 
 export const saveConcert = async (req, res) => {
-  console.log('tacoTIME!!!!!:', req.body);
   try {
     const {
       id: concertId,
@@ -28,41 +31,84 @@ export const saveConcert = async (req, res) => {
       sets: { set: sets },
       url,
     } = req.body.concertData;
+    const { name: artistName, mbid: artistId } = artist;
+    // console.log("artistName: ", artist);
+    
+    const { sub: userId } = req.body.user;
 
-    let artistDoc = await Artist.findOne({ artistName: artist.name });
+    if (!concertId || !userId) {
+      return res.status(400).json({ error: "concertId and userId are required" });
+    }
+
+    let artistDoc = await Artist.findOne({ artistId });
 
     // If the artist does not exist, create a new artist entry
     if (!artistDoc) {
       artistDoc = new Artist({
-        artistName: artist.name,
-        artistId: artist.mbid, // figure out
+        artistName,
+        artistId,
         concerts: [],
       });
     }
 
+    // TODO: need to set existingConcert to check for concertId in concertAttended property of current user.
     const existingConcert = artistDoc.concerts.find(
       (c) => c.concertId === concertId,
     );
-    if (existingConcert) {
-      return res.status(409).json({ error: "Concert already saved" });
+
+    if (!existingConcert) {
+      artistDoc.concerts.push({
+        concertId,
+        eventDate,
+        venue,
+        sets,
+        url,
+      });
     }
 
-    artistDoc.concerts.push({
-      concertId,
-      eventDate,
-      venue,
-      sets,
-      url,
+    await artistDoc.save();
+    // res.status(201).json(artistDoc);
+
+    let userDoc = await User.findOne({ auth0Id: userId });
+
+    // If the user does not exist, create a new user entry
+    if (!userDoc) {
+      userDoc = new User({
+        auth0Id: userId,
+        artistsSeenLive: []
+      });
+    }
+
+    // // TODO: need to set existingConcert to check for concertId in concertAttended property of current user.
+    // const existingAttendedConcert = userDoc.artistsSeenLive.includes(concertId);
+    const artistEntryInUserDoc = userDoc.artistsSeenLive.find((ac) => ac.artistId === artistId);
+    if (artistEntryInUserDoc) {
+      const hasConcert = artistEntryInUserDoc.concerts.includes(concertId);
+
+      if (!hasConcert) {
+        artistEntryInUserDoc.concerts.push(concertId);
+      }
+    } else {
+      userDoc.artistsSeenLive.push({
+        artistId,
+        concerts: [concertId],
+      });
+    }
+
+    await userDoc.save();
+    res.status(201).json({
+      message: 'Concert saved for artist and user successfully',
+      artist: artistDoc,
+      user: userDoc,
     });
 
-    await artistDoc.save();
-    res.status(201).json(artistDoc);
   } catch (error) {
-    console.error("error: ", error);
-    res.status(500).json({ error: "Could not save concert" });
+    console.error("Error adding concert:", error);
+    res.status(500).json({ error: "Could not save concert data." });
   }
 };
 
+// TODO: setup to work with reorganization of concert data.
 export const getSavedConcert = async (req, res) => {
   try {
     const { concertId } = req.params;
@@ -83,9 +129,12 @@ export const getSavedConcert = async (req, res) => {
   }
 };
 
+// TODO: setup to work with reorganization of concert data.
 export const getSavedConcerts = async (req, res) => {
   try {
-    //  const { userId } = req.user.sub;
+    const { userId } = req.params;
+
+    console.log('userId: ', userId);
 
     const concerts = await Artist.find();
 
@@ -95,6 +144,7 @@ export const getSavedConcerts = async (req, res) => {
   }
 };
 
+// TODO: setup to work with reorganization of concert data.
 export const deleteConcert = async (req, res) => {
   const { artistId, concertId } = req.params;
 

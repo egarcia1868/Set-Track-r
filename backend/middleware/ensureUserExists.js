@@ -11,7 +11,7 @@ export default async function ensureUserExists(req, res, next) {
     let user = await User.findOne({ auth0Id });
 
     if (!user) {
-      user = new User({ auth0Id, attendedConcerts: [] });
+      user = new User({ auth0Id, artistsSeenLive: [] });
       await user.save();
       console.log(`✅ Created new user with Auth0 ID: ${auth0Id}`);
     }

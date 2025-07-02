@@ -10,7 +10,7 @@ import {
 const router = express.Router();
 
 // GET all saved concerts
-router.get("/", getSavedConcerts);
+router.get("/:userId", getSavedConcerts);
 
 // GET a single concert from DB
 router.get("/:id", getSavedConcert);

@@ -12,6 +12,7 @@ const API_URL =
   process.env.REACT_APP_API_URL || "https://api.setlist.fm/rest/1.0/";
 const API_KEY = process.env.SETLIST_FM_API_KEY;
 
+//TODO: set up to allow more than just artistName and date
 export const getConcertFromAPI = async (artistName, date) => {
   try {
     const response = await axios.get(

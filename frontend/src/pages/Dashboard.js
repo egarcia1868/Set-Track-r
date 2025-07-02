@@ -13,7 +13,8 @@ const Dashboard = () => {
     const fetchConcerts = async () => {
       // Dynamically determine the base URL based on the environment
 
-      const response = await fetch(`${BASE_URL}/api/concerts`);
+      // const response = await fetch(`${BASE_URL}/api/concerts`);
+      const response = await fetch(`${BASE_URL}/api/concerts/${user.sub}`);
       const json = await response.json();
 
       if (response.ok) {
@@ -24,9 +25,9 @@ const Dashboard = () => {
     };
 
     fetchConcerts();
-  }, [dispatch]);
+  }, [dispatch, user.sub]);
 
-  console.log("wtf: ", user);
+  // console.log("wtf: ", user);
 
   return (
     <div className="home">
