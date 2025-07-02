@@ -79,6 +79,10 @@ header a {
   gap: 100px;
 }
 
+.alert {
+  color: #e50f04;
+}
+
 .subtitle {
   color: slategray;
 }

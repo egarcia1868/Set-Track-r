@@ -12,6 +12,7 @@ const Home = () => {
         isOpen={isModalOpen}
       />
         <div>
+          <p className="alert">7/2/2025 - some functionality may be temporarily unavailable due to ongoing restructuring of data storage and API request handling.</p>
           <p>
             Set Track'r is a tool that can be used to track the concerts and
             songs performed at shows you attended. Some standup comedy data is

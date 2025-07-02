@@ -32,7 +32,6 @@ export const saveConcert = async (req, res) => {
       url,
     } = req.body.concertData;
     const { name: artistName, mbid: artistId } = artist;
-    // console.log("artistName: ", artist);
     
     const { sub: userId } = req.body.user;
 
@@ -40,6 +39,7 @@ export const saveConcert = async (req, res) => {
       return res.status(400).json({ error: "concertId and userId are required" });
     }
 
+    // Check if the artist already exists in the database
     let artistDoc = await Artist.findOne({ artistId });
 
     // If the artist does not exist, create a new artist entry
@@ -51,11 +51,12 @@ export const saveConcert = async (req, res) => {
       });
     }
 
-    // TODO: need to set existingConcert to check for concertId in concertAttended property of current user.
+    // Check if the concert already exists for the artist
     const existingConcert = artistDoc.concerts.find(
       (c) => c.concertId === concertId,
     );
 
+    // If the concert does not exist, add it to the artist's concerts
     if (!existingConcert) {
       artistDoc.concerts.push({
         concertId,
@@ -67,7 +68,6 @@ export const saveConcert = async (req, res) => {
     }
 
     await artistDoc.save();
-    // res.status(201).json(artistDoc);
 
     let userDoc = await User.findOne({ auth0Id: userId });
 
@@ -79,8 +79,6 @@ export const saveConcert = async (req, res) => {
       });
     }
 
-    // // TODO: need to set existingConcert to check for concertId in concertAttended property of current user.
-    // const existingAttendedConcert = userDoc.artistsSeenLive.includes(concertId);
     const artistEntryInUserDoc = userDoc.artistsSeenLive.find((ac) => ac.artistId === artistId);
     if (artistEntryInUserDoc) {
       const hasConcert = artistEntryInUserDoc.concerts.includes(concertId);
