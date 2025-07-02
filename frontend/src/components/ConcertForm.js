@@ -85,6 +85,9 @@ const ConcertForm = () => {
         >
           Look Up Set List
         </button>
+        <p className="subtitle">
+          (<a href="https://www.setlist.fm/search?query=moody+center" target="_blank" rel="noopener noreferrer">Click here</a> if you need a sample artist name/show date to test with)
+        </p>
         {error && <div className="error">{error}</div>}
       </form>
     </>

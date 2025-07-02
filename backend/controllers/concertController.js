@@ -1,6 +1,7 @@
 import Artist from "../models/ArtistModel.js";
 import User from "../models/UserModel.js";
 import { getConcertFromAPI } from "../services/concertService.js";
+import { saveConcertForUser } from "../services/concertService.js";
 import mongoose from "mongoose";
 
 // TODO: Fix structure to use services/controllers pattern correctly.
@@ -23,86 +24,19 @@ export const getConcert = async (req, res) => {
 
 export const saveConcert = async (req, res) => {
   try {
-    const {
-      id: concertId,
-      eventDate,
-      artist,
-      venue,
-      sets: { set: sets },
-      url,
-    } = req.body.concertData;
-    const { name: artistName, mbid: artistId } = artist;
-    
-    const { sub: userId } = req.body.user;
-
-    if (!concertId || !userId) {
-      return res.status(400).json({ error: "concertId and userId are required" });
-    }
-
-    // Check if the artist already exists in the database
-    let artistDoc = await Artist.findOne({ artistId });
-
-    // If the artist does not exist, create a new artist entry
-    if (!artistDoc) {
-      artistDoc = new Artist({
-        artistName,
-        artistId,
-        concerts: [],
-      });
-    }
-
-    // Check if the concert already exists for the artist
-    const existingConcert = artistDoc.concerts.find(
-      (c) => c.concertId === concertId,
-    );
-
-    // If the concert does not exist, add it to the artist's concerts
-    if (!existingConcert) {
-      artistDoc.concerts.push({
-        concertId,
-        eventDate,
-        venue,
-        sets,
-        url,
-      });
-    }
-
-    await artistDoc.save();
-
-    let userDoc = await User.findOne({ auth0Id: userId });
-
-    // If the user does not exist, create a new user entry
-    if (!userDoc) {
-      userDoc = new User({
-        auth0Id: userId,
-        artistsSeenLive: []
-      });
-    }
-
-    const artistEntryInUserDoc = userDoc.artistsSeenLive.find((ac) => ac.artistId === artistId);
-    if (artistEntryInUserDoc) {
-      const hasConcert = artistEntryInUserDoc.concerts.includes(concertId);
-
-      if (!hasConcert) {
-        artistEntryInUserDoc.concerts.push(concertId);
-      }
-    } else {
-      userDoc.artistsSeenLive.push({
-        artistId,
-        concerts: [concertId],
-      });
-    }
-
-    await userDoc.save();
-    res.status(201).json({
-      message: 'Concert saved for artist and user successfully',
-      artist: artistDoc,
-      user: userDoc,
+    const result = await saveConcertForUser({
+      concertData: req.body.concertData,
+      user: req.body.user
     });
 
+    res.status(201).json({
+      message: 'Concert saved for artist and user successfully',
+      artist: result.artistDoc,
+      user: result.userDoc,
+    });
   } catch (error) {
-    console.error("Error adding concert:", error);
-    res.status(500).json({ error: "Could not save concert data." });
+    console.error('Error adding concert:', error);
+    res.status(500).json({ error: error.message || 'Could not save concert data.' });
   }
 };
 
@@ -128,17 +62,68 @@ export const getSavedConcert = async (req, res) => {
 };
 
 // TODO: setup to work with reorganization of concert data.
+// export const getSavedConcerts = async (req, res) => {
+//   try {
+//     const { userId } = req.params;
+
+//     // console.log('userId: ', userId);
+
+//     const concerts = await Artist.find();
+
+//     res.json(concerts);
+//   } catch (error) {
+//     res.status(500).json({ error: "Could not fetch concerts" });
+//   }
+// };
 export const getSavedConcerts = async (req, res) => {
+  // try {
+  //   const { userId } = req.params;
+  //   const user = await User.findOne({ auth0Id: userId });
+  //   if (!user) {
+  //     return res.status(404).json({ error: "User not found" });
+  //   }
+
+  //   const artistIds = user.artistsSeenLive.map(artist => artist.artistId);
+
+  //   const artistDocs = await Artist.find({ artistId: { $in: artistIds } });
+
+  //   const filtered = 
   try {
     const { userId } = req.params;
 
-    console.log('userId: ', userId);
+    // 1. Find the user by Auth0 ID
+    const user = await User.findOne({ auth0Id: userId });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
 
-    const concerts = await Artist.find();
+    const artistIds = user.artistsSeenLive.map((entry) => entry.artistId);
 
-    res.json(concerts);
+    // 2. Find all artist docs that match user-attended artists
+    const artistDocs = await Artist.find({ artistId: { $in: artistIds } });
+
+    // 3. Filter each artist’s concerts based on the user’s attended concerts
+    const filtered = artistDocs.map((artist) => {
+      const userArtistEntry = user.artistsSeenLive.find(
+        (entry) => entry.artistId === artist.artistId
+      );
+
+      const userConcertIds = userArtistEntry?.concerts || [];
+
+      return {
+        _id: artist._id,
+        artistName: artist.artistName,
+        artistId: artist.artistId,
+        concerts: artist.concerts.filter((concert) =>
+          userConcertIds.includes(concert.concertId)
+        ),
+      };
+    });
+
+    res.json(filtered);
   } catch (error) {
-    res.status(500).json({ error: "Could not fetch concerts" });
+    console.error('Error fetching saved concerts:', error);
+    res.status(500).json({ error: 'Could not fetch concerts' });
   }
 };
 
