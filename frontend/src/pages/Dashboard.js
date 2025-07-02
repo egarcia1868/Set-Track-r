@@ -6,10 +6,10 @@ import ConcertForm from "../components/ConcertForm";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const Dashboard = () => {
-    const { isAuthenticated, user } = useAuth0();
-    const { artists, dispatch } = useConcertsContext();
+  const { user } = useAuth0();
+  const { artists, dispatch } = useConcertsContext();
 
-      useEffect(() => {
+  useEffect(() => {
     const fetchConcerts = async () => {
       // Dynamically determine the base URL based on the environment
 
@@ -25,6 +25,8 @@ const Dashboard = () => {
 
     fetchConcerts();
   }, [dispatch]);
+
+  console.log("wtf: ", user);
 
   return (
     <div className="home">

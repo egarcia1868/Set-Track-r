@@ -1,21 +1,19 @@
-import { auth } from 'express-oauth2-jwt-bearer';
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const { Schema, model } = mongoose;
 
-const userSchema = new Schema(
+const userSchema = new Schema({
+  auth0Id: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  attendedConcerts: [
     {
-        auth0Id: {
-            type: String,
-            required: true,
-            unique: true,
-        },
-        attendedConcerts: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: 'UserConcerts',
-            },
-        ],
-    });
+      type: Schema.Types.ObjectId,
+      ref: "UserConcerts",
+    },
+  ],
+});
 
-    module.exports = model('User', userSchema);
+export default model("User", userSchema);

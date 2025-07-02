@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useConcertsContext } from "../hooks/useConcertsContext";
 import { BASE_URL } from "../utils/config";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
+  const { user } = useAuth0();
   const { dispatch } = useConcertsContext();
   const [error, setError] = useState(null);
   const setlistEntry = concert?.setlist?.[0] || {};
@@ -44,9 +46,16 @@ const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
   });
 
   const saveConcert = async () => {
+    const body = {
+      user,
+      concertData: concert?.setlist[0]
+    };
+
     const response = await fetch(`${BASE_URL}/api/concerts/`, {
       method: "POST",
-      body: JSON.stringify(concert?.setlist[0]),
+      // so I either need to add the auth0 data with the setlist data
+      // then pass both together or bring in auth0 data later.
+      body: JSON.stringify(body),
       headers: {
         "Content-Type": "application/json",
       },

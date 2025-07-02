@@ -18,6 +18,7 @@ export const getConcert = async (req, res) => {
 };
 
 export const saveConcert = async (req, res) => {
+  console.log('tacoTIME!!!!!:', req.body);
   try {
     const {
       id: concertId,
@@ -26,7 +27,7 @@ export const saveConcert = async (req, res) => {
       venue,
       sets: { set: sets },
       url,
-    } = req.body;
+    } = req.body.concertData;
 
     let artistDoc = await Artist.findOne({ artistName: artist.name });
 
@@ -84,7 +85,7 @@ export const getSavedConcert = async (req, res) => {
 
 export const getSavedConcerts = async (req, res) => {
   try {
-    //  const { showId } = req.params;
+    //  const { userId } = req.user.sub;
 
     const concerts = await Artist.find();
 
