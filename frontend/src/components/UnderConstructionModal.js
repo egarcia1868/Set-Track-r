@@ -107,7 +107,10 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
         Planned upcoming improvements/bug fixes:
       </h4>
       <ul>
-        <li>After retrieving concert data, add button to "save to user's list" to each concert</li>
+        <li>
+          After retrieving concert data, add button to "save to user's list" to
+          each concert
+        </li>
         <li>create new home page with suggestions as to how to add artist</li>
         <li>
           add ability to bring up selections of concerts by artist, cityName and

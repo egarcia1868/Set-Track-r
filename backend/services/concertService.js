@@ -36,7 +36,9 @@ export const saveConcertForUser = async ({ concertData, user }) => {
     artistDoc = new Artist({ artistName, artistId, concerts: [] });
   }
 
-  const existingConcert = artistDoc.concerts.find(c => c.concertId === concertId);
+  const existingConcert = artistDoc.concerts.find(
+    (c) => c.concertId === concertId,
+  );
 
   if (!existingConcert) {
     artistDoc.concerts.push({ concertId, eventDate, venue, sets, url });
@@ -50,7 +52,9 @@ export const saveConcertForUser = async ({ concertData, user }) => {
     userDoc = new User({ auth0Id: userId, artistsSeenLive: [] });
   }
 
-  const artistEntry = userDoc.artistsSeenLive.find(ac => ac.artistId === artistId);
+  const artistEntry = userDoc.artistsSeenLive.find(
+    (ac) => ac.artistId === artistId,
+  );
   if (artistEntry) {
     if (!artistEntry.concerts.includes(concertId)) {
       artistEntry.concerts.push(concertId);

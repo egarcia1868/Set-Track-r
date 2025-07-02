@@ -26,17 +26,19 @@ export const saveConcert = async (req, res) => {
   try {
     const result = await saveConcertForUser({
       concertData: req.body.concertData,
-      user: req.body.user
+      user: req.body.user,
     });
 
     res.status(201).json({
-      message: 'Concert saved for artist and user successfully',
+      message: "Concert saved for artist and user successfully",
       artist: result.artistDoc,
       user: result.userDoc,
     });
   } catch (error) {
-    console.error('Error adding concert:', error);
-    res.status(500).json({ error: error.message || 'Could not save concert data.' });
+    console.error("Error adding concert:", error);
+    res
+      .status(500)
+      .json({ error: error.message || "Could not save concert data." });
   }
 };
 
@@ -87,14 +89,14 @@ export const getSavedConcerts = async (req, res) => {
 
   //   const artistDocs = await Artist.find({ artistId: { $in: artistIds } });
 
-  //   const filtered = 
+  //   const filtered =
   try {
     const { userId } = req.params;
 
     // 1. Find the user by Auth0 ID
     const user = await User.findOne({ auth0Id: userId });
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: "User not found" });
     }
 
     const artistIds = user.artistsSeenLive.map((entry) => entry.artistId);
@@ -105,7 +107,7 @@ export const getSavedConcerts = async (req, res) => {
     // 3. Filter each artist’s concerts based on the user’s attended concerts
     const filtered = artistDocs.map((artist) => {
       const userArtistEntry = user.artistsSeenLive.find(
-        (entry) => entry.artistId === artist.artistId
+        (entry) => entry.artistId === artist.artistId,
       );
 
       const userConcertIds = userArtistEntry?.concerts || [];
@@ -115,15 +117,15 @@ export const getSavedConcerts = async (req, res) => {
         artistName: artist.artistName,
         artistId: artist.artistId,
         concerts: artist.concerts.filter((concert) =>
-          userConcertIds.includes(concert.concertId)
+          userConcertIds.includes(concert.concertId),
         ),
       };
     });
 
     res.json(filtered);
   } catch (error) {
-    console.error('Error fetching saved concerts:', error);
-    res.status(500).json({ error: 'Could not fetch concerts' });
+    console.error("Error fetching saved concerts:", error);
+    res.status(500).json({ error: "Could not fetch concerts" });
   }
 };
 

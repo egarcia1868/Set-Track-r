@@ -48,7 +48,7 @@ const ConcertDetailsModal = ({ isOpen, onClose, concert }) => {
   const saveConcert = async () => {
     const body = {
       user,
-      concertData: concert?.setlist[0]
+      concertData: concert?.setlist[0],
     };
 
     const response = await fetch(`${BASE_URL}/api/concerts/`, {

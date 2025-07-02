@@ -8,13 +8,15 @@ const userSchema = new Schema({
     required: true,
     unique: true,
   },
-  artistsSeenLive: [{
-    artistId: {
-      type: String,
-      required: true,
+  artistsSeenLive: [
+    {
+      artistId: {
+        type: String,
+        required: true,
+      },
+      concerts: [String],
     },
-    concerts: [String]
-  }],
+  ],
 });
 
 export default model("User", userSchema);

@@ -50,7 +50,6 @@ app.get("/api/protected", checkJwt, ensureUserExists, (req, res) => {
   res.json({ message: "You accessed a protected route!", user: req.auth });
 });
 
-
 // app.get("/set-cookies", (req, res) => {
 //   // res.setHeader('Set-Cookie', 'newUser=true');
 //   res.cookie("newUser", false);
