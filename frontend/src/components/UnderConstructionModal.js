@@ -98,7 +98,16 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
           as well as when you've seen it
         </li>
         <li>Find reliable api for artist images to display</li>
-        <li>Change link for getting tester artist name & date to retrieve latest concert data available and automatically bring up results (use previous days date)</li>
+        <li>
+          Change link for getting tester artist name & date to retrieve latest
+          concert data available and automatically bring up results (use
+          previous days date)
+        </li>
+        <li>
+          Used prop drilling out of convenience from Dashboard -- ConcertForm --
+          ConcertDetailsModal. When finished with more important tasks, refactor
+          to use context.
+        </li>
         <li>Update and optimize styling (general and for mobile)</li>
         {/* <li>
           create separate links from main page to go to either artist's song

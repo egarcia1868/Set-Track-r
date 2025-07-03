@@ -29,34 +29,40 @@ export const concertsReducer = (state, action) => {
         ...state,
         artists: newArtists,
       };
-    case "ADD_CONCERT":
-      const foundArtist = state.artists.some(
-        (artist) => artist.artistName === action.payload.artistName,
+    case "ADD_CONCERT": {
+      const foundArtist = state.artists.find(
+        (artist) => artist.artistId === action.payload.artistId,
       );
-      const updatedArtists = state.artists.map((artist) =>
-        artist.artistId === action.payload.artistId
-          ? {
-              ...artist,
-              concerts: [
-                ...artist.concerts,
-                ...action.payload.concerts.filter(
-                  (newConcert) =>
-                    !artist.concerts.some(
-                      (existingConcert) =>
-                        existingConcert.concertId === newConcert.concertId,
-                    ),
-                ), // Add only new concerts
-              ],
-            }
-          : artist,
-      );
-      !foundArtist && updatedArtists.push(action.payload);
+
+      let updatedArtists;
+
+      if (foundArtist) {
+        updatedArtists = state.artists.map((artist) =>
+          artist.artistId === action.payload.artistId
+            ? {
+                ...artist,
+                concerts: [
+                  ...artist.concerts,
+                  ...action.payload.concerts.filter(
+                    (newConcert) =>
+                      !artist.concerts.some(
+                        (existingConcert) =>
+                          existingConcert.concertId === newConcert.concertId,
+                      ),
+                  ),
+                ],
+              }
+            : artist,
+        );
+      } else {
+        updatedArtists = [...state.artists, action.payload];
+      }
 
       return {
         ...state,
         artists: updatedArtists,
-        // artists: [action.payload, ...state.artists]
       };
+    }
     case "GET_SAVED_ARTISTS":
       return {
         ...state,
