@@ -16,10 +16,12 @@ const Home = () => {
           7/2/2025 - some functionality may be temporarily unavailable due to
           ongoing restructuring of data storage and API request handling.
         </p>
+        <p className="alert">
+          <strong>Note:</strong> This site may enter a brief sleep mode when inactive. If this is your first visit or it's been a while since your last, please allow a moment for the site to fully wake up.
+        </p>
         <p>
           Set Track'r is a tool that can be used to track the concerts and songs
-          performed at shows you attended. Some standup comedy data is also
-          available, but less so.
+          performed at shows you attended.
         </p>
         <p>Please log in to view and manage your concerts.</p>
         <p className="subtitle">
