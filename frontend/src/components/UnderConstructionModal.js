@@ -72,52 +72,22 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
         Improvement/s currently being worked:
       </h4>
       <ul>
-        <li>create login for tracking personal shows</li>
         <li>
-          Set up db to be structured something like the following:
-          <pre>
-            <br />
-            settrackr
-            <br /> ├── users
-            <br /> │ ├ _id,
-            <br /> │ ├ username,
-            <br /> │ ├ password: (hashed),
-            <br /> │ └ concertsAttended: [concertId1, concertId2, ...]
-            <br /> │
-            <br /> ├── artists
-            <br /> │ ├ _id,
-            <br /> │ ├ artistName,
-            <br /> │ └ mbid
-            <br /> │
-            <br /> └── concerts
-            <br /> ├ _id,
-            <br /> ├ artistId,
-            <br /> ├ eventDate,
-            <br /> ├ venue,
-            <br /> ├ sets,
-            <br /> └ url
-          </pre>
+          Need to update the following to work with new db structure:
+          <ul>
+            <li>Show delete functionality (currently removes concert from artists collection, but not from users collection.)</li>
+            <li>Functionality that updates concert listing after adding new concert</li>
+          </ul>
         </li>
         <li>
-          re-organize routes and route functions to save users, artists, and
-          concert info to match new db structure.
+          After retrieving concert data, set up to assume it will receive an array of shows
+          with an add button to "save to user's list" to each concert.
         </li>
       </ul>
       <h4 style={{ marginLeft: "1.5rem" }}>
         Planned upcoming improvements/bug fixes:
       </h4>
       <ul>
-        <li>
-          After retrieving concert data, add button to "save to user's list" to
-          each concert
-        </li>
-        <li>create new home page with suggestions as to how to add artist</li>
-        <li>
-          add ability to bring up selections of concerts by artist, cityName and
-          year (somewhat similar to next item on list). Set default behavior to
-          present search results with an "add" button, rather than automatically
-          adding it to db.
-        </li>
         <li>
           Add ability to select multiple dates on the show add form - (check
           commit from 4/16 for starting point)
@@ -128,21 +98,20 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
         </li>
         <li>create pie chart divided by number of times per song vs total.</li>
         <li>create personal page to display shows listed</li>
-        <li>update login with OAuth</li>
         <li>
           create a song page that displays information about the specific song
           as well as when you've seen it
         </li>
-        <li>
-          add buttons to save new property that stores live/watched/listened. --
-          add checkboxes to add modal.
-        </li>
         <li>Find reliable api for artist images to display</li>
         <li>Update and optimize styling (general and for mobile)</li>
-        <li>
+        {/* <li>
           create separate links from main page to go to either artist's song
           list or concert lists.
         </li>
+        <li>
+          add buttons to save new property that stores live/watched/listened. --
+          add checkboxes to add modal.
+        </li> */}
       </ul>
       <form method="dialog" id="modal-actions">
         <button style={{ marginBottom: "2rem" }}>Close</button>
