@@ -49,6 +49,8 @@ const Dashboard = () => {
     // user.sub, isLoading
   ]);
 
+  console.log("Artists in Dashboard: ", artists);
+
   return (
     <div className="home">
       <div className="concerts">
@@ -56,7 +58,7 @@ const Dashboard = () => {
           <div>Loading...</div>
         ) : artists.length > 0 ? (
           artists.map((artist) => (
-            <ArtistDetails key={artist.artistId} artist={artist} />
+            <ArtistDetails key={artist._id} artist={artist} />
           ))
         ) : (
           <h3>No Saved Concerts yet</h3>
