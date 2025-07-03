@@ -60,7 +60,11 @@ export const saveConcertForUser = async ({ concertData, user }) => {
       artistEntry.concerts.push(concertId);
     }
   } else {
-    userDoc.artistsSeenLive.push({ artistId, concerts: [concertId] });
+    userDoc.artistsSeenLive.push({
+      artistName,
+      artistId,
+      concerts: [concertId],
+    });
   }
 
   await userDoc.save();

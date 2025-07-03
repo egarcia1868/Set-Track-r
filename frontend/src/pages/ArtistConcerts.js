@@ -108,7 +108,8 @@ const ArtistConcerts = () => {
                       <ConcertDetails
                         key={concert.concertId || concert.id}
                         concert={concert}
-                        artistObjectId={artist._id}
+                        // artistObjectId={artist._id}
+                        artistId={artist.artistId}
                         onDelete={(deletedId) =>
                           setConcertList((prev) =>
                             prev.filter((c) => c.concertId !== deletedId),

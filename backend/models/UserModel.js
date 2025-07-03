@@ -10,6 +10,7 @@ const userSchema = new Schema({
   },
   artistsSeenLive: [
     {
+      artistName: { type: String, required: true },
       artistId: {
         type: String,
         required: true,

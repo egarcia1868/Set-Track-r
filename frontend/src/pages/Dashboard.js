@@ -6,14 +6,20 @@ import ConcertForm from "../components/ConcertForm";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const Dashboard = () => {
-  const { user, isLoading } = useAuth0();
+  const { isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
+  // const { user, isLoading } = useAuth0();
   const { artists, dispatch } = useConcertsContext();
   const [isFetchingConcerts, setIsFetchingConcerts] = useState(true);
 
   useEffect(() => {
     const fetchConcerts = async () => {
       try {
-        const response = await fetch(`${BASE_URL}/api/concerts/${user.sub}`);
+        const token = await getAccessTokenSilently();
+        const response = await fetch(`${BASE_URL}/api/concerts/user/saved`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const json = await response.json();
 
         if (response.ok) {
@@ -28,10 +34,20 @@ const Dashboard = () => {
       }
     };
 
+    if (!isAuthenticated || isLoading) {
+      console.log("User not authenticated or loading, skipping fetch.");
+      return;
+    }
     // if (!isLoading) {  HIDING THIS FOR NOW TO SEE IF ACTUALLY NEEDED
     fetchConcerts();
     // }
-  }, [dispatch, user.sub, isLoading]);
+  }, [
+    dispatch,
+    getAccessTokenSilently,
+    isAuthenticated,
+    isLoading,
+    // user.sub, isLoading
+  ]);
 
   return (
     <div className="home">

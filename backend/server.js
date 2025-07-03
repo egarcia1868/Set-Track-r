@@ -1,16 +1,17 @@
 import express from "express";
 import dotenv from "dotenv";
 dotenv.config({ path: path.resolve("./.env") });
-import { auth } from "express-oauth2-jwt-bearer";
+// import { auth } from "express-oauth2-jwt-bearer";
+
 import mongoose from "mongoose";
-import checkJwt from "./middleware/auth.js";
+// import checkJwt from "./middleware/auth.js";
 import path from "path";
 import cors from "cors";
 import concertRoutes from "./routes/concertRoutes.js";
 import cookieParser from "cookie-parser";
-import ensureUserExists from "./middleware/ensureUserExists.js";
+// import ensureUserExists from "./middleware/ensureUserExists.js";
 
-console.log("Working directory:", process.cwd());
+// console.log("Working directory:", process.cwd());
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -46,9 +47,9 @@ app.get("/", (req, res) => {
   res.send("Backend is running!");
 });
 
-app.get("/api/protected", checkJwt, ensureUserExists, (req, res) => {
-  res.json({ message: "You accessed a protected route!", user: req.auth });
-});
+// app.get("/api/protected", checkJwt, ensureUserExists, (req, res) => {
+//   res.json({ message: "You accessed a protected route!", user: req.auth });
+// });
 
 // app.get("/set-cookies", (req, res) => {
 //   // res.setHeader('Set-Cookie', 'newUser=true');

@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useConcertsContext } from "../hooks/useConcertsContext";
 import { BASE_URL } from "../utils/config";
+import { useAuth0 } from "@auth0/auth0-react";
 
-const ConcertDetails = ({ concert, artistObjectId, onDelete }) => {
+const ConcertDetails = ({ concert, artistId, onDelete }) => {
+  const { getAccessTokenSilently } = useAuth0();
   const { dispatch } = useConcertsContext();
   const [showSetList, setShowSetList] = useState(false);
 
@@ -30,19 +32,21 @@ const ConcertDetails = ({ concert, artistObjectId, onDelete }) => {
     day: "numeric",
   });
 
-  const deleteConcert = async (artistObjectId, concertId) => {
-    console.log(
-      "Deleting concert for artist:",
-      artistObjectId,
-      "Concert ID:",
-      concertId,
-    ); // Debugging
+  const deleteConcert = async (artistId, concertId) => {
+    // console.log(
+    //   "Deleting concert for artist:",
+    //   artistObjectId,
+    //   "Concert ID:",
+    //   concertId,
+    // ); // Debugging
+    const token = await getAccessTokenSilently();
 
     const response = await fetch(
-      `${BASE_URL}/api/concerts/${artistObjectId}/${concertId}`,
+      `${BASE_URL}/api/concerts/${artistId}/${concertId}`,
       {
         method: "DELETE",
         headers: {
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       },
@@ -101,7 +105,7 @@ const ConcertDetails = ({ concert, artistObjectId, onDelete }) => {
         </a>
         <p
           style={{ fontSize: ".65rem", color: "red" }}
-          onClick={() => deleteConcert(artistObjectId, concertId)}
+          onClick={() => deleteConcert(artistId, concertId)}
         >
           Remove Concert
         </p>
