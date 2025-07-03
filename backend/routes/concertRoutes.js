@@ -12,11 +12,13 @@ const router = express.Router();
 // GET all saved concerts
 router.get("/:userId", getSavedConcerts);
 
+// UNSURE WHY I CREATED THIS, BUT IT'S NOT USED
 // GET a single concert from DB
-router.get("/:id", getSavedConcert);
+// router.get("/:id", getSavedConcert);
 
 // GET a single concert from API
-router.get("/:artistName/:date", getConcert);
+// router.get("/:artistName/:date", getConcert);
+router.get("/", getConcert);
 
 // POST a new concert to DB
 router.post("/", saveConcert);
@@ -24,6 +26,8 @@ router.post("/", saveConcert);
 // DELETE a concert
 router.delete("/:artistId/:concertId", deleteConcert);
 
+// CURRENTLY UNUSED.  WOULD NEED TO BE REWORKED TO WORK WITH NEW CONCERT DATA
+// PLAN IS TO USE THIS FOR EDITING A CONCERT (e.g. GOT TO CONCERT LATE OR LEFT EARLY)
 // UPDATE a concert
 router.patch("/:id", (req, res) => {
   res.json({ mssg: "UPDATE a concert" });

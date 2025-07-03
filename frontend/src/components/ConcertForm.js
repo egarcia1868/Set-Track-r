@@ -6,6 +6,9 @@ import ConcertDetailsModal from "./ConcertDetailsModal";
 const ConcertForm = () => {
   const [artistName, setArtistName] = useState("");
   const [eventDate, setEventDate] = useState("");
+  const [cityName, setCityName] = useState("");
+  const [venueName, setVenueName] = useState("");
+  const [year, setYear] = useState("");
   const [error, setError] = useState(null);
   const [concert, setConcert] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,9 +21,19 @@ const ConcertForm = () => {
   const getConcertDetails = async () => {
     const formattedDate = convertDateFormat(eventDate);
 
-    const response = await fetch(
-      `${BASE_URL}/api/concerts/${encodeURIComponent(artistName)}/${formattedDate}`,
-    );
+    const query = new URLSearchParams();
+
+    if (artistName) query.append("artistName", artistName);
+    if (eventDate) query.append("date", formattedDate);
+    if (cityName) query.append("city", cityName);
+    if (venueName) query.append("venueName", venueName);
+    if (year) query.append("year", year);
+
+    const response = await fetch(`${BASE_URL}/api/concerts?${query.toString()}`);
+
+    // const response = await fetch(
+    //   `${BASE_URL}/api/concerts/${encodeURIComponent(artistName)}/${formattedDate}`,
+    // );
     const json = await response.json();
 
     if (!response.ok) {
@@ -64,7 +77,7 @@ const ConcertForm = () => {
             setError(null);
             setArtistName(e.target.value);
           }}
-          placeholder="e.g. Billy Strings, CAKE, Sturgill Simpson, etc."
+          placeholder="e.g. - Billy Strings, CAKE, Sturgill Simpson, etc."
           value={artistName}
         />
         <label htmlFor="date">Concert Date:</label>
@@ -73,9 +86,44 @@ const ConcertForm = () => {
           type="date"
           onChange={(e) => {
             setError(null);
+            setYear("");
             setEventDate(e.target.value);
           }}
           value={eventDate}
+        />
+        <label htmlFor="year">Year of concert/s:</label>
+        <input
+          id="year"
+          type="text"
+          onChange={(e) => {
+            setError(null);
+            setEventDate("");
+            setYear(e.target.value);
+          }}
+          placeholder="e.g. - 2025, 2024, 2023 etc."
+          value={year}
+        />
+        <label htmlFor="cityName">City:</label>
+        <input
+          id="cityName"
+          type="text"
+          onChange={(e) => {
+            setError(null);
+            setCityName(e.target.value);
+          }}
+          placeholder="e.g. - Austin, San Diego, Asheville, etc."
+          value={cityName}
+        />
+        <label htmlFor="venueName">Venue Name:</label>
+        <input
+          id="VenueName"
+          type="text"
+          onChange={(e) => {
+            setError(null);
+            setVenueName(e.target.value);
+          }}
+          placeholder="e.g. - Moody Center, The Fillmore, The Ryman, etc."
+          value={venueName}
         />
         <button
           onClick={() => {

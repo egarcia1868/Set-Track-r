@@ -7,17 +7,40 @@ import mongoose from "mongoose";
 // TODO: Fix structure to use services/controllers pattern correctly.
 
 // TODO: setup to accept other search fields
+// export const getConcert = async (req, res) => {
+//   try {
+//     const { artistName, date } = req.params;
+//     const concertData = await getConcertFromAPI(artistName, date);
+
+//     if (!concertData) {
+//       return res.status(404).json({ error: "Concert not found from API" });
+//     }
+
+//     res.json(concertData);
+//   } catch (error) {
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// };
 export const getConcert = async (req, res) => {
+  // const { artistName, venueName, city, date, p = 1 } = req.query;
+  const params = req.query;
+
+  console.log("Received search params:", params);
+
   try {
-    const { artistName, date } = req.params;
-    const concertData = await getConcertFromAPI(artistName, date);
+    if (Object.keys(params).length < 1) {
+      return res.status(400).json({ error: "At least one search criteria must be provided." });
+    }
+    let concertData = null;
+    concertData = await getConcertFromAPI( params );
 
     if (!concertData) {
-      return res.status(404).json({ error: "Concert not found from API" });
+      return res.status(404).json({ error: "Concert not found with provided criteria." });
     }
 
     res.json(concertData);
   } catch (error) {
+    console.error("Error fetching concert:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -64,36 +87,11 @@ export const getSavedConcert = async (req, res) => {
 };
 
 // TODO: setup to work with reorganization of concert data.
-// export const getSavedConcerts = async (req, res) => {
-//   try {
-//     const { userId } = req.params;
-
-//     // console.log('userId: ', userId);
-
-//     const concerts = await Artist.find();
-
-//     res.json(concerts);
-//   } catch (error) {
-//     res.status(500).json({ error: "Could not fetch concerts" });
-//   }
-// };
 export const getSavedConcerts = async (req, res) => {
-  // try {
-  //   const { userId } = req.params;
-  //   const user = await User.findOne({ auth0Id: userId });
-  //   if (!user) {
-  //     return res.status(404).json({ error: "User not found" });
-  //   }
-
-  //   const artistIds = user.artistsSeenLive.map(artist => artist.artistId);
-
-  //   const artistDocs = await Artist.find({ artistId: { $in: artistIds } });
-
-  //   const filtered =
   try {
     const { userId } = req.params;
 
-    // 1. Find the user by Auth0 ID
+    // Find the user by Auth0 ID
     const user = await User.findOne({ auth0Id: userId });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -101,10 +99,10 @@ export const getSavedConcerts = async (req, res) => {
 
     const artistIds = user.artistsSeenLive.map((entry) => entry.artistId);
 
-    // 2. Find all artist docs that match user-attended artists
+    // Find all artist docs that match user-attended artists
     const artistDocs = await Artist.find({ artistId: { $in: artistIds } });
 
-    // 3. Filter each artist’s concerts based on the user’s attended concerts
+    // Filter each artist’s concerts based on the user’s attended concerts
     const filtered = artistDocs.map((artist) => {
       const userArtistEntry = user.artistsSeenLive.find(
         (entry) => entry.artistId === artist.artistId,
