@@ -29,13 +29,17 @@ export const getConcert = async (req, res) => {
 
   try {
     if (Object.keys(params).length < 1) {
-      return res.status(400).json({ error: "At least one search criteria must be provided." });
+      return res
+        .status(400)
+        .json({ error: "At least one search criteria must be provided." });
     }
     let concertData = null;
-    concertData = await getConcertFromAPI( params );
+    concertData = await getConcertFromAPI(params);
 
     if (!concertData) {
-      return res.status(404).json({ error: "Concert not found with provided criteria." });
+      return res
+        .status(404)
+        .json({ error: "Concert not found with provided criteria." });
     }
 
     res.json(concertData);

@@ -29,7 +29,9 @@ const ConcertForm = () => {
     if (venueName) query.append("venueName", venueName);
     if (year) query.append("year", year);
 
-    const response = await fetch(`${BASE_URL}/api/concerts?${query.toString()}`);
+    const response = await fetch(
+      `${BASE_URL}/api/concerts?${query.toString()}`,
+    );
 
     // const response = await fetch(
     //   `${BASE_URL}/api/concerts/${encodeURIComponent(artistName)}/${formattedDate}`,

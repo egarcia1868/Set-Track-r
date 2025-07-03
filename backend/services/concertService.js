@@ -71,7 +71,7 @@ export const saveConcertForUser = async ({ concertData, user }) => {
 //TODO: set up to allow more than just artistName and date
 export const getConcertFromAPI = async (params) => {
   const queryString = new URLSearchParams(params).toString();
-// console.log("Fetching concert from API with params:", queryString);
+  // console.log("Fetching concert from API with params:", queryString);
   try {
     const response = await axios.get(
       `${API_URL}search/setlists/?${queryString}`,

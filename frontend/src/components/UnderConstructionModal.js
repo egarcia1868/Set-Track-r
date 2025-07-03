@@ -75,13 +75,20 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
         <li>
           Need to update the following to work with new db structure:
           <ul>
-            <li>Show delete functionality (currently removes concert from artists collection, but not from users collection.)</li>
-            <li>Functionality that updates concert listing after adding new concert</li>
+            <li>
+              Show delete functionality (currently removes concert from artists
+              collection, but not from users collection.)
+            </li>
+            <li>
+              Functionality that updates concert listing after adding new
+              concert
+            </li>
           </ul>
         </li>
         <li>
-          After retrieving concert data, set up to assume it will receive an array of shows
-          with an add button to "save to user's list" to each concert.
+          After retrieving concert data, set up to assume it will receive an
+          array of shows with an add button to "save to user's list" to each
+          concert.
         </li>
       </ul>
       <h4 style={{ marginLeft: "1.5rem" }}>

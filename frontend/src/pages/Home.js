@@ -17,7 +17,10 @@ const Home = () => {
           ongoing restructuring of data storage and API request handling.
         </p>
         <p className="alert">
-          <strong>Note:</strong> This site may enter a brief sleep mode when inactive. If this is your first visit or it's been a while since your last, please allow a moment for the site to fully wake up.
+          <strong>Note:</strong> This site may enter a brief sleep mode when
+          inactive. If this is your first visit or it's been a while since your
+          last, please allow a moment for the site to fully wake up (saved
+          concerts will not populate correctly until the site is fully awake.  ~1 minute).
         </p>
         <p>
           Set Track'r is a tool that can be used to track the concerts and songs
