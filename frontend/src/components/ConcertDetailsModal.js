@@ -3,12 +3,19 @@ import { BASE_URL } from "../utils/config";
 import { useAuth0 } from "@auth0/auth0-react";
 import ConcertDetails from "./ConcertDetails";
 
-const ConcertDetailsModal = ({ isOpen, onClose, concerts, refreshConcerts }) => {
+const ConcertDetailsModal = ({ isOpen, onClose, concertList, refreshConcerts }) => {
   const { user } = useAuth0();
   const [error, setError] = useState(null);
-  const [concertList, setConcertList] = useState(concerts?.setlist || []);
+  // const [concerts, setConcerts] = useState(concertList || []);
 
-  console.log("Concerts in Modal: ", concertList);
+//   useEffect(() => {
+//   if (concertList) {
+//     setConcerts(concertList);
+//   }
+// }, [concertList]);
+
+  // console.log("CM: ", concerts.setlist);
+  console.log("CM2: ", concertList);
   // const {
   //   artist: { name: artistName } = {},
   //   eventDate = "Unknown Date",
@@ -19,22 +26,28 @@ const ConcertDetailsModal = ({ isOpen, onClose, concerts, refreshConcerts }) => 
   //   sets: { set: sets = [] } = {},
   // } = setlistEntry;
 
-  const handleClose = () => {
-    dialogRef.current.close();
-    onClose();
-  };
+  const dialogRef = useRef(null);
 
   useEffect(() => {
-    if (isOpen) {
-      setError(null);
+    if (isOpen && dialogRef.current) {
+      if (!dialogRef.current.open) {
+        dialogRef.current.showModal();
+      }
+    } else if (dialogRef.current?.open) {
+      dialogRef.current.close();
     }
-  }, [isOpen, concerts]);
-
-  const dialogRef = useRef(null);
+  }, [isOpen]);
 
   if (isOpen && dialogRef.current) {
     dialogRef.current.showModal();
   }
+
+  const handleClose = () => {
+    dialogRef.current?.close();
+    onClose();
+  };
+
+  
 
   // const inputDate = eventDate;
   // const [day, month, year] = inputDate.split("-");
@@ -49,7 +62,7 @@ const ConcertDetailsModal = ({ isOpen, onClose, concerts, refreshConcerts }) => 
   const saveConcert = async () => {
     const body = {
       user,
-      concertData: concerts?.setlist[0],
+      // concertData: concerts?.setlist[0],
     };
 
     const response = await fetch(`${BASE_URL}/api/concerts/`, {
@@ -65,8 +78,7 @@ const ConcertDetailsModal = ({ isOpen, onClose, concerts, refreshConcerts }) => 
 
     if (!response.ok) {
       setError(json.error);
-    }
-    if (response.ok) {
+    } else {
       handleClose();
       refreshConcerts();
     }
@@ -85,7 +97,7 @@ const ConcertDetailsModal = ({ isOpen, onClose, concerts, refreshConcerts }) => 
     );
   }
 
-  if (concertList.length > 0) {
+  // if (!concertList || concertList.length === 0) return null;
     return (
       <dialog id="modal" ref={dialogRef} onClose={onClose}>
         {/* {concerts ? (
@@ -118,8 +130,8 @@ const ConcertDetailsModal = ({ isOpen, onClose, concerts, refreshConcerts }) => 
               </button>
             </form>
           </>
-        )  */}
-              {concertList.map((concert) => (
+        )  */}{ (!concertList || concertList.length === 0) ? <p>Loading...</p> :
+              concertList.map((concert) => (
                       <ConcertDetails
                         key={concert.concertId || concert.id}
                         concert={concert}
@@ -133,6 +145,6 @@ const ConcertDetailsModal = ({ isOpen, onClose, concerts, refreshConcerts }) => 
       </dialog>
     );
   }
-};
+// };
 
 export default ConcertDetailsModal;

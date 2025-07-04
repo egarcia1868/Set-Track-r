@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { BASE_URL } from "../utils/config";
 
 import ConcertDetailsModal from "./ConcertDetailsModal";
@@ -10,7 +10,7 @@ const ConcertForm = ({ refreshConcerts }) => {
   const [venueName, setVenueName] = useState("");
   const [year, setYear] = useState("");
   const [error, setError] = useState(null);
-  const [concerts, setConcerts] = useState([]);
+  const [concertList, setConcertList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const convertDateFormat = (date) => {
@@ -33,40 +33,27 @@ const ConcertForm = ({ refreshConcerts }) => {
       `${BASE_URL}/api/concerts?${query.toString()}`,
     );
 
-    // const response = await fetch(
-    //   `${BASE_URL}/api/concerts/${encodeURIComponent(artistName)}/${formattedDate}`,
-    // );
     const json = await response.json();
 
     if (!response.ok) {
       setError(json.error);
-      // setConcert(null);
+      return;
     }
 
-    if (response.ok) {
-      setConcerts(json);
-      // setError(null);
-    }
-  };
-
-  useEffect(() => {
-    if (concerts) {
+      setConcertList(json);
       setIsModalOpen(true);
-    }
-  }, [concerts]);
+  };
 
   const handleConcertDetailsClick = async () => {
     await getConcertDetails();
   };
-
-    // console.log("WHATEVER: ", concerts)
 
   return (
     <>
       <ConcertDetailsModal
         onClose={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
-        concerts={concerts}
+        concertList={concertList.setlist}
         refreshConcerts={refreshConcerts}
       />
       <form className="create">
