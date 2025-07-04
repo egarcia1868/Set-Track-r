@@ -1,20 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import { BASE_URL } from "../utils/config";
 import { useAuth0 } from "@auth0/auth0-react";
+import ConcertDetails from "./ConcertDetails";
 
-const ConcertDetailsModal = ({ isOpen, onClose, concert, refreshConcerts }) => {
+const ConcertDetailsModal = ({ isOpen, onClose, concerts, refreshConcerts }) => {
   const { user } = useAuth0();
   const [error, setError] = useState(null);
-  const setlistEntry = concert?.setlist?.[0] || {};
-  const {
-    artist: { name: artistName } = {},
-    eventDate = "Unknown Date",
-    venue: {
-      name: venueName = "Unknown Venue",
-      city: { name: cityName, state, country: { name: countryName } = {} } = {},
-    } = {},
-    sets: { set: sets = [] } = {},
-  } = setlistEntry;
+  const [concertList, setConcertList] = useState(concerts?.setlist || []);
+
+  console.log("Concerts in Modal: ", concertList);
+  // const {
+  //   artist: { name: artistName } = {},
+  //   eventDate = "Unknown Date",
+  //   venue: {
+  //     name: venueName = "Unknown Venue",
+  //     city: { name: cityName, state, country: { name: countryName } = {} } = {},
+  //   } = {},
+  //   sets: { set: sets = [] } = {},
+  // } = setlistEntry;
 
   const handleClose = () => {
     dialogRef.current.close();
@@ -25,7 +28,7 @@ const ConcertDetailsModal = ({ isOpen, onClose, concert, refreshConcerts }) => {
     if (isOpen) {
       setError(null);
     }
-  }, [isOpen, concert]);
+  }, [isOpen, concerts]);
 
   const dialogRef = useRef(null);
 
@@ -33,20 +36,20 @@ const ConcertDetailsModal = ({ isOpen, onClose, concert, refreshConcerts }) => {
     dialogRef.current.showModal();
   }
 
-  const inputDate = eventDate;
-  const [day, month, year] = inputDate.split("-");
-  const formattedDate = new Date(`${year}-${month}-${day}T00:00:00`);
+  // const inputDate = eventDate;
+  // const [day, month, year] = inputDate.split("-");
+  // const formattedDate = new Date(`${year}-${month}-${day}T00:00:00`);
 
-  const outputDate = formattedDate.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+  // const outputDate = formattedDate.toLocaleDateString("en-US", {
+  //   year: "numeric",
+  //   month: "short",
+  //   day: "numeric",
+  // });
 
   const saveConcert = async () => {
     const body = {
       user,
-      concertData: concert?.setlist[0],
+      concertData: concerts?.setlist[0],
     };
 
     const response = await fetch(`${BASE_URL}/api/concerts/`, {
@@ -82,10 +85,10 @@ const ConcertDetailsModal = ({ isOpen, onClose, concert, refreshConcerts }) => {
     );
   }
 
-  if (concert) {
+  if (concertList.length > 0) {
     return (
       <dialog id="modal" ref={dialogRef} onClose={onClose}>
-        {concert ? (
+        {/* {concerts ? (
           <>
             <h2>{artistName}</h2>
             <h4>
@@ -115,9 +118,18 @@ const ConcertDetailsModal = ({ isOpen, onClose, concert, refreshConcerts }) => {
               </button>
             </form>
           </>
-        ) : (
+        )  */}
+              {concertList.map((concert) => (
+                      <ConcertDetails
+                        key={concert.concertId || concert.id}
+                        concert={concert}
+                        // artistObjectId={artist._id}
+                        artistId={concert.artistId}
+                      />
+                    ))}
+        {/* : (
           <p>Loading...</p>
-        )}
+        )} */}
       </dialog>
     );
   }

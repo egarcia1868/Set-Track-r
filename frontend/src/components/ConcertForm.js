@@ -10,7 +10,7 @@ const ConcertForm = ({ refreshConcerts }) => {
   const [venueName, setVenueName] = useState("");
   const [year, setYear] = useState("");
   const [error, setError] = useState(null);
-  const [concert, setConcert] = useState(null);
+  const [concerts, setConcerts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const convertDateFormat = (date) => {
@@ -44,27 +44,29 @@ const ConcertForm = ({ refreshConcerts }) => {
     }
 
     if (response.ok) {
-      setConcert(json);
+      setConcerts(json);
       // setError(null);
     }
   };
 
   useEffect(() => {
-    if (concert) {
+    if (concerts) {
       setIsModalOpen(true);
     }
-  }, [concert]);
+  }, [concerts]);
 
   const handleConcertDetailsClick = async () => {
     await getConcertDetails();
   };
+
+    // console.log("WHATEVER: ", concerts)
 
   return (
     <>
       <ConcertDetailsModal
         onClose={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
-        concert={concert}
+        concerts={concerts}
         refreshConcerts={refreshConcerts}
       />
       <form className="create">
@@ -94,6 +96,7 @@ const ConcertForm = ({ refreshConcerts }) => {
           }}
           value={eventDate}
         />
+        <p className="alert">Recommend that you only use Artist Name and Date until this message is removed.</p>
         <label htmlFor="year">Year of concert/s:</label>
         <input
           id="year"

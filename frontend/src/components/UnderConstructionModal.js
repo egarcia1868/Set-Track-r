@@ -72,7 +72,6 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
         Improvement/s currently being worked:
       </h4>
       <ul>
-        <li>Fix error occuring after adding a new concert to user's list</li>
         <li>
           After retrieving concert data, set up to assume it will receive an
           array of shows with an add button to "save to user's list" to each
@@ -84,15 +83,25 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
       </h4>
       <ul>
         <li>
+          Create a new ConcertDetailsModalDetails component that will
+          display all concert details in smaller components (like the components in the ArtistDetails component) and allow the user to save it to their
+          list.
+        </li>
+        <li>
+          Add "next" button to ConcertDetailsModal to allow user to cycle
+          through concerts returned from the API.
+        </li>
+        {/* <li>
           Add ability to select multiple dates on the show add form - (check
           commit from 4/16 for starting point)
-        </li>
+        </li> */}
         <li>
           add ability to remove specific songs from "seen" set (for accurate
           tracking if arrived late/left early)
         </li>
         <li>create pie chart divided by number of times per song vs total.</li>
         <li>create personal page to display shows listed</li>
+        <li>Figure out why page logs out on refresh for mobile, but not desktop.</li>
         <li>
           create a song page that displays information about the specific song
           as well as when you've seen it

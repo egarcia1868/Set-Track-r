@@ -40,8 +40,6 @@ const Dashboard = () => {
     fetchConcerts();
   }, [isAuthenticated, isLoading, fetchConcerts]);
 
-  console.log("Artists in Dashboard: ", artists);
-
   return (
     <div className="home">
       <div className="concerts">
