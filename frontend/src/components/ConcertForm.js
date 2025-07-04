@@ -3,7 +3,7 @@ import { BASE_URL } from "../utils/config";
 
 import ConcertDetailsModal from "./ConcertDetailsModal";
 
-const ConcertForm = () => {
+const ConcertForm = ({ refreshConcerts }) => {
   const [artistName, setArtistName] = useState("");
   const [eventDate, setEventDate] = useState("");
   const [cityName, setCityName] = useState("");
@@ -25,7 +25,7 @@ const ConcertForm = () => {
 
     if (artistName) query.append("artistName", artistName);
     if (eventDate) query.append("date", formattedDate);
-    if (cityName) query.append("city", cityName);
+    if (cityName) query.append("cityName", cityName);
     if (venueName) query.append("venueName", venueName);
     if (year) query.append("year", year);
 
@@ -65,6 +65,7 @@ const ConcertForm = () => {
         onClose={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
         concert={concert}
+        refreshConcerts={refreshConcerts}
       />
       <form className="create">
         <h3>Find new set list</h3>
