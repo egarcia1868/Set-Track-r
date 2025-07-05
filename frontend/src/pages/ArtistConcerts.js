@@ -13,7 +13,7 @@ const ArtistConcerts = () => {
   const [concertList, setConcertList] = useState(artist?.concerts || []);
 
   const navigate = useNavigate();
-    console.log("Concerts in Artist page: ", concertList);
+  console.log("Concerts in Artist page: ", concertList);
 
   useEffect(() => {
     if (!location.state) {

@@ -74,19 +74,23 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
       <ul>
         <li>
           After retrieving concert data, set up to assume it will receive an
-          array of shows with an add button to "save to user's list" to each
-          concert.
+          array of shows with a checkbox to "save to user's list" to each
+          concert. Then submit all that are checked to be added at once.
+        </li>
+        <li>
+          Create a new ConcertDetailsModalDetails component that will display
+          all concert details in smaller components (like the components in the
+          ArtistDetails component) and allow the user to save it to their list.
+        </li>
+        <li>
+          Need to set up saveConcert to be able to accept a group of concerts,
+          rather than just one.
         </li>
       </ul>
       <h4 style={{ marginLeft: "1.5rem" }}>
         Planned upcoming improvements/bug fixes:
       </h4>
       <ul>
-        <li>
-          Create a new ConcertDetailsModalDetails component that will
-          display all concert details in smaller components (like the components in the ArtistDetails component) and allow the user to save it to their
-          list.
-        </li>
         <li>
           Add "next" button to ConcertDetailsModal to allow user to cycle
           through concerts returned from the API.
@@ -101,7 +105,9 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
         </li>
         <li>create pie chart divided by number of times per song vs total.</li>
         <li>create personal page to display shows listed</li>
-        <li>Figure out why page logs out on refresh for mobile, but not desktop.</li>
+        <li>
+          Figure out why page logs out on refresh for mobile, but not desktop.
+        </li>
         <li>
           create a song page that displays information about the specific song
           as well as when you've seen it

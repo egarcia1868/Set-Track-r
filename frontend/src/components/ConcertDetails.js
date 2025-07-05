@@ -103,12 +103,14 @@ const ConcertDetails = ({ concert, artistId, onDelete }) => {
         >
           More Info
         </a>
-        {onDelete && <p
-          style={{ fontSize: ".65rem", color: "red" }}
-          onClick={() => deleteConcert(artistId, concertId)}
-        >
-          Remove Concert
-        </p>}
+        {onDelete && (
+          <p
+            style={{ fontSize: ".65rem", color: "red" }}
+            onClick={() => deleteConcert(artistId, concertId)}
+          >
+            Remove Concert
+          </p>
+        )}
       </div>
     </div>
   );

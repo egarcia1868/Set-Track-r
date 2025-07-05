@@ -3,16 +3,21 @@ import { BASE_URL } from "../utils/config";
 import { useAuth0 } from "@auth0/auth0-react";
 import ConcertDetails from "./ConcertDetails";
 
-const ConcertDetailsModal = ({ isOpen, onClose, concertList, refreshConcerts }) => {
+const ConcertDetailsModal = ({
+  isOpen,
+  onClose,
+  concertList,
+  refreshConcerts,
+}) => {
   const { user } = useAuth0();
   const [error, setError] = useState(null);
   // const [concerts, setConcerts] = useState(concertList || []);
 
-//   useEffect(() => {
-//   if (concertList) {
-//     setConcerts(concertList);
-//   }
-// }, [concertList]);
+  //   useEffect(() => {
+  //   if (concertList) {
+  //     setConcerts(concertList);
+  //   }
+  // }, [concertList]);
 
   // console.log("CM: ", concerts.setlist);
   console.log("CM2: ", concertList);
@@ -46,8 +51,6 @@ const ConcertDetailsModal = ({ isOpen, onClose, concertList, refreshConcerts }) 
     dialogRef.current?.close();
     onClose();
   };
-
-  
 
   // const inputDate = eventDate;
   // const [day, month, year] = inputDate.split("-");
@@ -98,9 +101,9 @@ const ConcertDetailsModal = ({ isOpen, onClose, concertList, refreshConcerts }) 
   }
 
   // if (!concertList || concertList.length === 0) return null;
-    return (
-      <dialog id="modal" ref={dialogRef} onClose={onClose}>
-        {/* {concerts ? (
+  return (
+    <dialog id="modal" ref={dialogRef} onClose={onClose}>
+      {/* {concerts ? (
           <>
             <h2>{artistName}</h2>
             <h4>
@@ -130,21 +133,25 @@ const ConcertDetailsModal = ({ isOpen, onClose, concertList, refreshConcerts }) 
               </button>
             </form>
           </>
-        )  */}{ (!concertList || concertList.length === 0) ? <p>Loading...</p> :
-              concertList.map((concert) => (
-                      <ConcertDetails
-                        key={concert.concertId || concert.id}
-                        concert={concert}
-                        // artistObjectId={artist._id}
-                        artistId={concert.artistId}
-                      />
-                    ))}
-        {/* : (
+        )  */}
+      {!concertList || concertList.length === 0 ? (
+        <p>Loading...</p>
+      ) : (
+        concertList.map((concert) => (
+          <ConcertDetails
+            key={concert.concertId || concert.id}
+            concert={concert}
+            // artistObjectId={artist._id}
+            artistId={concert.artistId}
+          />
+        ))
+      )}
+      {/* : (
           <p>Loading...</p>
         )} */}
-      </dialog>
-    );
-  }
+    </dialog>
+  );
+};
 // };
 
 export default ConcertDetailsModal;
