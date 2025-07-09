@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { BASE_URL } from "../utils/config";
 import { useAuth0 } from "@auth0/auth0-react";
-import ConcertDetails from "./ConcertDetails";
+import NewConcertDetails from "./NewConcertDetails";
 
 const ConcertDetailsModal = ({
   isOpen,
@@ -11,6 +11,7 @@ const ConcertDetailsModal = ({
 }) => {
   const { user } = useAuth0();
   const [error, setError] = useState(null);
+  const [setsToAdd, setSetsToAdd] = useState([]);
   // const [concerts, setConcerts] = useState(concertList || []);
 
   //   useEffect(() => {
@@ -34,18 +35,52 @@ const ConcertDetailsModal = ({
   const dialogRef = useRef(null);
 
   useEffect(() => {
-    if (isOpen && dialogRef.current) {
-      if (!dialogRef.current.open) {
-        dialogRef.current.showModal();
-      }
-    } else if (dialogRef.current?.open) {
-      dialogRef.current.close();
-    }
-  }, [isOpen]);
+    const dialog = dialogRef.current;
+    if (!dialog) return;
 
-  if (isOpen && dialogRef.current) {
-    dialogRef.current.showModal();
-  }
+    if (isOpen && !dialog.open) {
+      dialog.showModal();
+    } else if (!isOpen && dialog.open) {
+      dialog.close();
+    }
+
+    const handleClick = (e) => {
+      // If the click target *is* the <dialog> element, it means the user clicked the backdrop
+      if (e.target === dialog) {
+        onClose();
+      }
+    };
+
+    dialog.addEventListener("click", handleClick);
+    return () => dialog.removeEventListener("click", handleClick);
+  }, [onClose, isOpen]);
+
+  // Close on click outside or Escape
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const handleClickOutside = (e) => {
+      // If dialog is open and click is outside it
+      if (dialog.open && !dialog.contains(e.target)) {
+        onClose();
+      }
+    };
+
+    const handleEscape = (e) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [onClose]);
 
   const handleClose = () => {
     dialogRef.current?.close();
@@ -62,10 +97,16 @@ const ConcertDetailsModal = ({
   //   day: "numeric",
   // });
 
-  const saveConcert = async () => {
+  const addSetToSetsToAddList = (set) => {
+    setSetsToAdd((prev) => [...prev, set]);
+  };
+
+  console.log("tacotaco: ", setsToAdd);
+
+  const saveConcerts = async () => {
     const body = {
       user,
-      // concertData: concerts?.setlist[0],
+      concertData: setsToAdd,
     };
 
     const response = await fetch(`${BASE_URL}/api/concerts/`, {
@@ -103,6 +144,7 @@ const ConcertDetailsModal = ({
   // if (!concertList || concertList.length === 0) return null;
   return (
     <dialog id="modal" ref={dialogRef} onClose={onClose}>
+      {/* {concertList && <h2 style={{ marginBottom: '16px' }}>{concertList[0].artist.name}</h2> } */}
       {/* {concerts ? (
           <>
             <h2>{artistName}</h2>
@@ -138,14 +180,24 @@ const ConcertDetailsModal = ({
         <p>Loading...</p>
       ) : (
         concertList.map((concert) => (
-          <ConcertDetails
+          <NewConcertDetails
             key={concert.concertId || concert.id}
             concert={concert}
             // artistObjectId={artist._id}
-            artistId={concert.artistId}
+            // saveConcert={saveConcert}
+            addSetToSetsToAddList={addSetToSetsToAddList}
+            // artist={concert.artist}
           />
         ))
       )}
+      <form method="dialog" id="modal-actions">
+        <button type="button" onClick={handleClose}>
+          Close
+        </button>
+        <button type="button" onClick={saveConcerts}>
+          Add show/s to my list!
+        </button>
+      </form>
       {/* : (
           <p>Loading...</p>
         )} */}

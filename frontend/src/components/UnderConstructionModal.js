@@ -78,9 +78,14 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
           concert. Then submit all that are checked to be added at once.
         </li>
         <li>
-          Create a new ConcertDetailsModalDetails component that will display
-          all concert details in smaller components (like the components in the
+          Create a new NewConcertDetails component that will display all concert
+          details in smaller components (like the components in the
           ArtistDetails component) and allow the user to save it to their list.
+        </li>
+        <li>
+          Retrieve all concert data from matching artistId, and do not provide
+          an "add to sets" checkbox for those. Instead provide an "Already
+          added" message.
         </li>
         <li>
           Need to set up saveConcert to be able to accept a group of concerts,

@@ -72,6 +72,26 @@ header a {
   width: 100%; /* Ensure it takes the full width */
 }
 
+.checkbox {
+  display: inline-block;
+  position: relative;
+}
+
+.checkbox-label {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  height: 35px;
+  /* margin-bottom: -7px; */
+  white-space: nowrap;
+  /* gap: 8px; space between checkbox and text */
+  /* font-family: sans-serif; */
+  /* font-size: 16px; */
+  cursor: pointer;
+  /* width: auto; */
+}
+
 /* homepage */
 .home {
   display: grid;
@@ -97,6 +117,18 @@ dialog {
   background: #fff;
   border-radius: 4px;
   margin: 20px auto;
+  padding: 20px;
+  position: relative;
+  cursor: pointer;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
+}
+.new-concert-details + .new-concert-details {
+  margin-top: -2px;
+}
+.new-concert-details {
+  background: #fff;
+  border-radius: 4px;
+  border: solid 2px lightgray;
   padding: 20px;
   position: relative;
   cursor: pointer;
