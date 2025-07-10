@@ -73,23 +73,12 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
       </h4>
       <ul>
         <li>
-          After retrieving concert data, set up to assume it will receive an
-          array of shows with a checkbox to "save to user's list" to each
-          concert. Then submit all that are checked to be added at once.
-        </li>
+          Set "Close" / "Save Concerts" button to be stuck at the bottom of the
+          modal.
+        </li>{" "}
         <li>
-          Create a new NewConcertDetails component that will display all concert
-          details in smaller components (like the components in the
-          ArtistDetails component) and allow the user to save it to their list.
-        </li>
-        <li>
-          Retrieve all concert data from matching artistId, and do not provide
-          an "add to sets" checkbox for those. Instead provide an "Already
-          added" message.
-        </li>
-        <li>
-          Need to set up saveConcerts to be able to accept a group of concerts,
-          rather than just one.
+          Add "Next page" button to modal and have it run same api call, just
+          with p++ as param.
         </li>
       </ul>
       <h4 style={{ marginLeft: "1.5rem" }}>
