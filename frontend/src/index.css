@@ -259,9 +259,9 @@ body,
   /* margin: 0 auto; */
 }
 
-.new-concerts {
-  /* max-height: calc(100% - 36px); */
-}
+/* .new-concerts {
+  max-height: calc(100% - 36px);
+} */
 
 #modal {
   width: 50%;
