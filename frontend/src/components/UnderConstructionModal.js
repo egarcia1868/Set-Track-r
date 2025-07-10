@@ -80,16 +80,12 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
           Add "Next page" button to modal and have it run same api call, just
           with p++ as param.
         </li>
+        <li>Set form to accept "Enter"/"Return" as button click</li>
       </ul>
       <h4 style={{ marginLeft: "1.5rem" }}>
         Planned upcoming improvements/bug fixes:
       </h4>
       <ul>
-        <li>Set form to accept "Enter"/"Return" as button click</li>
-        <li>
-          Add "next" button to ConcertDetailsModal to allow user to cycle
-          through concerts returned from the API.
-        </li>
         {/* <li>
           Add ability to select multiple dates on the show add form - (check
           commit from 4/16 for starting point)
