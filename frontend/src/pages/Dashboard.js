@@ -40,6 +40,8 @@ const Dashboard = () => {
     fetchConcerts();
   }, [isAuthenticated, isLoading, fetchConcerts]);
 
+  artists.sort((a, b) => a.artistName.localeCompare(b.artistName));
+
   return (
     <div className="home">
       <div className="concerts">

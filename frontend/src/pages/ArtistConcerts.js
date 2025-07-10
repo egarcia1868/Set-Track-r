@@ -1,23 +1,19 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { useState, useMemo, useEffect } from "react";
 import ConcertDetails from "../components/ConcertDetails";
 import SongsDetails from "../components/SongsDetails";
-import { useState, useMemo, useEffect } from "react";
 
 const ArtistConcerts = () => {
-  const [expandedYears, setExpandedYears] = useState(new Set());
-  const [expandTracks, setExpandTracks] = useState(false);
-
+  const navigate = useNavigate();
   const location = useLocation();
+
   const { artist = {} } = location.state || {};
   const { artistName } = artist;
   const [concertList, setConcertList] = useState(artist?.concerts || []);
-
-  const navigate = useNavigate();
+  const [expandTracks, setExpandTracks] = useState(false);
 
   useEffect(() => {
-    if (!location.state) {
-      navigate("/");
-    }
+    if (!location.state) navigate("/");
   }, [location.state, navigate]);
 
   // Sort concerts by date (descending order)
@@ -39,6 +35,10 @@ const ArtistConcerts = () => {
       ),
     ],
     [sortedConcerts],
+  );
+
+  const [expandedYears, setExpandedYears] = useState(
+    new Set(sortedConcertYears),
   );
 
   const toggleYear = (year) => {

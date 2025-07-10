@@ -122,18 +122,20 @@ const ConcertDetailsModal = ({
 
   return (
     <dialog id="modal" ref={dialogRef} onClose={onClose}>
-      {!concertList || concertList.length === 0 ? (
-        <p>Loading...</p>
-      ) : (
-        concertList.map((concert) => (
-          <NewConcertDetails
-            key={concert.concertId || concert.id}
-            concert={concert}
-            isChecked={checkedConcertIds.has(concert.id)}
-            onCheckboxChange={handleCheckboxChange(concert.id)}
-          />
-        ))
-      )}
+      <div className="new-concerts">
+        {!concertList || concertList.length === 0 ? (
+          <p>Loading...</p>
+        ) : (
+          concertList.map((concert) => (
+            <NewConcertDetails
+              key={concert.concertId || concert.id}
+              concert={concert}
+              isChecked={checkedConcertIds.has(concert.id)}
+              onCheckboxChange={handleCheckboxChange(concert.id)}
+            />
+          ))
+        )}
+      </div>
       <form method="dialog" id="modal-actions">
         <button type="button" onClick={handleClose}>
           Close

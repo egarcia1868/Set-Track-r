@@ -32,7 +32,7 @@ const NewConcertDetails = ({ concert, isChecked, onCheckboxChange }) => {
 
   return (
     <div
-      className="new-concert-details"
+      className="concert-details"
       onClick={() => setShowSetList((prev) => !prev)}
     >
       <h3>{artist.name}</h3>

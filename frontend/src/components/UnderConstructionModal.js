@@ -67,10 +67,6 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
       </h4>
       <ul>
         <li>
-          Set "Close" / "Save Concerts" button to be stuck at the bottom of the
-          modal.
-        </li>{" "}
-        <li>
           Add "Next page" button to modal and have it run same api call, just
           with p++ as param.
         </li>
@@ -80,6 +76,10 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
         Planned upcoming improvements/bug fixes:
       </h4>
       <ul>
+        <li>
+          displayed bands should be displayed in alphabetical order rather than
+          added date.
+        </li>
         <li>
           See if feasible when adding a band, to display other bands at that
           show. (ex. - enter King Gizz & 11/15/2024, King Gizz would show up,

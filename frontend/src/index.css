@@ -122,6 +122,7 @@ dialog {
   cursor: pointer;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
 }
+
 .new-concert-details + .new-concert-details {
   margin-top: -2px;
 }
@@ -240,12 +241,26 @@ body,
   min-height: 100vh; /* full viewport height */
 }
 
+.footer {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  height: 0.6rem;
+  line-height: 0.6rem;
+  z-index: 100;
+  font-size: 0.6rem;
+}
+
 /* Make the "pages" div grow to fill available space */
 .pages {
   flex: 1; /* This pushes footer down */
   max-width: 1400px;
   padding: 20px;
   /* margin: 0 auto; */
+}
+
+.new-concerts {
+  /* max-height: calc(100% - 36px); */
 }
 
 #modal {
@@ -301,6 +316,17 @@ body,
 
 #modal form button:last-of-type:hover {
   background: #382e1b;
+}
+
+#modal-actions {
+  position: fixed;
+  bottom: 0;
+  height: 33px;
+  width: inherit;
+  /* height: .6rem; */
+  /* line-height: .6rem; */
+  z-index: 100;
+  /* font-size: .6rem;   */
 }
 
 @media screen and (max-width: 768px) {
