@@ -1,7 +1,7 @@
 import Artist from "../models/ArtistModel.js";
 import User from "../models/UserModel.js";
 import { getConcertFromAPI } from "../services/concertService.js";
-import { saveConcertForUser } from "../services/concertService.js";
+import { saveConcertsForUser } from "../services/concertService.js";
 // import mongoose from "mongoose";
 
 // TODO: Fix structure to use services/controllers pattern correctly.
@@ -49,16 +49,16 @@ export const getConcert = async (req, res) => {
   }
 };
 
-export const saveConcert = async (req, res) => {
+export const saveConcerts = async (req, res) => {
   try {
-    const result = await saveConcertForUser({
+    const result = await saveConcertsForUser({
       concertData: req.body.concertData,
       user: req.body.user,
     });
 
     res.status(201).json({
-      message: "Concert saved for artist and user successfully",
-      artist: result.artistDoc,
+      message: "Concert saved for user successfully",
+      // artist: result.artistDoc,
       user: result.userDoc,
     });
   } catch (error) {

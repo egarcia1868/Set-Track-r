@@ -12,7 +12,21 @@ const ConcertDetailsModal = ({
   const { user } = useAuth0();
   const [error, setError] = useState(null);
   const [setsToAdd, setSetsToAdd] = useState([]);
+  const [checkedConcertIds, setCheckedConcertIds] = useState(new Set());
   // const [concerts, setConcerts] = useState(concertList || []);
+
+  const handleCheckboxChange = (concertId) => (e) => {
+    e.stopPropagation();
+    setCheckedConcertIds((prev) => {
+      const updated = new Set(prev);
+      if (e.target.checked) {
+        updated.add(concertId);
+      } else {
+        updated.delete(concertId);
+      }
+      return updated;
+    });
+  };
 
   //   useEffect(() => {
   //   if (concertList) {
@@ -21,7 +35,7 @@ const ConcertDetailsModal = ({
   // }, [concertList]);
 
   // console.log("CM: ", concerts.setlist);
-  console.log("CM2: ", concertList);
+  // console.log("CM2: ", concertList);
   // const {
   //   artist: { name: artistName } = {},
   //   eventDate = "Unknown Date",
@@ -97,17 +111,12 @@ const ConcertDetailsModal = ({
   //   day: "numeric",
   // });
 
-  const addSetToSetsToAddList = (set) => {
-    setSetsToAdd((prev) => [...prev, set]);
-  };
+  // const addConcertsToAddList = async (concert) => {
+  //   await setSetsToAdd((prev) => [...prev, concert]);
+  // };
 
-  console.log("tacotaco: ", setsToAdd);
-
-  const saveConcerts = async () => {
-    const body = {
-      user,
-      concertData: setsToAdd,
-    };
+  const saveConcerts = async (body) => {
+    console.log("4444444", body);
 
     const response = await fetch(`${BASE_URL}/api/concerts/`, {
       method: "POST",
@@ -128,6 +137,17 @@ const ConcertDetailsModal = ({
     }
   };
 
+  const handleSubmit = async () => {
+    const selectedConcerts = concertList.filter((c) =>
+      checkedConcertIds.has(c.id),
+    );
+    // addConcertsToAddList(selectedConcerts); // your saving logic
+    // saveConcerts();
+    const body = { user, concertData: selectedConcerts };
+
+    await saveConcerts(body);
+  };
+
   if (error) {
     return (
       <dialog id="modal" ref={dialogRef} onClose={onClose}>
@@ -135,7 +155,7 @@ const ConcertDetailsModal = ({
 
         <form method="dialog" id="modal-actions">
           <button>Close</button>
-          {/* <button onClick={saveConcert}>Add show to my list!</button> */}
+          {/* <button onClick={saveConcer}>Add show to my list!</button> */}
         </form>
       </dialog>
     );
@@ -170,7 +190,7 @@ const ConcertDetailsModal = ({
               <button type="button" onClick={handleClose}>
                 Close
               </button>
-              <button type="button" onClick={saveConcert}>
+              <button type="button" onClick={saveConcer}>
                 Add show to my list!
               </button>
             </form>
@@ -184,8 +204,10 @@ const ConcertDetailsModal = ({
             key={concert.concertId || concert.id}
             concert={concert}
             // artistObjectId={artist._id}
-            // saveConcert={saveConcert}
-            addSetToSetsToAddList={addSetToSetsToAddList}
+            // saveConcerts={saveConcerts}
+            isChecked={checkedConcertIds.has(concert.id)}
+            onCheckboxChange={handleCheckboxChange(concert.id)}
+            // addConcertToAddList={addConcertToAddList}
             // artist={concert.artist}
           />
         ))
@@ -194,7 +216,7 @@ const ConcertDetailsModal = ({
         <button type="button" onClick={handleClose}>
           Close
         </button>
-        <button type="button" onClick={saveConcerts}>
+        <button type="button" onClick={handleSubmit}>
           Add show/s to my list!
         </button>
       </form>

@@ -88,7 +88,7 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
           added" message.
         </li>
         <li>
-          Need to set up saveConcert to be able to accept a group of concerts,
+          Need to set up saveConcerts to be able to accept a group of concerts,
           rather than just one.
         </li>
       </ul>
@@ -96,6 +96,7 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
         Planned upcoming improvements/bug fixes:
       </h4>
       <ul>
+        <li>Set form to accept "Enter"/"Return" as button click</li>
         <li>
           Add "next" button to ConcertDetailsModal to allow user to cycle
           through concerts returned from the API.
@@ -140,7 +141,7 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
       </ul>
       <form method="dialog" id="modal-actions">
         <button style={{ marginBottom: "2rem" }}>Close</button>
-        {/* <button onClick={saveConcert}>Add show to my list!</button> */}
+        {/* <button onClick={saveConcerts}>Add show to my list!</button> */}
       </form>
     </dialog>
   );
@@ -259,7 +260,7 @@ export default UnderConstructionModal;
 //       </ul>
 //       <form method="dialog" id="modal-actions">
 //         <button style={{ marginBottom: "2rem" }}>Close</button>
-//         {/* <button onClick={saveConcert}>Add show to my list!</button> */}
+//         {/* <button onClick={saveConcerts}>Add show to my list!</button> */}
 //       </form>
 //     </dialog>
 //   );

@@ -3,12 +3,10 @@ import { useState } from "react";
 // import { BASE_URL } from "../utils/config";
 // import { useAuth0 } from "@auth0/auth0-react";
 
-const NewConcertDetails = ({ concert }) => {
+const NewConcertDetails = ({ concert, isChecked, onCheckboxChange }) => {
   // const { getAccessTokenSilently } = useAuth0();
   // const { dispatch } = useConcertsContext();
   const [showSetList, setShowSetList] = useState(false);
-
-  // console.log("NCD: ", concert);
 
   const {
     // concertId,
@@ -28,6 +26,8 @@ const NewConcertDetails = ({ concert }) => {
   } = concert;
 
   const sets = setsArray.set;
+
+  // console.log("NCD: ", concert);
 
   const inputDate = eventDate;
   const [day, month, year] = inputDate.split("-");
@@ -116,7 +116,11 @@ const NewConcertDetails = ({ concert }) => {
         </a>
         <label className="checkbox-label" onClick={(e) => e.stopPropagation()}>
           Add to my sets!
-          <input type="checkbox" />
+          <input
+            type="checkbox"
+            onChange={onCheckboxChange}
+            checked={isChecked}
+          />
         </label>
       </div>
     </div>

@@ -3,7 +3,7 @@ import {
   // getSavedConcert,
   deleteConcert,
   getSavedConcerts,
-  saveConcert,
+  saveConcerts,
   getConcert,
 } from "../controllers/concertController.js";
 import getCheckJwt from "../middleware/auth.js";
@@ -23,7 +23,7 @@ router.get("/user/saved", checkJwt, getSavedConcerts);
 router.get("/", getConcert);
 
 // POST a new concert to DB
-router.post("/", saveConcert);
+router.post("/", saveConcerts);
 
 // DELETE a concert
 router.delete("/:artistId/:concertId", checkJwt, deleteConcert);

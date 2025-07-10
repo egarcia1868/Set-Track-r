@@ -23,7 +23,7 @@ const SetlistEntry = () => {
       <button type="button" onClick={handleClose}>
         Close
       </button>
-      <button type="button" onClick={saveConcert}>
+      <button type="button" onClick={saveConcerts}>
         Add show to my list!
       </button>
     </form>
