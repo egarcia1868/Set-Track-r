@@ -11,7 +11,6 @@ const API_URL =
 const API_KEY = process.env.SETLIST_FM_API_KEY;
 
 export const saveConcertsForUser = async ({ concertData, user }) => {
-  console.log("STARTING", concertData);
   const userId = user.sub;
 
   let userDoc = await User.findOne({ auth0Id: userId });

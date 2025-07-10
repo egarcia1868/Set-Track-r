@@ -1,18 +1,11 @@
 import { useState } from "react";
-// import { useConcertsContext } from "../hooks/useConcertsContext";
-// import { BASE_URL } from "../utils/config";
-// import { useAuth0 } from "@auth0/auth0-react";
 
 const NewConcertDetails = ({ concert, isChecked, onCheckboxChange }) => {
-  // const { getAccessTokenSilently } = useAuth0();
-  // const { dispatch } = useConcertsContext();
   const [showSetList, setShowSetList] = useState(false);
 
   const {
-    // concertId,
     artist,
     eventDate,
-    // id: concertId,
     venue: {
       name: venueName,
       city: {
@@ -27,8 +20,6 @@ const NewConcertDetails = ({ concert, isChecked, onCheckboxChange }) => {
 
   const sets = setsArray.set;
 
-  // console.log("NCD: ", concert);
-
   const inputDate = eventDate;
   const [day, month, year] = inputDate.split("-");
   const formattedDate = new Date(`${year}-${month}-${day}T00:00:00`);
@@ -38,37 +29,6 @@ const NewConcertDetails = ({ concert, isChecked, onCheckboxChange }) => {
     month: "short",
     day: "numeric",
   });
-
-  // const deleteConcert = async (artistId, concertId) => {
-  //   // console.log(
-  //   //   "Deleting concert for artist:",
-  //   //   artistObjectId,
-  //   //   "Concert ID:",
-  //   //   concertId,
-  //   // ); // Debugging
-  //   const token = await getAccessTokenSilently();
-
-  //   const response = await fetch(
-  //     `${BASE_URL}/api/concerts/${artistId}/${concertId}`,
-  //     {
-  //       method: "DELETE",
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //         "Content-Type": "application/json",
-  //       },
-  //     },
-  //   );
-
-  //   const json = await response.json();
-
-  //   if (!response.ok) {
-  //     console.error("Failed to delete concert");
-  //     return;
-  //   }
-  //   if (onDelete) onDelete(concertId);
-  //   dispatch({ type: "DELETE_CONCERT", payload: json });
-  // };
-  // console.log('who cares: ', artistId)
 
   return (
     <div

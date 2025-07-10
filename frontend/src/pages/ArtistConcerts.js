@@ -13,7 +13,6 @@ const ArtistConcerts = () => {
   const [concertList, setConcertList] = useState(artist?.concerts || []);
 
   const navigate = useNavigate();
-  console.log("Concerts in Artist page: ", concertList);
 
   useEffect(() => {
     if (!location.state) {
@@ -55,12 +54,6 @@ const ArtistConcerts = () => {
       expandedYears.size > 0 ? new Set() : new Set(sortedConcertYears),
     );
   };
-
-  // const handleDeleteConcert = (concertId) => {
-  //   setConcerts((prevConcerts) =>
-  //     prevConcerts.filter((c) => c._id !== concertId)
-  //   );
-  // };
 
   if (!location.state) return null;
 
@@ -109,7 +102,6 @@ const ArtistConcerts = () => {
                       <ConcertDetails
                         key={concert.concertId || concert.id}
                         concert={concert}
-                        // artistObjectId={artist._id}
                         artistId={artist.artistId}
                         onDelete={(deletedId) =>
                           setConcertList((prev) =>

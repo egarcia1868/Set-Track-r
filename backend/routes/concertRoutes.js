@@ -1,6 +1,5 @@
 import express from "express";
 import {
-  // getSavedConcert,
   deleteConcert,
   getSavedConcerts,
   saveConcerts,
@@ -19,7 +18,6 @@ router.get("/user/saved", checkJwt, getSavedConcerts);
 // router.get("/:id", getSavedConcert);
 
 // GET a single concert from API
-// router.get("/:artistName/:date", getConcert);
 router.get("/", getConcert);
 
 // POST a new concert to DB

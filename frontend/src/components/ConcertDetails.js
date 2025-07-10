@@ -33,12 +33,6 @@ const ConcertDetails = ({ concert, artistId, onDelete }) => {
   });
 
   const deleteConcert = async (artistId, concertId) => {
-    // console.log(
-    //   "Deleting concert for artist:",
-    //   artistObjectId,
-    //   "Concert ID:",
-    //   concertId,
-    // ); // Debugging
     const token = await getAccessTokenSilently();
 
     const response = await fetch(
