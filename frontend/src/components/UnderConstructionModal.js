@@ -77,6 +77,10 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
       </h4>
       <ul>
         <li>
+          Start switching to utilizing MUI or shadcn/ui for components.
+          </li>
+        <li>Fix bug where close/"add to list" buttons appear at bottom of page, rather than bottom of modal after searching for concerts and concert list does not take up full page.</li>
+        <li>
           displayed bands should be displayed in alphabetical order rather than
           added date.
         </li>
