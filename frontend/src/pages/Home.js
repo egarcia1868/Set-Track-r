@@ -13,10 +13,6 @@ const Home = () => {
       />
       <div>
         <p className="alert">
-          7/2/2025 - some functionality may be temporarily unavailable due to
-          ongoing restructuring of data storage and API request handling.
-        </p>
-        <p className="alert">
           <strong>Note:</strong> This site may enter a brief sleep mode when
           inactive. If this is your first visit or it's been a while since your
           last, please allow a moment for the site to fully wake up (saved
