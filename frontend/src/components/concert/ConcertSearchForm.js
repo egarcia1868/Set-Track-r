@@ -12,13 +12,15 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
   const [error, setError] = useState(null);
   const [concertList, setConcertList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [lastSearchParams, setLastSearchParams] = useState(null);
 
   const convertDateFormat = (date) => {
     const [year, month, day] = date.split("-");
     return `${day}-${month}-${year}`;
   };
 
-  const getConcertDetails = async () => {
+  const getConcertDetails = async (page = 1) => {
     const formattedDate = convertDateFormat(eventDate);
 
     const query = new URLSearchParams();
@@ -28,6 +30,17 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
     if (cityName) query.append("cityName", cityName);
     if (venueName) query.append("venueName", venueName);
     if (year) query.append("year", year);
+    if (page > 1) query.append("p", page);
+
+    // Store search params for pagination
+    setLastSearchParams({
+      artistName,
+      eventDate: formattedDate,
+      cityName,
+      venueName,
+      year
+    });
+    setCurrentPage(page);
 
     const response = await fetch(
       `${BASE_URL}/api/concerts?${query.toString()}`,
@@ -44,13 +57,45 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
     setIsModalOpen(true);
   };
 
-  const handleConcertDetailsClick = async () => {
-    await getConcertDetails();
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     await getConcertDetails();
+  };
+
+  const navigateToPage = async (newPage) => {
+    if (lastSearchParams && newPage >= 1) {
+      // Temporarily restore search params for pagination
+      const tempArtistName = artistName;
+      const tempEventDate = eventDate;
+      const tempCityName = cityName;
+      const tempVenueName = venueName;
+      const tempYear = year;
+
+      // Set the last search params
+      setArtistName(lastSearchParams.artistName || "");
+      setEventDate(lastSearchParams.eventDate ? 
+        lastSearchParams.eventDate.split("-").reverse().join("-") : "");
+      setCityName(lastSearchParams.cityName || "");
+      setVenueName(lastSearchParams.venueName || "");
+      setYear(lastSearchParams.year || "");
+
+      await getConcertDetails(newPage);
+
+      // Restore current form values
+      setArtistName(tempArtistName);
+      setEventDate(tempEventDate);
+      setCityName(tempCityName);
+      setVenueName(tempVenueName);
+      setYear(tempYear);
+    }
+  };
+
+  const handleNextPage = async () => {
+    await navigateToPage(currentPage + 1);
+  };
+
+  const handlePrevPage = async () => {
+    await navigateToPage(currentPage - 1);
   };
 
   return (
@@ -60,6 +105,9 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
         isOpen={isModalOpen}
         concertList={concertList.setlist}
         refreshConcerts={refreshConcerts}
+        onNextPage={handleNextPage}
+        onPrevPage={handlePrevPage}
+        currentPage={currentPage}
       />
       <form className="create" onSubmit={handleSubmit}>
         <h3>Find new set list</h3>

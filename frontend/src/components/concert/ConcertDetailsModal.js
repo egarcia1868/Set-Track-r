@@ -8,6 +8,9 @@ const ConcertDetailsModal = ({
   onClose,
   concertList = [],
   refreshConcerts,
+  onNextPage,
+  onPrevPage,
+  currentPage = 1,
 }) => {
   const { user } = useAuth0();
   const [error, setError] = useState(null);
@@ -163,6 +166,12 @@ return (
 
     <form method="dialog" id="modal-actions" className="modal-actions">
       <button type="button" onClick={handleClose}>Close</button>
+      {onPrevPage && currentPage > 1 && (
+        <button type="button" onClick={onPrevPage} className="pagination-btn">Prev Page</button>
+      )}
+      {onNextPage && (
+        <button type="button" onClick={onNextPage} className="pagination-btn">Next Page</button>
+      )}
       {selectedConcerts.length < 1 ?
        <button disabled>Select shows to add</button> :
       <button type="button" onClick={handleSubmit}>Add show{selectedConcerts.length > 1 && 's'} to my list!</button>

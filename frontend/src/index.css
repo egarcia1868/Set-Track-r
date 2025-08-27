@@ -312,12 +312,26 @@ body,
   border: none;
   border-radius: 5px;
   padding: 0.5rem 1rem;
-  color: #f9efda;
+  color: white;
   font-size: 1rem;
   cursor: pointer;
 }
 
 #modal form button:last-of-type:hover {
+  background: #382e1b;
+}
+
+#modal form button.pagination-btn {
+  background: black;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+#modal form button.pagination-btn:hover {
   background: #382e1b;
 }
 
