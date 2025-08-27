@@ -48,6 +48,11 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
     await getConcertDetails();
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await getConcertDetails();
+  };
+
   return (
     <>
       <ConcertDetailsModal
@@ -56,7 +61,7 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
         concertList={concertList.setlist}
         refreshConcerts={refreshConcerts}
       />
-      <form className="create">
+      <form className="create" onSubmit={handleSubmit}>
         <h3>Find new set list</h3>
         <label htmlFor="artistName">
           Artist Name
@@ -117,12 +122,7 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
           placeholder="e.g. - Moody Center, The Fillmore, The Ryman, etc."
           value={venueName}
         />
-        <button
-          onClick={() => {
-            handleConcertDetailsClick();
-          }}
-          type="button"
-        >
+        <button type="submit">
           Look Up Set List
         </button>
         <p className="subtitle">

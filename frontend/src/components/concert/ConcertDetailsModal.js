@@ -102,14 +102,29 @@ const ConcertDetailsModal = ({
     }
   };
 
-  console.log('cid: ', selectedConcerts);
-  console.log('cid2: ', selectedConcerts);
-
   const handleSubmit = async () => {
     const body = { user, concertData: selectedConcerts };
 
     await saveConcerts(body);
   };
+
+  // Handle Enter key press
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Enter' && selectedConcerts.length > 0 && isOpen) {
+        e.preventDefault();
+        handleSubmit();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedConcerts.length, isOpen]);
 
   if (error) {
     return (
