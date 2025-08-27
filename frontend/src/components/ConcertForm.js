@@ -83,10 +83,6 @@ const ConcertForm = ({ refreshConcerts }) => {
           }}
           value={eventDate}
         />
-        <p className="alert">
-          Recommend that you only use Artist Name and Date until this message is
-          removed.
-        </p>
         <label htmlFor="year">Year of concert/s:</label>
         <input
           id="year"

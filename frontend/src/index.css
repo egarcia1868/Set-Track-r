@@ -318,16 +318,16 @@ body,
   background: #382e1b;
 }
 
-#modal-actions {
+/* #modal-actions {
   position: fixed;
   bottom: 0;
   height: 33px;
   width: inherit;
-  /* height: .6rem; */
-  /* line-height: .6rem; */
+  /* height: .6rem;
+  /* line-height: .6rem; 
   z-index: 100;
-  /* font-size: .6rem;   */
-}
+  /* font-size: .6rem;   
+} */
 
 @media screen and (max-width: 768px) {
   dialog {
