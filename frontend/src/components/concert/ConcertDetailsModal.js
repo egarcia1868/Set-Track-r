@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { BASE_URL } from "../utils/config";
+import { BASE_URL } from "../../utils/config";
 import { useAuth0 } from "@auth0/auth0-react";
 import NewConcertDetails from "./NewConcertDetails";
 

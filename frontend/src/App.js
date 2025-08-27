@@ -2,9 +2,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import ArtistConcerts from "./pages/ArtistConcerts";
 import Dashboard from "./pages/Dashboard";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import PrivateRoute from "./components/PrivateRoute";
+import Navbar from "./components/common/Navbar";
+import Footer from "./components/common/Footer";
+import PrivateRoute from "./components/common/PrivateRoute";
 import RootRoute from "./pages/RootRoute";
 
 function App() {

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useConcertsContext } from "../hooks/useConcertsContext";
-import { BASE_URL } from "../utils/config";
+import { useConcertsContext } from "../../hooks/useConcertsContext";
+import { BASE_URL } from "../../utils/config";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const ConcertDetails = ({ concert, artistId, onDelete }) => {

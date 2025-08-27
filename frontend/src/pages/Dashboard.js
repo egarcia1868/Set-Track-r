@@ -1,8 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
 import { BASE_URL } from "../utils/config";
-import ArtistDetails from "../components/ArtistDetails";
+import ArtistDetails from "../components/artist/ArtistDetails";
 import { useConcertsContext } from "../hooks/useConcertsContext";
-import ConcertForm from "../components/ConcertForm";
+import ConcertForm from "../components/concert/ConcertForm";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const Dashboard = () => {

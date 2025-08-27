@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useMemo, useEffect } from "react";
-import ConcertDetails from "../components/ConcertDetails";
-import SongsDetails from "../components/SongsDetails";
+import ConcertDetails from "../components/concert/ConcertDetails";
+import SongsDetails from "../components/concert/SongsDetails";
 
 const ArtistConcerts = () => {
   const navigate = useNavigate();

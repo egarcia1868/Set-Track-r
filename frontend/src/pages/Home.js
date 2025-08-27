@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import UnderConstructionModal from "../components/UnderConstructionModal";
+import UnderConstructionModal from "../components/common/UnderConstructionModal";
 
 const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(true);
