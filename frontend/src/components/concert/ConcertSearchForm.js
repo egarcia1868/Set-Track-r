@@ -14,6 +14,7 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [lastSearchParams, setLastSearchParams] = useState(null);
+  const [hasMorePages, setHasMorePages] = useState(true);
 
   const convertDateFormat = (date) => {
     const [year, month, day] = date.split("-");
@@ -49,8 +50,18 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
     const json = await response.json();
 
     if (!response.ok) {
+      if (response.status === 404 && page > 1) {
+        // If it's a 404 on a page > 1, we've reached the end
+        setHasMorePages(false);
+        return;
+      }
       setError(json.error);
       return;
+    }
+
+    // If we successfully get results, there might be more pages
+    if (page === 1) {
+      setHasMorePages(true);
     }
 
     setConcertList(json);
@@ -108,6 +119,7 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
         onNextPage={handleNextPage}
         onPrevPage={handlePrevPage}
         currentPage={currentPage}
+        hasMorePages={hasMorePages}
       />
       <form className="create" onSubmit={handleSubmit}>
         <h3>Find new set list</h3>

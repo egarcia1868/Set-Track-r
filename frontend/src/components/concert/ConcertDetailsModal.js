@@ -11,6 +11,7 @@ const ConcertDetailsModal = ({
   onNextPage,
   onPrevPage,
   currentPage = 1,
+  hasMorePages = true,
 }) => {
   const { user } = useAuth0();
   const [error, setError] = useState(null);
@@ -169,7 +170,7 @@ return (
       {onPrevPage && currentPage > 1 && (
         <button type="button" onClick={onPrevPage} className="pagination-btn">Prev Page</button>
       )}
-      {onNextPage && (
+      {onNextPage && hasMorePages && (
         <button type="button" onClick={onNextPage} className="pagination-btn">Next Page</button>
       )}
       {selectedConcerts.length < 1 ?
