@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { BASE_URL } from "../utils/config";
 import ArtistDetails from "../components/artist/ArtistDetails";
 import { useConcertsContext } from "../hooks/useConcertsContext";
-import ConcertForm from "../components/concert/ConcertForm";
+import ConcertSearchForm from "../components/concert/ConcertSearchForm";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const Dashboard = () => {
@@ -55,7 +55,7 @@ const Dashboard = () => {
           <h3>No Saved Concerts yet</h3>
         )}
       </div>
-      <ConcertForm refreshConcerts={fetchConcerts} />
+      <ConcertSearchForm refreshConcerts={fetchConcerts} />
     </div>
   );
 };
