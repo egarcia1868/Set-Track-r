@@ -190,6 +190,9 @@ button.login {
   color: #fff;
   background: var(--primary);
 }
+button:disabled {
+  background-color: gray !important;
+}
 div.error {
   padding: 10px;
   background: #ffefef;

@@ -6,12 +6,15 @@ import NewConcertDetails from "./NewConcertDetails";
 const ConcertDetailsModal = ({
   isOpen,
   onClose,
-  concertList,
+  concertList = [],
   refreshConcerts,
 }) => {
   const { user } = useAuth0();
   const [error, setError] = useState(null);
   const [checkedConcertIds, setCheckedConcertIds] = useState(new Set());
+  const selectedConcerts = concertList.filter((c) =>
+      checkedConcertIds.has(c.id),
+    );
 
   const handleCheckboxChange = (concertId) => (e) => {
     e.stopPropagation();
@@ -99,10 +102,10 @@ const ConcertDetailsModal = ({
     }
   };
 
+  console.log('cid: ', selectedConcerts);
+  console.log('cid2: ', selectedConcerts);
+
   const handleSubmit = async () => {
-    const selectedConcerts = concertList.filter((c) =>
-      checkedConcertIds.has(c.id),
-    );
     const body = { user, concertData: selectedConcerts };
 
     await saveConcerts(body);
@@ -140,7 +143,10 @@ return (
 
     <form method="dialog" id="modal-actions" className="modal-actions">
       <button type="button" onClick={handleClose}>Close</button>
-      <button type="button" onClick={handleSubmit}>Add show/s to my list!</button>
+      {selectedConcerts.length < 1 ?
+       <button disabled>Select shows to add</button> :
+      <button type="button" onClick={handleSubmit}>Add show{selectedConcerts.length > 1 && 's'} to my list!</button>
+}
     </form>
   </div>
 </dialog>
