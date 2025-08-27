@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { BASE_URL } from "../../utils/config";
 import { useAuth0 } from "@auth0/auth0-react";
 import NewConcertDetails from "./NewConcertDetails";
@@ -52,7 +52,7 @@ const ConcertDetailsModal = ({
     return () => dialog.removeEventListener("click", handleClick);
   }, [onClose, isOpen]);
 
-  // Close on click outside or Escape
+  // Close on click outside or handle keyboard events
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
@@ -64,27 +64,49 @@ const ConcertDetailsModal = ({
       }
     };
 
-    const handleEscape = (e) => {
+    const handleKeyDown = async (e) => {
       if (e.key === "Escape") {
         onClose();
+      } else if (e.key === 'Enter' && selectedConcerts.length > 0 && isOpen) {
+        e.preventDefault();
+        const body = { user, concertData: selectedConcerts };
+        
+        const response = await fetch(`${BASE_URL}/api/concerts/`, {
+          method: "POST",
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const json = await response.json();
+
+        if (!response.ok) {
+          setError(json.error);
+        } else {
+          dialogRef.current?.close();
+          onClose();
+          refreshConcerts();
+        }
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("keydown", handleEscape);
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleKeyDown);
+    }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keydown", handleEscape);
+      document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [onClose]);
+  }, [onClose, selectedConcerts, isOpen, user, refreshConcerts]);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     dialogRef.current?.close();
     onClose();
-  };
+  }, [onClose]);
 
-  const saveConcerts = async (body) => {
+  const saveConcerts = useCallback(async (body) => {
     const response = await fetch(`${BASE_URL}/api/concerts/`, {
       method: "POST",
       body: JSON.stringify(body),
@@ -100,31 +122,14 @@ const ConcertDetailsModal = ({
       handleClose();
       refreshConcerts();
     }
-  };
+  }, [handleClose, refreshConcerts]);
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     const body = { user, concertData: selectedConcerts };
 
     await saveConcerts(body);
-  };
+  }, [user, selectedConcerts, saveConcerts]);
 
-  // Handle Enter key press
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Enter' && selectedConcerts.length > 0 && isOpen) {
-        e.preventDefault();
-        handleSubmit();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown);
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [selectedConcerts.length, isOpen]);
 
   if (error) {
     return (
