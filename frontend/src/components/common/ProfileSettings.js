@@ -12,6 +12,7 @@ const ProfileSettings = ({ isOpen, onClose }) => {
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [showMessage, setShowMessage] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -74,13 +75,16 @@ const ProfileSettings = ({ isOpen, onClose }) => {
       if (response.ok) {
         setProfile((prev) => ({ ...prev, ...data.profile }));
         setMessage("Profile updated successfully!");
+        setTimeout(() => setShowMessage(true), 10);
       } else {
         console.error("Profile update failed:", data);
         setMessage(data.error || "Failed to update profile");
+        setTimeout(() => setShowMessage(true), 10);
       }
     } catch (error) {
       console.error("Error updating profile:", error);
       setMessage("Failed to update profile");
+      setTimeout(() => setShowMessage(true), 10);
     } finally {
       setLoading(false);
     }
@@ -91,6 +95,20 @@ const ProfileSettings = ({ isOpen, onClose }) => {
       const url = `${window.location.origin}/profile/${profile.shareableId}`;
       navigator.clipboard.writeText(url);
       setMessage("Shareable URL copied to clipboard!");
+      
+      // Small delay to allow CSS transition to start from collapsed state
+      setTimeout(() => {
+        setShowMessage(true);
+      }, 10);
+      
+      // Start shrinking animation after 4.5 seconds, clear after 5 seconds
+      setTimeout(() => {
+        setShowMessage(false);
+      }, 4500);
+      
+      setTimeout(() => {
+        setMessage("");
+      }, 5000);
     }
   };
 
@@ -171,7 +189,7 @@ const ProfileSettings = ({ isOpen, onClose }) => {
           )}
 
           {message && (
-            <div className={`message ${message.includes("success") ? "success" : "error"}`}>
+            <div className={`message ${message.includes("success") || message.includes("copied") ? "success" : "error"} ${showMessage ? "show" : ""}`}>
               {message}
             </div>
           )}

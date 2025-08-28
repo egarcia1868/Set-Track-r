@@ -476,16 +476,23 @@ body,
 .modal-overlay .shareable-url {
   flex: 1;
   background: #f5f5f5;
+  margin: 0;
 }
 
 .modal-overlay .copy-btn {
-  padding: 10px 15px;
+  padding: 0px 8px;
   background: var(--primary);
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
+  white-space: nowrap;
+  line-height: 1;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal-overlay .copy-btn:hover {
@@ -496,6 +503,18 @@ body,
   padding: 10px;
   border-radius: 4px;
   margin-bottom: 15px;
+  max-height: 0;
+  overflow: hidden;
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: all 0.3s ease-in-out;
+  opacity: 0;
+}
+
+.modal-overlay .message.show {
+  max-height: 100px;
+  transform: scaleY(1);
+  opacity: 1;
 }
 
 .modal-overlay .message.success {
