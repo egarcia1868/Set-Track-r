@@ -15,6 +15,7 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [lastSearchParams, setLastSearchParams] = useState(null);
   const [hasMorePages, setHasMorePages] = useState(true);
+  const [navigationDirection, setNavigationDirection] = useState(null);
 
   const convertDateFormat = (date) => {
     const [year, month, day] = date.split("-");
@@ -124,10 +125,12 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
   };
 
   const handleNextPage = async () => {
+    setNavigationDirection('next');
     await navigateToPage(currentPage + 1);
   };
 
   const handlePrevPage = async () => {
+    setNavigationDirection('prev');
     await navigateToPage(currentPage - 1);
   };
 
@@ -142,6 +145,7 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
         onPrevPage={handlePrevPage}
         currentPage={currentPage}
         hasMorePages={hasMorePages}
+        navigationDirection={navigationDirection}
       />
       <form className="create" onSubmit={handleSubmit}>
         <h3>Find new set list</h3>
