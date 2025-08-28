@@ -113,22 +113,7 @@ const ConcertDetailsModal = ({
       if (dialog) {
         // Wait a moment for content to render, then scroll to bottom
         setTimeout(() => {
-          // Try scrolling the dialog itself
           dialog.scrollTop = dialog.scrollHeight;
-          
-          // Also try scrolling the modal body
-          const modalBody = dialog.querySelector('.modal-body');
-          if (modalBody) {
-            modalBody.scrollTop = modalBody.scrollHeight;
-          }
-          
-          // And try the concerts container
-          const concertContainer = dialog.querySelector('.new-concerts');
-          if (concertContainer) {
-            concertContainer.scrollTop = concertContainer.scrollHeight;
-          }
-          
-          console.log('Attempted to scroll to bottom for prev page');
         }, 200);
       }
     }

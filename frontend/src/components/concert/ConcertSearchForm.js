@@ -14,7 +14,7 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [lastSearchParams, setLastSearchParams] = useState(null);
-  const [hasMorePages, setHasMorePages] = useState(true);
+  const [hasMorePages, setHasMorePages] = useState(false);
   const [navigationDirection, setNavigationDirection] = useState(null);
 
   const convertDateFormat = (date) => {
@@ -22,25 +22,33 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
     return `${day}-${month}-${year}`;
   };
 
-  const getConcertDetails = async (page = 1) => {
-    const formattedDate = convertDateFormat(eventDate);
+  const getConcertDetails = async (page = 1, overrideParams = null) => {
+    const params = overrideParams || {
+      artistName,
+      eventDate,
+      cityName,
+      venueName,
+      year
+    };
+    
+    const formattedDate = params.eventDate ? convertDateFormat(params.eventDate) : "";
 
     const query = new URLSearchParams();
 
-    if (artistName) query.append("artistName", artistName);
-    if (eventDate) query.append("date", formattedDate);
-    if (cityName) query.append("cityName", cityName);
-    if (venueName) query.append("venueName", venueName);
-    if (year) query.append("year", year);
+    if (params.artistName) query.append("artistName", params.artistName);
+    if (params.eventDate) query.append("date", formattedDate);
+    if (params.cityName) query.append("cityName", params.cityName);
+    if (params.venueName) query.append("venueName", params.venueName);
+    if (params.year) query.append("year", params.year);
     if (page > 1) query.append("p", page);
 
     // Store search params for pagination
     setLastSearchParams({
-      artistName,
+      artistName: params.artistName,
       eventDate: formattedDate,
-      cityName,
-      venueName,
-      year
+      cityName: params.cityName,
+      venueName: params.venueName,
+      year: params.year
     });
     setCurrentPage(page);
 
@@ -65,11 +73,11 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
 
     // Check if there's a next page by testing page + 1
     const nextPageQuery = new URLSearchParams();
-    if (artistName) nextPageQuery.append("artistName", artistName);
-    if (eventDate) nextPageQuery.append("date", formattedDate);
-    if (cityName) nextPageQuery.append("cityName", cityName);
-    if (venueName) nextPageQuery.append("venueName", venueName);
-    if (year) nextPageQuery.append("year", year);
+    if (params.artistName) nextPageQuery.append("artistName", params.artistName);
+    if (params.eventDate) nextPageQuery.append("date", formattedDate);
+    if (params.cityName) nextPageQuery.append("cityName", params.cityName);
+    if (params.venueName) nextPageQuery.append("venueName", params.venueName);
+    if (params.year) nextPageQuery.append("year", params.year);
     nextPageQuery.append("p", page + 1);
 
     try {
@@ -132,6 +140,29 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
   const handlePrevPage = async () => {
     setNavigationDirection('prev');
     await navigateToPage(currentPage - 1);
+  };
+
+  const handleSampleSearch = async (e) => {
+    e.preventDefault();
+    setError(null);
+    
+    const sampleParams = {
+      artistName: "Billy Strings",
+      eventDate: "",
+      cityName: "Austin",
+      venueName: "",
+      year: ""
+    };
+    
+    // Update the form fields
+    setYear("");
+    setCityName("Austin");
+    setArtistName("Billy Strings");
+    setEventDate("");
+    setVenueName("");
+    
+    // Submit with the sample params directly
+    await getConcertDetails(1, sampleParams);
   };
 
   return (
@@ -213,14 +244,22 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
         </button>
         <p className="subtitle">
           (
-          <a
-            href="https://www.setlist.fm/search?query=moody+center"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            onClick={handleSampleSearch}
+            style={{ 
+              background: 'none', 
+              border: 'none', 
+              color: 'inherit', 
+              textDecoration: 'underline',
+              cursor: 'pointer',
+              padding: 0,
+              font: 'inherit'
+            }}
           >
             Click here
-          </a>{" "}
-          if you need a sample artist name/show date to test with)
+          </button>{" "}
+          if you just want a sample search to see how it works)
         </p>
         {error && <div className="error">{error}</div>}
       </form>
