@@ -12,6 +12,7 @@ const PublicProfile = () => {
   const [expandedSetlists, setExpandedSetlists] = useState(new Set());
   const [searchTerm, setSearchTerm] = useState("");
   const [showStatsModal, setShowStatsModal] = useState(false);
+  const [bioExpanded, setBioExpanded] = useState(false);
 
   useEffect(() => {
     fetchPublicProfile();
@@ -167,7 +168,19 @@ const PublicProfile = () => {
       <div className="profile-header">
         <h1>{profileData.profile.displayName}</h1>
         {profileData.profile.bio && (
-          <p className="profile-bio">{profileData.profile.bio}</p>
+          <div className="profile-bio-container">
+            <p className={`profile-bio ${!bioExpanded ? 'bio-truncated' : ''}`}>
+              {profileData.profile.bio}
+            </p>
+            {profileData.profile.bio.length > 150 && (
+              <button 
+                className="bio-toggle-btn"
+                onClick={() => setBioExpanded(!bioExpanded)}
+              >
+                {bioExpanded ? 'Show less' : 'Show more'}
+              </button>
+            )}
+          </div>
         )}
         <div className="profile-stats" onClick={() => setShowStatsModal(true)}>
           <div className="stat-row">
