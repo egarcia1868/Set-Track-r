@@ -68,9 +68,6 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
       <ul>
         <li>create personal page to display shows listed</li>
         <li>
-          Figure out why page logs out on refresh for mobile, but not desktop.
-        </li>
-        <li>
           create a song page that displays information about the specific song
           as well as when you've seen it
         </li>

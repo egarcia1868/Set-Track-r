@@ -3,12 +3,14 @@ import { BASE_URL } from "../utils/config";
 import ArtistDetails from "../components/artist/ArtistDetails";
 import { useConcertsContext } from "../hooks/useConcertsContext";
 import ConcertSearchForm from "../components/concert/ConcertSearchForm";
+import ProfileSettings from "../components/common/ProfileSettings";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const Dashboard = () => {
   const { isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
   const { artists, dispatch } = useConcertsContext();
   const [isFetchingConcerts, setIsFetchingConcerts] = useState(true);
+  const [showProfileSettings, setShowProfileSettings] = useState(false);
 
   const fetchConcerts = useCallback(async () => {
     try {
@@ -45,6 +47,14 @@ const Dashboard = () => {
   return (
     <div className="home">
       <div className="concerts">
+        <div className="dashboard-header">
+          <button 
+            className="profile-settings-btn"
+            onClick={() => setShowProfileSettings(true)}
+          >
+            Profile Settings
+          </button>
+        </div>
         {isFetchingConcerts ? (
           <div>Loading...</div>
         ) : artists.length > 0 ? (
@@ -56,6 +66,10 @@ const Dashboard = () => {
         )}
       </div>
       <ConcertSearchForm refreshConcerts={fetchConcerts} />
+      <ProfileSettings 
+        isOpen={showProfileSettings}
+        onClose={() => setShowProfileSettings(false)}
+      />
     </div>
   );
 };

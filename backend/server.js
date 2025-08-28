@@ -1,9 +1,19 @@
-import express from "express";
 import dotenv from "dotenv";
-dotenv.config({ path: path.resolve("./.env") });
-
-import mongoose from "mongoose";
 import path from "path";
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load environment variables first
+dotenv.config({ path: path.resolve(__dirname, "./.env") });
+
+console.log("Environment variables loaded:");
+console.log("AUTH0_DOMAIN:", process.env.AUTH0_DOMAIN);
+console.log("AUTH0_AUDIENCE:", process.env.AUTH0_AUDIENCE);
+
+import express from "express";
+import mongoose from "mongoose";
 import cors from "cors";
 import concertRoutes from "./routes/concertRoutes.js";
 import cookieParser from "cookie-parser";
@@ -13,7 +23,7 @@ const PORT = process.env.PORT || 3000;
 const nodeEnv = process.env.NODE_ENV;
 
 const corsOptions = {
-  methods: ["GET", "POST", "DELETE", "UPDATE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "UPDATE"],
   credentials: true,
 };
 
@@ -47,3 +57,4 @@ mongoose
   .catch((error) => {
     console.log(error);
   });
+// trigger restart

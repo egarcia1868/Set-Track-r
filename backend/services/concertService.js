@@ -1,14 +1,20 @@
 import dotenv from "dotenv";
 import axios from "axios";
 import path from "path";
+import { fileURLToPath } from 'url';
 import Artist from "../models/ArtistModel.js";
 import User from "../models/UserModel.js";
 
-dotenv.config({ path: path.resolve(".env") });
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 const API_URL =
   process.env.REACT_APP_API_URL || "https://api.setlist.fm/rest/1.0/";
 const API_KEY = process.env.SETLIST_FM_API_KEY;
+
+console.log("Concert service - API_KEY loaded:", API_KEY ? "Yes" : "No");
 
 export const saveConcertsForUser = async ({ concertData, user }) => {
   const userId = user.sub;

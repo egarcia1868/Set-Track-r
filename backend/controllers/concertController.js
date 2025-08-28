@@ -125,3 +125,140 @@ export const deleteConcert = async (req, res) => {
     res.status(500).json({ error: "Could not delete concert" });
   }
 };
+
+export const getPublicProfile = async (req, res) => {
+  try {
+    const { shareableId } = req.params;
+    
+    const user = await User.findOne({ 
+      "profile.shareableId": shareableId,
+      "profile.isPublic": true 
+    });
+    
+    if (!user) {
+      return res.status(404).json({ error: "Profile not found or not public" });
+    }
+
+    const artistIds = user.artistsSeenLive.map((entry) => entry.artistId);
+    const artistDocs = await Artist.find({ artistId: { $in: artistIds } });
+
+    const concertData = artistDocs.map((artist) => {
+      const userArtistEntry = user.artistsSeenLive.find(
+        (entry) => entry.artistId === artist.artistId,
+      );
+      const userConcertIds = userArtistEntry?.concerts || [];
+
+      return {
+        artistName: artist.artistName,
+        artistId: artist.artistId,
+        concerts: artist.concerts.filter((concert) =>
+          userConcertIds.includes(concert.concertId),
+        ),
+      };
+    });
+
+    res.json({
+      profile: {
+        displayName: user.profile.displayName || "Music Fan",
+        bio: user.profile.bio,
+      },
+      concerts: concertData,
+      stats: {
+        totalConcerts: concertData.reduce((sum, artist) => sum + artist.concerts.length, 0),
+        totalArtists: concertData.length,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching public profile:", error);
+    res.status(500).json({ error: "Could not fetch profile" });
+  }
+};
+
+export const getUserProfile = async (req, res) => {
+  try {
+    const auth0Id = req.auth?.payload.sub;
+    if (!auth0Id) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const user = await User.findOne({ auth0Id });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json({
+      profile: user.profile || {
+        displayName: "",
+        bio: "",
+        isPublic: false,
+        shareableId: "",
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    res.status(500).json({ error: "Could not fetch profile" });
+  }
+};
+
+export const updateProfile = async (req, res) => {
+  console.log("=== PROFILE UPDATE REQUEST RECEIVED ===");
+  try {
+    const auth0Id = req.auth?.payload.sub;
+    console.log("Profile update request:", { auth0Id, body: req.body });
+    
+    if (!auth0Id) {
+      console.log("No auth0Id found");
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const { displayName, bio, isPublic } = req.body;
+    const user = await User.findOne({ auth0Id });
+    console.log("Found user:", user ? "Yes" : "No");
+    
+    if (!user) {
+      console.log("User not found for auth0Id:", auth0Id);
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    console.log("Current user profile:", user.profile);
+
+    // Initialize profile if it doesn't exist
+    if (!user.profile) {
+      user.profile = {
+        displayName: "",
+        bio: "",
+        isPublic: false,
+        shareableId: "",
+      };
+    }
+
+    // Generate shareable ID if making profile public for the first time
+    if (isPublic && !user.profile.shareableId) {
+      // Generate a random 12-character ID
+      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      let shareableId = '';
+      for (let i = 0; i < 12; i++) {
+        shareableId += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      user.profile.shareableId = shareableId;
+      console.log("Generated shareable ID:", shareableId);
+    }
+
+    user.profile.displayName = displayName || user.profile.displayName;
+    user.profile.bio = bio !== undefined ? bio : user.profile.bio;
+    user.profile.isPublic = isPublic !== undefined ? isPublic : user.profile.isPublic;
+
+    console.log("Updated profile before save:", user.profile);
+
+    await user.save();
+    console.log("Profile saved successfully");
+
+    res.json({
+      message: "Profile updated successfully",
+      profile: user.profile,
+    });
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    res.status(500).json({ error: "Could not update profile" });
+  }
+};

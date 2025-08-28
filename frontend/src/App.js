@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import ArtistConcerts from "./pages/ArtistConcerts";
 import Dashboard from "./pages/Dashboard";
+import PublicProfile from "./pages/PublicProfile";
 import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
 import PrivateRoute from "./components/common/PrivateRoute";
@@ -15,6 +16,7 @@ function App() {
         <div className="pages">
           <Routes>
             <Route path="/" element={<RootRoute />} />
+            <Route path="/profile/:shareableId" element={<PublicProfile />} />
             <Route
               path="/dashboard"
               element={

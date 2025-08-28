@@ -364,3 +364,432 @@ body,
     min-width: 1400px; /* or whatever width aligns your navbar + main content */
   }
 }
+
+/* Profile Settings Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-overlay .modal {
+  background: white;
+  padding: 0;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-overlay .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-overlay .modal-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.modal-overlay .close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay .close-btn:hover {
+  color: #333;
+}
+
+.modal-overlay .profile-form {
+  padding: 20px;
+}
+
+.modal-overlay .form-group {
+  margin-bottom: 20px;
+}
+
+.modal-overlay .form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #333;
+}
+
+.modal-overlay .form-group input,
+.modal-overlay .form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.modal-overlay .form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.modal-overlay .checkbox-label {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.modal-overlay .checkbox-label input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+
+.modal-overlay .help-text {
+  font-size: 12px;
+  color: #666;
+  margin: 5px 0 0 0;
+}
+
+.modal-overlay .url-container {
+  display: flex;
+  gap: 10px;
+}
+
+.modal-overlay .shareable-url {
+  flex: 1;
+  background: #f5f5f5;
+}
+
+.modal-overlay .copy-btn {
+  padding: 10px 15px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.modal-overlay .copy-btn:hover {
+  background: #158f6b;
+}
+
+.modal-overlay .message {
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.modal-overlay .message.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.modal-overlay .message.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.modal-overlay .modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.modal-overlay .btn-primary, 
+.modal-overlay .btn-secondary {
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  border: none;
+}
+
+.modal-overlay .btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.modal-overlay .btn-primary:hover {
+  background: #158f6b;
+}
+
+.modal-overlay .btn-primary:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.modal-overlay .btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.modal-overlay .btn-secondary:hover {
+  background: #545b62;
+}
+
+/* Dashboard Header */
+.dashboard-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.profile-settings-btn {
+  padding: 10px 20px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.profile-settings-btn:hover {
+  background: #158f6b;
+}
+
+/* Public Profile Styles */
+.public-profile {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.profile-header {
+  text-align: center;
+  padding: 40px 0;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 40px;
+}
+
+.profile-header h1 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 2.5rem;
+}
+
+.profile-bio {
+  color: #666;
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto 30px auto;
+  line-height: 1.6;
+}
+
+.profile-stats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.stat-label {
+  display: block;
+  color: #666;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.concerts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.concerts-section h2 {
+  color: #333;
+  margin: 0;
+  text-align: center;
+  flex: 1;
+}
+
+.expand-collapse-all-btn {
+  padding: 8px 16px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.expand-collapse-all-btn:hover {
+  background: #158f6b;
+}
+
+.no-concerts {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+}
+
+.artists-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.artist-card {
+  background: white;
+  padding: 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.artist-header {
+  padding: 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s ease;
+}
+
+.artist-header:hover {
+  background-color: #f8f9fa;
+}
+
+.artist-name {
+  margin: 0;
+  color: #333;
+  font-size: 1.3rem;
+}
+
+.artist-summary {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.concert-count {
+  margin: 0;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.expand-icon {
+  color: #666;
+  font-size: 1.2rem;
+  transition: transform 0.2s ease;
+}
+
+.concerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  border-top: 1px solid #eee;
+  background-color: #fafafa;
+}
+
+.concert-item {
+  padding: 12px;
+  background: white;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  border: 1px solid #e9ecef;
+}
+
+.concert-venue {
+  font-weight: 500;
+  color: #333;
+}
+
+.concert-location {
+  color: #666;
+  font-size: 0.8rem;
+}
+
+.concert-date {
+  color: #666;
+  font-size: 0.8rem;
+}
+
+.song-count {
+  color: var(--primary);
+  font-size: 0.8rem;
+  margin-top: 5px;
+}
+
+.loading-container,
+.error-container {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.error-container h2 {
+  color: var(--error);
+  margin-bottom: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-stats {
+    gap: 20px;
+  }
+  
+  .stat-number {
+    font-size: 1.5rem;
+  }
+  
+  .profile-header h1 {
+    font-size: 2rem;
+  }
+  
+  .artists-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal-overlay .modal {
+    margin: 20px;
+    width: calc(100% - 40px);
+  }
+  
+  .concerts-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .concerts-section h2 {
+    text-align: center;
+    flex: none;
+  }
+}

@@ -18,6 +18,12 @@ const userSchema = new Schema({
       concerts: [String],
     },
   ],
+  profile: {
+    displayName: { type: String, default: "" },
+    bio: { type: String, default: "" },
+    isPublic: { type: Boolean, default: false },
+    shareableId: { type: String, unique: true, sparse: true },
+  },
 });
 
 export default model("User", userSchema);
