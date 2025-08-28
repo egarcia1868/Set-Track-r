@@ -11,6 +11,7 @@ const Dashboard = () => {
   const { artists, dispatch } = useConcertsContext();
   const [isFetchingConcerts, setIsFetchingConcerts] = useState(true);
   const [showProfileSettings, setShowProfileSettings] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchConcerts = useCallback(async () => {
     try {
@@ -42,12 +43,33 @@ const Dashboard = () => {
     fetchConcerts();
   }, [isAuthenticated, isLoading, fetchConcerts]);
 
-  artists.sort((a, b) => a.artistName.localeCompare(b.artistName));
+  // Helper function to get sort name (ignoring "The" prefix)
+  const getSortName = (artistName) => {
+    if (artistName.toLowerCase().startsWith('the ')) {
+      return artistName.substring(4); // Remove "The " prefix
+    }
+    return artistName;
+  };
+
+  // Filter and sort artists
+  const filteredArtists = artists.filter(artist =>
+    artist.artistName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  filteredArtists.sort((a, b) => getSortName(a.artistName).localeCompare(getSortName(b.artistName)));
 
   return (
     <div className="home">
       <div className="concerts">
         <div className="dashboard-header">
+          {artists.length > 0 && (
+            <input
+              type="text"
+              placeholder="Search artists..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="artist-search-input-inline"
+            />
+          )}
           <button 
             className="profile-settings-btn"
             onClick={() => setShowProfileSettings(true)}
@@ -55,14 +77,23 @@ const Dashboard = () => {
             Profile Settings
           </button>
         </div>
+        
+        {searchTerm && artists.length > 0 && (
+          <div className="search-results-info">
+            {filteredArtists.length} of {artists.length} artists
+          </div>
+        )}
+        
         {isFetchingConcerts ? (
           <div>Loading...</div>
-        ) : artists.length > 0 ? (
-          artists.map((artist) => (
+        ) : artists.length === 0 ? (
+          <h3>No Saved Concerts yet</h3>
+        ) : filteredArtists.length === 0 ? (
+          <h3>No artists found matching "{searchTerm}"</h3>
+        ) : (
+          filteredArtists.map((artist) => (
             <ArtistDetails key={artist._id} artist={artist} />
           ))
-        ) : (
-          <h3>No Saved Concerts yet</h3>
         )}
       </div>
       <ConcertSearchForm refreshConcerts={fetchConcerts} />

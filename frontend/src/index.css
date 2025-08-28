@@ -551,8 +551,15 @@ body,
 /* Dashboard Header */
 .dashboard-header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
+  gap: 15px;
+}
+
+.dashboard-header input {
+  flex: 1;
+  max-width: 300px;
 }
 
 .profile-settings-btn {
@@ -578,9 +585,7 @@ body,
 
 .profile-header {
   text-align: center;
-  padding: 40px 0;
   border-bottom: 1px solid #eee;
-  margin-bottom: 40px;
 }
 
 .profile-header h1 {
@@ -599,8 +604,59 @@ body,
 
 .profile-stats {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 20px 30px;
+  border-radius: 12px;
+  margin: 20px auto;
+  max-width: 400px;
+  border: 2px dashed transparent;
+}
+
+.profile-stats:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  background-color: rgba(26, 172, 131, 0.08);
+  border-color: rgba(26, 172, 131, 0.3);
+}
+
+.profile-stats .stat-row {
+  display: flex;
   justify-content: center;
   gap: 40px;
+  width: 100%;
+}
+
+.stats-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.profile-stats:hover .stats-indicator {
+  opacity: 1;
+}
+
+.chart-icon {
+  font-size: 24px;
+  animation: pulse 2s infinite;
+}
+
+.click-hint {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
 }
 
 .stat {
@@ -633,7 +689,7 @@ body,
 }
 
 .artist-search-input-inline {
-  padding: 8px 12px;
+  padding: 10px 12px;
   border: 2px solid #e9ecef;
   border-radius: 6px;
   font-size: 14px;
@@ -922,5 +978,251 @@ body,
   
   .setlist-toggle-btn {
     align-self: flex-end;
+  }
+}
+
+/* Artist Stats Modal */
+.artist-stats-modal {
+  width: 85vw;
+  height: 85vh;
+  max-width: none;
+  max-height: none;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.chart-type-selector {
+  display: flex;
+  gap: 8px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.chart-type-btn {
+  padding: 8px 16px;
+  border: 2px solid #ddd;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.chart-type-btn:hover {
+  border-color: var(--primary);
+  background-color: rgba(26, 172, 131, 0.05);
+}
+
+.chart-type-btn.active {
+  border-color: var(--primary);
+  background-color: var(--primary);
+  color: white;
+}
+
+.chart-container {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: 10px;
+  height: 100%;
+  width: 100%;
+}
+
+.pie-chart-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.pie-chart-wrapper svg {
+  max-width: 100%;
+  max-height: 100%;
+  height: auto;
+  width: auto;
+  object-fit: contain;
+}
+
+.bar-chart-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.bar-chart-wrapper svg {
+  width: 100%;
+  max-height: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.pie-slice {
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.pie-slice:hover {
+  opacity: 0.8;
+}
+
+.bar-slice {
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.bar-slice:hover {
+  opacity: 0.8;
+}
+
+.bar-label {
+  pointer-events: none;
+}
+
+.chart-tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  pointer-events: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 1000;
+}
+
+.chart-legend {
+  max-width: 300px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.legend-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  padding-left: 4px;
+  border-radius: 4px;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.legend-label {
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.chart-summary {
+  text-align: center;
+  margin-top: auto;
+  padding: 0 20px;
+  border-top: 1px solid #eee;
+  color: azure;
+  flex-shrink: 0;
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Responsive adjustments for chart modal */
+@media (max-width: 768px) {
+  .chart-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 5px;
+  }
+  
+  .pie-chart-wrapper {
+    flex: 1;
+    min-height: 0;
+  }
+  
+  .pie-chart-wrapper svg {
+    max-width: 100%;
+    max-height: 100%;
+  }
+  
+  .bar-chart-wrapper {
+    flex: 1;
+    min-height: 0;
+  }
+  
+  .bar-chart-wrapper svg {
+    width: 100%;
+    max-width: 500px;
+    height: 300px;
+  }
+  
+  .chart-legend {
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  .artist-stats-modal {
+    width: 95vw;
+    height: 85vh;
+  }
+  
+  .profile-stats .stat-row {
+    gap: 30px;
+  }
+  
+  .chart-icon {
+    font-size: 20px;
+  }
+  
+  .click-hint {
+    font-size: 11px;
+  }
+  
+  .modal-header {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  
+  .chart-type-selector {
+    justify-content: center;
   }
 }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { BASE_URL } from "../utils/config";
+import ArtistStatsModal from "../components/common/ArtistStatsModal";
 
 const PublicProfile = () => {
   const { shareableId } = useParams();
@@ -10,6 +11,7 @@ const PublicProfile = () => {
   const [expandedArtists, setExpandedArtists] = useState(new Set());
   const [expandedSetlists, setExpandedSetlists] = useState(new Set());
   const [searchTerm, setSearchTerm] = useState("");
+  const [showStatsModal, setShowStatsModal] = useState(false);
 
   useEffect(() => {
     fetchPublicProfile();
@@ -167,14 +169,20 @@ const PublicProfile = () => {
         {profileData.profile.bio && (
           <p className="profile-bio">{profileData.profile.bio}</p>
         )}
-        <div className="profile-stats">
-          <div className="stat">
-            <span className="stat-number">{profileData.stats.totalConcerts}</span>
-            <span className="stat-label">Concerts</span>
+        <div className="profile-stats" onClick={() => setShowStatsModal(true)}>
+          <div className="stat-row">
+            <div className="stat">
+              <span className="stat-number">{profileData.stats.totalConcerts}</span>
+              <span className="stat-label">Concerts</span>
+            </div>
+            <div className="stat">
+              <span className="stat-number">{profileData.stats.totalArtists}</span>
+              <span className="stat-label">Artists</span>
+            </div>
           </div>
-          <div className="stat">
-            <span className="stat-number">{profileData.stats.totalArtists}</span>
-            <span className="stat-label">Artists</span>
+          <div className="stats-indicator">
+            <span className="chart-icon">📊</span>
+            <span className="click-hint">Click for chart view</span>
           </div>
         </div>
       </div>
@@ -214,7 +222,16 @@ const PublicProfile = () => {
         ) : (
           <div className="artists-list">
             {filteredArtists
-              .sort((a, b) => a.artistName.localeCompare(b.artistName))
+              .sort((a, b) => {
+                // Helper function to get sort name (ignoring "The" prefix)
+                const getSortName = (artistName) => {
+                  if (artistName.toLowerCase().startsWith('the ')) {
+                    return artistName.substring(4); // Remove "The " prefix
+                  }
+                  return artistName;
+                };
+                return getSortName(a.artistName).localeCompare(getSortName(b.artistName));
+              })
               .map((artist) => {
                 const isExpanded = expandedArtists.has(artist.artistId);
                 return (
@@ -311,6 +328,12 @@ const PublicProfile = () => {
           </div>
         )}
       </div>
+      
+      <ArtistStatsModal 
+        isOpen={showStatsModal}
+        onClose={() => setShowStatsModal(false)}
+        concerts={profileData?.concerts || []}
+      />
     </div>
   );
 };
