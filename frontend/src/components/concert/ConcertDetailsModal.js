@@ -18,8 +18,8 @@ const ConcertDetailsModal = ({
   const [error, setError] = useState(null);
   const [checkedConcertIds, setCheckedConcertIds] = useState(new Set());
   const selectedConcerts = concertList.filter((c) =>
-      checkedConcertIds.has(c.id),
-    );
+    checkedConcertIds.has(c.id),
+  );
 
   const handleCheckboxChange = (concertId) => (e) => {
     e.stopPropagation();
@@ -72,10 +72,10 @@ const ConcertDetailsModal = ({
     const handleKeyDown = async (e) => {
       if (e.key === "Escape") {
         onClose();
-      } else if (e.key === 'Enter' && selectedConcerts.length > 0 && isOpen) {
+      } else if (e.key === "Enter" && selectedConcerts.length > 0 && isOpen) {
         e.preventDefault();
         const body = { user, concertData: selectedConcerts };
-        
+
         const response = await fetch(`${BASE_URL}/api/concerts/`, {
           method: "POST",
           body: JSON.stringify(body),
@@ -108,7 +108,7 @@ const ConcertDetailsModal = ({
 
   // Scroll to bottom when navigating to previous page
   useEffect(() => {
-    if (navigationDirection === 'prev' && isOpen) {
+    if (navigationDirection === "prev" && isOpen) {
       const dialog = dialogRef.current;
       if (dialog) {
         // Wait a moment for content to render, then scroll to bottom
@@ -124,30 +124,32 @@ const ConcertDetailsModal = ({
     onClose();
   }, [onClose]);
 
-  const saveConcerts = useCallback(async (body) => {
-    const response = await fetch(`${BASE_URL}/api/concerts/`, {
-      method: "POST",
-      body: JSON.stringify(body),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const json = await response.json();
+  const saveConcerts = useCallback(
+    async (body) => {
+      const response = await fetch(`${BASE_URL}/api/concerts/`, {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const json = await response.json();
 
-    if (!response.ok) {
-      setError(json.error);
-    } else {
-      handleClose();
-      refreshConcerts();
-    }
-  }, [handleClose, refreshConcerts]);
+      if (!response.ok) {
+        setError(json.error);
+      } else {
+        handleClose();
+        refreshConcerts();
+      }
+    },
+    [handleClose, refreshConcerts],
+  );
 
   const handleSubmit = useCallback(async () => {
     const body = { user, concertData: selectedConcerts };
 
     await saveConcerts(body);
   }, [user, selectedConcerts, saveConcerts]);
-
 
   if (error) {
     return (
@@ -161,42 +163,57 @@ const ConcertDetailsModal = ({
     );
   }
 
-return (
-<dialog id="modal" ref={dialogRef} onClose={onClose} className="modal">
-  <div className="modal-body">
-    <div className="new-concerts">
-      {!concertList || concertList.length === 0 ? (
-        <p>Loading...</p>
-      ) : (
-        concertList.map((concert) => (
-          <NewConcertDetails
-            key={concert.concertId || concert.id}
-            concert={concert}
-            isChecked={checkedConcertIds.has(concert.id)}
-            onCheckboxChange={handleCheckboxChange(concert.id)}
-          />
-        ))
-      )}
-    </div>
+  return (
+    <dialog id="modal" ref={dialogRef} onClose={onClose} className="modal">
+      <div className="modal-body">
+        <div className="new-concerts">
+          {!concertList || concertList.length === 0 ? (
+            <p>Loading...</p>
+          ) : (
+            concertList.map((concert) => (
+              <NewConcertDetails
+                key={concert.concertId || concert.id}
+                concert={concert}
+                isChecked={checkedConcertIds.has(concert.id)}
+                onCheckboxChange={handleCheckboxChange(concert.id)}
+              />
+            ))
+          )}
+        </div>
 
-    <form method="dialog" id="modal-actions" className="modal-actions">
-      <button type="button" onClick={handleClose}>Close</button>
-      {onPrevPage && currentPage > 1 && (
-        <button type="button" onClick={onPrevPage} className="pagination-btn">Prev Page</button>
-      )}
-      {onNextPage && hasMorePages && (
-        <button type="button" onClick={onNextPage} className="pagination-btn">Next Page</button>
-      )}
-      {selectedConcerts.length < 1 ?
-       <button disabled>Select shows to add</button> :
-      <button type="button" onClick={handleSubmit}>Add show{selectedConcerts.length > 1 && 's'} to my list!</button>
-}
-    </form>
-  </div>
-</dialog>
-
-);
-
+        <form method="dialog" id="modal-actions" className="modal-actions">
+          <button type="button" onClick={handleClose}>
+            Close
+          </button>
+          {onPrevPage && currentPage > 1 && (
+            <button
+              type="button"
+              onClick={onPrevPage}
+              className="pagination-btn"
+            >
+              Prev Page
+            </button>
+          )}
+          {onNextPage && hasMorePages && (
+            <button
+              type="button"
+              onClick={onNextPage}
+              className="pagination-btn"
+            >
+              Next Page
+            </button>
+          )}
+          {selectedConcerts.length < 1 ? (
+            <button disabled>Select shows to add</button>
+          ) : (
+            <button type="button" onClick={handleSubmit}>
+              Add show{selectedConcerts.length > 1 && "s"} to my list!
+            </button>
+          )}
+        </form>
+      </div>
+    </dialog>
+  );
 };
 
 export default ConcertDetailsModal;

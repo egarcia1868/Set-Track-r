@@ -20,6 +20,9 @@ root.render(
         redirect_uri: window.location.origin,
         audience,
       }}
+      cacheLocation="localstorage"
+      useRefreshTokens={true}
+      useRefreshTokensFallback={false}
     >
       <ConcertsContextProvider>
         <App />

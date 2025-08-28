@@ -66,19 +66,20 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
         Improvement/s currently being worked:
       </h4>
       <ul>
+        <li>create personal page to display shows listed</li>
         <li>
-          Change link for getting tester artist name & date to retrieve latest
-          concert data available and automatically bring up results (use
-          previous days date)
+          Figure out why page logs out on refresh for mobile, but not desktop.
+        </li>
+        <li>
+          create a song page that displays information about the specific song
+          as well as when you've seen it
         </li>
       </ul>
       <h4 style={{ marginLeft: "1.5rem" }}>
         Planned upcoming improvements/bug fixes:
       </h4>
       <ul>
-        <li>
-          Start switching to utilizing MUI or shadcn/ui for components.
-          </li>
+        <li>Start switching to utilizing MUI or shadcn/ui for components.</li>
         <li>
           See if feasible when adding a band, to display other bands at that
           show. (ex. - enter King Gizz & 11/15/2024, King Gizz would show up,
@@ -90,14 +91,6 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
           tracking if arrived late/left early)
         </li>
         <li>create pie chart divided by number of times per song vs total.</li>
-        <li>create personal page to display shows listed</li>
-        <li>
-          Figure out why page logs out on refresh for mobile, but not desktop.
-        </li>
-        <li>
-          create a song page that displays information about the specific song
-          as well as when you've seen it
-        </li>
         <li>Find reliable api for artist images to display</li>
         <li>
           Used prop drilling out of convenience from Dashboard -- ConcertForm --

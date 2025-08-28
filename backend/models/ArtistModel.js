@@ -4,11 +4,11 @@ const { Schema, model } = mongoose;
 
 const artistSchema = new Schema(
   {
-    artistName: { 
+    artistName: {
       type: String,
       required: true,
     },
-    artistId: { 
+    artistId: {
       type: String,
       required: true,
       unique: true,

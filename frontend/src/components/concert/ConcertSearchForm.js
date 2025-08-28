@@ -28,10 +28,12 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
       eventDate,
       cityName,
       venueName,
-      year
+      year,
     };
-    
-    const formattedDate = params.eventDate ? convertDateFormat(params.eventDate) : "";
+
+    const formattedDate = params.eventDate
+      ? convertDateFormat(params.eventDate)
+      : "";
 
     const query = new URLSearchParams();
 
@@ -48,7 +50,7 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
       eventDate: formattedDate,
       cityName: params.cityName,
       venueName: params.venueName,
-      year: params.year
+      year: params.year,
     });
     setCurrentPage(page);
 
@@ -73,7 +75,8 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
 
     // Check if there's a next page by testing page + 1
     const nextPageQuery = new URLSearchParams();
-    if (params.artistName) nextPageQuery.append("artistName", params.artistName);
+    if (params.artistName)
+      nextPageQuery.append("artistName", params.artistName);
     if (params.eventDate) nextPageQuery.append("date", formattedDate);
     if (params.cityName) nextPageQuery.append("cityName", params.cityName);
     if (params.venueName) nextPageQuery.append("venueName", params.venueName);
@@ -82,13 +85,15 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
 
     try {
       const nextPageResponse = await fetch(
-        `${BASE_URL}/api/concerts?${nextPageQuery.toString()}`
+        `${BASE_URL}/api/concerts?${nextPageQuery.toString()}`,
       );
-      
+
       if (nextPageResponse.ok) {
         const nextPageJson = await nextPageResponse.json();
         // If next page has results, show Next button
-        setHasMorePages(nextPageJson.setlist && nextPageJson.setlist.length > 0);
+        setHasMorePages(
+          nextPageJson.setlist && nextPageJson.setlist.length > 0,
+        );
       } else {
         // If next page returns error (like 404), no more pages
         setHasMorePages(false);
@@ -115,8 +120,11 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
 
       // Set the last search params
       setArtistName(lastSearchParams.artistName || "");
-      setEventDate(lastSearchParams.eventDate ? 
-        lastSearchParams.eventDate.split("-").reverse().join("-") : "");
+      setEventDate(
+        lastSearchParams.eventDate
+          ? lastSearchParams.eventDate.split("-").reverse().join("-")
+          : "",
+      );
       setCityName(lastSearchParams.cityName || "");
       setVenueName(lastSearchParams.venueName || "");
       setYear(lastSearchParams.year || "");
@@ -133,34 +141,34 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
   };
 
   const handleNextPage = async () => {
-    setNavigationDirection('next');
+    setNavigationDirection("next");
     await navigateToPage(currentPage + 1);
   };
 
   const handlePrevPage = async () => {
-    setNavigationDirection('prev');
+    setNavigationDirection("prev");
     await navigateToPage(currentPage - 1);
   };
 
   const handleSampleSearch = async (e) => {
     e.preventDefault();
     setError(null);
-    
+
     const sampleParams = {
       artistName: "Billy Strings",
       eventDate: "",
       cityName: "Austin",
       venueName: "",
-      year: ""
+      year: "",
     };
-    
+
     // Update the form fields
     setYear("");
     setCityName("Austin");
     setArtistName("Billy Strings");
     setEventDate("");
     setVenueName("");
-    
+
     // Submit with the sample params directly
     await getConcertDetails(1, sampleParams);
   };
@@ -239,22 +247,20 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
           placeholder="e.g. - Moody Center, The Fillmore, The Ryman, etc."
           value={venueName}
         />
-        <button type="submit">
-          Look Up Set List
-        </button>
+        <button type="submit">Look Up Set List</button>
         <p className="subtitle">
           (
           <button
             type="button"
             onClick={handleSampleSearch}
-            style={{ 
-              background: 'none', 
-              border: 'none', 
-              color: 'inherit', 
-              textDecoration: 'underline',
-              cursor: 'pointer',
+            style={{
+              background: "none",
+              border: "none",
+              color: "inherit",
+              textDecoration: "underline",
+              cursor: "pointer",
               padding: 0,
-              font: 'inherit'
+              font: "inherit",
             }}
           >
             Click here

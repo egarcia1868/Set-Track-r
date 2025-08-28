@@ -32,15 +32,15 @@ const concertSchema = new Schema(
     songs: [
       {
         type: String,
-      }
+      },
     ],
     attendees: [
       {
         type: String, // Auth0 user IDs
-      }
+      },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default model("Concert", concertSchema);
