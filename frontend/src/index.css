@@ -114,6 +114,7 @@ dialog {
 }
 
 .concert-details {
+  text-align: center;
   background: #fff;
   border-radius: 4px;
   margin: 20px auto;
@@ -619,6 +620,7 @@ body,
   max-width: 600px;
   margin: 0 auto 15px auto;
   line-height: 1.6;
+  white-space: pre-wrap;
 }
 
 .profile-bio.bio-truncated {
@@ -648,6 +650,109 @@ body,
 
 .bio-toggle-btn:hover {
   color: #0056b3;
+}
+
+/* Mobile search button styles */
+.mobile-search-btn-container {
+  display: none;
+  padding: 20px;
+}
+
+.mobile-search-btn {
+  width: 100%;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 15px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.mobile-search-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Mobile dashboard header layout */
+.header-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.mobile-search-btn-header {
+  display: none;
+}
+
+.mobile-search-btn-small {
+  padding: 10px 20px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.mobile-search-btn-small:hover {
+  background: #158f6b;
+}
+
+.mobile-search-field {
+  display: none;
+  /* padding: 0 20px 20px 20px; */
+  text-align: center;
+}
+
+.mobile-search-input {
+  width: 100%;
+}
+
+.concert-search-modal {
+  width: 95vw;
+  max-width: 600px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.concert-search-modal .modal-header {
+  flex-shrink: 0;
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 15px;
+  margin-bottom: 0;
+}
+
+.concert-search-modal .modal-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 0;
+  min-height: 0;
+}
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* Artists inline layout */
+.artists-grid {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.artists-grid .concert-details {
+  flex: 0 0 auto;
+  width: auto;
+  margin: 0;
 }
 
 .profile-stats {
@@ -741,7 +846,7 @@ body,
   border: 2px solid #e9ecef;
   border-radius: 6px;
   font-size: 14px;
-  width: 200px;
+  width: 300px;
   transition: border-color 0.2s ease;
 }
 
@@ -836,7 +941,8 @@ body,
 }
 
 .artist-name {
-  margin: 0;
+  margin: 0 5px 0 0;
+  
   color: #333;
   font-size: 1.3rem;
 }
@@ -987,6 +1093,10 @@ body,
     gap: 20px;
   }
   
+  .public-profile {
+    padding: 0;
+  }
+
   .stat-number {
     font-size: 1.5rem;
   }
@@ -1007,11 +1117,101 @@ body,
   .concerts-header {
     flex-direction: column;
     text-align: center;
+    position: static;
+    align-items: center;
+    gap: 15px;
   }
+  
+  /* Center search input on mobile profile page */
+  .concerts-header .artist-search-input-inline {
+    width: 280px;
+    max-width: 90%;
+    margin-bottom: 0;
+  }
+  
+  /* Remove margin from mobile dashboard search input */
+  .mobile-search-input {
+    margin-bottom: 0;
+  }
+  
+  /* Center expand/collapse button on mobile profile page */
+  .concerts-header .expand-collapse-all-btn {
+    align-self: center;
+  }
+  
+  /* Center concert count on mobile */
+  .concert-count {
+    text-align: center;
+  }
+  
+  /* Center dashboard header on mobile */
+  .dashboard-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  /* Center header buttons on mobile */
+  .header-buttons {
+    justify-content: center;
+  }
+  
+  /* Hide desktop form on mobile */
+  .desktop-search-form {
+    display: none;
+  }
+  
+  /* Show mobile elements on mobile */
+  .mobile-search-btn-header {
+    display: block;
+  }
+  
+  .mobile-search-field {
+    display: flex;
+    justify-content: center;
+  }
+  
+  /* Center and size mobile search input */
+  .mobile-search-input {
+    width: 300px;
+    max-width: 90%;
+  }
+  
+  /* Hide desktop search field on mobile */
+  .desktop-search-field {
+    display: none;
+  }
+  
+  /* Full width layout on mobile */
+  .home {
+    display: block;
+    gap: 0;
+  }
+  
+  /* Full width concert details on mobile */
+  .concert-details {
+    margin: 20px 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Single column artists on mobile */
+  .artists-grid {
+    flex-direction: column;
+  }
+  
+  .artists-grid .concert-details {
+    width: 100%;
+  }
+  
   
   .concerts-section h2 {
     text-align: center;
     flex: none;
+    position: static;
+    transform: none;
+    left: auto;
   }
   
   .concert-main-info {

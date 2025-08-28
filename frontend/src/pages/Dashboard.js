@@ -12,6 +12,21 @@ const Dashboard = () => {
   const [isFetchingConcerts, setIsFetchingConcerts] = useState(true);
   const [showProfileSettings, setShowProfileSettings] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showConcertSearchModal, setShowConcertSearchModal] = useState(false);
+
+  // Handle modal body scroll prevention
+  useEffect(() => {
+    if (showConcertSearchModal) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    
+    // Cleanup when component unmounts
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [showConcertSearchModal]);
 
   const fetchConcerts = useCallback(async () => {
     try {
@@ -61,21 +76,45 @@ const Dashboard = () => {
     <div className="home">
       <div className="concerts">
         <div className="dashboard-header">
+          <div className="desktop-search-field">
+            {artists.length > 0 && (
+              <input
+                type="text"
+                placeholder="Search artists..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="artist-search-input-inline"
+              />
+            )}
+          </div>
+          <div className="header-buttons">
+            <div className="mobile-search-btn-header">
+              <button 
+                className="mobile-search-btn-small"
+                onClick={() => setShowConcertSearchModal(true)}
+              >
+                Find new setlist
+              </button>
+            </div>
+            <button 
+              className="profile-settings-btn"
+              onClick={() => setShowProfileSettings(true)}
+            >
+              Profile settings
+            </button>
+          </div>
+        </div>
+        
+        <div className="mobile-search-field">
           {artists.length > 0 && (
             <input
               type="text"
               placeholder="Search artists..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="artist-search-input-inline"
+              className="artist-search-input-inline mobile-search-input"
             />
           )}
-          <button 
-            className="profile-settings-btn"
-            onClick={() => setShowProfileSettings(true)}
-          >
-            Profile Settings
-          </button>
         </div>
         
         {searchTerm && artists.length > 0 && (
@@ -91,12 +130,42 @@ const Dashboard = () => {
         ) : filteredArtists.length === 0 ? (
           <h3>No artists found matching "{searchTerm}"</h3>
         ) : (
-          filteredArtists.map((artist) => (
-            <ArtistDetails key={artist._id} artist={artist} />
-          ))
+          <div className="artists-grid">
+            {filteredArtists.map((artist) => (
+              <ArtistDetails key={artist._id} artist={artist} />
+            ))}
+          </div>
         )}
       </div>
-      <ConcertSearchForm refreshConcerts={fetchConcerts} />
+      
+      {/* Desktop form - hidden on mobile */}
+      <div className="desktop-search-form">
+        <ConcertSearchForm refreshConcerts={fetchConcerts} />
+      </div>
+      
+      {/* Mobile modal */}
+      {showConcertSearchModal && (
+        <div className="modal-overlay">
+          <div className="concert-search-modal">
+            <div className="modal-header">
+              <h2>Find new setlist</h2>
+              <button 
+                className="close-btn"
+                onClick={() => setShowConcertSearchModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-content">
+              <ConcertSearchForm 
+                refreshConcerts={fetchConcerts} 
+                onClose={() => setShowConcertSearchModal(false)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+      
       <ProfileSettings 
         isOpen={showProfileSettings}
         onClose={() => setShowProfileSettings(false)}

@@ -66,11 +66,11 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
         Improvement/s currently being worked:
       </h4>
       <ul>
-        <li>create personal page to display shows listed</li>
         <li>
           create a song page that displays information about the specific song
           as well as when you've seen it
         </li>
+        <li>create pie chart divided by number of times per song vs total.</li>
       </ul>
       <h4 style={{ marginLeft: "1.5rem" }}>
         Planned upcoming improvements/bug fixes:
@@ -87,7 +87,6 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
           add ability to remove specific songs from "seen" set (for accurate
           tracking if arrived late/left early)
         </li>
-        <li>create pie chart divided by number of times per song vs total.</li>
         <li>Find reliable api for artist images to display</li>
         <li>
           Used prop drilling out of convenience from Dashboard -- ConcertForm --

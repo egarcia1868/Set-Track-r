@@ -202,6 +202,8 @@ const PublicProfile = () => {
 
       <div className="concerts-section">
         <div className="concerts-header">
+          
+        <h2>Concert History</h2>
           {profileData.concerts.length > 0 && (
             <input
               type="text"
@@ -211,7 +213,6 @@ const PublicProfile = () => {
               className="artist-search-input-inline"
             />
           )}
-          <h2>Concert History</h2>
           {profileData.concerts.length > 0 && (
             <button 
               className="expand-collapse-all-btn"
