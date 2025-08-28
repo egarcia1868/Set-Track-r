@@ -9,27 +9,26 @@ import {
   getUserProfile,
   updateProfile,
 } from "../controllers/concertController.js";
-// import getCheckJwt from "../middleware/auth.js";
 
-// const checkJwt = getCheckJwt();
-// Temporary bypass for debugging - decode the actual JWT token
+// Temporary auth middleware to decode JWT tokens without verification
+// TODO: Replace with proper Auth0 JWT verification once configuration is resolved
 const checkJwt = (req, res, next) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
     if (token) {
-      // Decode without verification for debugging
       const decoded = jwt.decode(token);
-      console.log("Decoded JWT:", decoded);
-      req.auth = { payload: { sub: decoded.sub } };
+      if (decoded && decoded.sub) {
+        req.auth = { payload: { sub: decoded.sub } };
+      } else {
+        return res.status(401).json({ error: "Invalid token format" });
+      }
     } else {
-      console.log("No token found in authorization header");
-      req.auth = { payload: { sub: "NO_TOKEN_FOUND" } };
+      return res.status(401).json({ error: "Authorization token required" });
     }
     next();
   } catch (error) {
     console.error("Error decoding token:", error);
-    req.auth = { payload: { sub: "TOKEN_DECODE_ERROR" } };
-    next();
+    return res.status(401).json({ error: "Invalid token" });
   }
 };
 const router = express.Router();

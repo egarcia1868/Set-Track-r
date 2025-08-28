@@ -129,6 +129,7 @@ export const deleteConcert = async (req, res) => {
 export const getPublicProfile = async (req, res) => {
   try {
     const { shareableId } = req.params;
+    console.log(`Public profile request for shareableId: ${shareableId}`);
     
     const user = await User.findOne({ 
       "profile.shareableId": shareableId,
@@ -136,8 +137,11 @@ export const getPublicProfile = async (req, res) => {
     });
     
     if (!user) {
+      console.log(`No public profile found for shareableId: ${shareableId}`);
       return res.status(404).json({ error: "Profile not found or not public" });
     }
+    
+    console.log(`Found public profile for user: ${user._id}`);
 
     const artistIds = user.artistsSeenLive.map((entry) => entry.artistId);
     const artistDocs = await Artist.find({ artistId: { $in: artistIds } });
@@ -201,26 +205,19 @@ export const getUserProfile = async (req, res) => {
 };
 
 export const updateProfile = async (req, res) => {
-  console.log("=== PROFILE UPDATE REQUEST RECEIVED ===");
   try {
     const auth0Id = req.auth?.payload.sub;
-    console.log("Profile update request:", { auth0Id, body: req.body });
     
     if (!auth0Id) {
-      console.log("No auth0Id found");
       return res.status(401).json({ error: "Unauthorized" });
     }
 
     const { displayName, bio, isPublic } = req.body;
     const user = await User.findOne({ auth0Id });
-    console.log("Found user:", user ? "Yes" : "No");
     
     if (!user) {
-      console.log("User not found for auth0Id:", auth0Id);
       return res.status(404).json({ error: "User not found" });
     }
-
-    console.log("Current user profile:", user.profile);
 
     // Initialize profile if it doesn't exist
     if (!user.profile) {
@@ -241,17 +238,13 @@ export const updateProfile = async (req, res) => {
         shareableId += chars.charAt(Math.floor(Math.random() * chars.length));
       }
       user.profile.shareableId = shareableId;
-      console.log("Generated shareable ID:", shareableId);
     }
 
     user.profile.displayName = displayName || user.profile.displayName;
     user.profile.bio = bio !== undefined ? bio : user.profile.bio;
     user.profile.isPublic = isPublic !== undefined ? isPublic : user.profile.isPublic;
 
-    console.log("Updated profile before save:", user.profile);
-
     await user.save();
-    console.log("Profile saved successfully");
 
     res.json({
       message: "Profile updated successfully",

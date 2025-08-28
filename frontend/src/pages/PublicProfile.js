@@ -8,10 +8,12 @@ const PublicProfile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [expandedArtists, setExpandedArtists] = useState(new Set());
+  const [expandedSetlists, setExpandedSetlists] = useState(new Set());
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetchPublicProfile();
-  }, [shareableId]);
+  }, [shareableId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleArtist = (artistId) => {
     setExpandedArtists(prev => {
@@ -20,6 +22,18 @@ const PublicProfile = () => {
         newSet.delete(artistId);
       } else {
         newSet.add(artistId);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleSetlist = (concertId) => {
+    setExpandedSetlists(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(concertId)) {
+        newSet.delete(concertId);
+      } else {
+        newSet.add(concertId);
       }
       return newSet;
     });
@@ -39,6 +53,11 @@ const PublicProfile = () => {
   const allExpanded = profileData?.concerts ? 
     profileData.concerts.every(artist => expandedArtists.has(artist.artistId)) : false;
 
+  // Filter artists based on search term
+  const filteredArtists = profileData?.concerts?.filter(artist =>
+    artist.artistName.toLowerCase().includes(searchTerm.toLowerCase())
+  ) || [];
+
   const fetchPublicProfile = async () => {
     try {
       const response = await fetch(`${BASE_URL}/api/concerts/profile/${shareableId}`);
@@ -52,8 +71,12 @@ const PublicProfile = () => {
           const firstConcerts = data.concerts[0].concerts;
           if (firstConcerts && firstConcerts.length > 0) {
             console.log("Date formats found:");
-            firstConcerts.slice(0, 5).forEach((concert, i) => {
+            firstConcerts.slice(0, 3).forEach((concert, i) => {
               console.log(`Concert ${i}: eventDate = "${concert.eventDate}" (type: ${typeof concert.eventDate})`);
+              console.log(`Concert ${i} full structure:`, concert);
+              console.log(`Concert ${i} has sets:`, !!concert.sets, 'Sets length:', concert.sets?.length);
+              console.log(`Concert ${i} venue structure:`, concert.venue);
+              console.log(`Concert ${i} city structure:`, concert.city);
             });
           }
         }
@@ -82,17 +105,19 @@ const PublicProfile = () => {
       const parts = dateString.split('-');
       if (parts.length === 3) {
         if (parts[0].length === 4) {
-          // YYYY-MM-DD format
-          date = new Date(dateString);
+          // YYYY-MM-DD format - use UTC to avoid timezone offset
+          const [year, month, day] = parts;
+          date = new Date(Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day)));
         } else {
           // DD-MM-YYYY format (common in some APIs)
-          date = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+          const [day, month, year] = parts;
+          date = new Date(Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day)));
         }
       } else {
-        date = new Date(dateString);
+        date = new Date(dateString + 'T00:00:00Z');
       }
     } else {
-      date = new Date(dateString);
+      date = new Date(dateString + 'T00:00:00Z');
     }
     
     // Check if date is valid
@@ -105,6 +130,7 @@ const PublicProfile = () => {
       year: "numeric",
       month: "short",
       day: "numeric",
+      timeZone: "UTC",
     });
   };
 
@@ -155,6 +181,15 @@ const PublicProfile = () => {
 
       <div className="concerts-section">
         <div className="concerts-header">
+          {profileData.concerts.length > 0 && (
+            <input
+              type="text"
+              placeholder="Search artists..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="artist-search-input-inline"
+            />
+          )}
           <h2>Concert History</h2>
           {profileData.concerts.length > 0 && (
             <button 
@@ -165,11 +200,20 @@ const PublicProfile = () => {
             </button>
           )}
         </div>
+        
+        {searchTerm && profileData.concerts.length > 0 && (
+          <div className="search-results-info">
+            {filteredArtists.length} of {profileData.concerts.length} artists
+          </div>
+        )}
+
         {profileData.concerts.length === 0 ? (
           <p className="no-concerts">No concerts recorded yet.</p>
+        ) : filteredArtists.length === 0 ? (
+          <p className="no-concerts">No artists found matching "{searchTerm}"</p>
         ) : (
-          <div className="artists-grid">
-            {profileData.concerts
+          <div className="artists-list">
+            {filteredArtists
               .sort((a, b) => a.artistName.localeCompare(b.artistName))
               .map((artist) => {
                 const isExpanded = expandedArtists.has(artist.artistId);
@@ -193,22 +237,72 @@ const PublicProfile = () => {
                       <div className="concerts-list">
                         {artist.concerts
                           .sort((a, b) => new Date(b.eventDate) - new Date(a.eventDate))
-                          .map((concert) => (
-                            <div key={concert.concertId} className="concert-item">
-                              <div className="concert-venue">
-                                {typeof concert.venue === 'object' ? concert.venue?.name || 'Unknown Venue' : concert.venue}
-                              </div>
-                              <div className="concert-location">
-                                {typeof concert.city === 'object' ? concert.city?.name || 'Unknown City' : concert.city}
-                              </div>
-                              <div className="concert-date">{formatDate(concert.eventDate)}</div>
-                              {concert.songs && concert.songs.length > 0 && (
-                                <div className="song-count">
-                                  {concert.songs.length} songs
+                          .map((concert) => {
+                            const setlistExpanded = expandedSetlists.has(concert.concertId);
+                            const hasSetlist = concert.sets && concert.sets.length > 0;
+                            
+                            // Flatten all songs from all sets into a single array
+                            const allSongs = hasSetlist ? 
+                              concert.sets.flatMap(set => 
+                                set.song ? set.song.map(song => song.name) : []
+                              ) : [];
+                            
+                            return (
+                              <div key={concert.concertId} className="concert-item-detailed">
+                                <div className="concert-main-info">
+                                  <div className="concert-header-info">
+                                    <div className="concert-venue">
+                                      {typeof concert.venue === 'object' 
+                                        ? concert.venue?.name || 'Unknown Venue' 
+                                        : concert.venue || 'Unknown Venue'}
+                                    </div>
+                                    <div className="concert-location">
+                                      {concert.venue?.city ? (
+                                        `${concert.venue.city.name}, ${concert.venue.city.state}, ${concert.venue.city.country.name}`
+                                      ) : concert.city ? (
+                                        typeof concert.city === 'object' ? concert.city?.name || 'Unknown City' : concert.city
+                                      ) : (
+                                        'Unknown Location'
+                                      )}
+                                    </div>
+                                    <div className="concert-date">{formatDate(concert.eventDate)}</div>
+                                  </div>
+                                  
+                                  {hasSetlist && (
+                                    <button 
+                                      className="setlist-toggle-btn"
+                                      onClick={() => toggleSetlist(concert.concertId)}
+                                    >
+                                      <span className="setlist-text">
+                                        Setlist ({allSongs.length} songs)
+                                      </span>
+                                      <span className="setlist-arrow">
+                                        {setlistExpanded ? "▼" : "▲"}
+                                      </span>
+                                    </button>
+                                  )}
+                                  
+                                  {!hasSetlist && (
+                                    <div className="no-setlist">
+                                      Setlist unavailable
+                                    </div>
+                                  )}
                                 </div>
-                              )}
-                            </div>
-                          ))}
+                                
+                                {hasSetlist && setlistExpanded && (
+                                  <div className="setlist-content">
+                                    <ol className="songs-list">
+                                      {allSongs.map((song, index) => (
+                                        <li key={index} className="song-item">
+                                          {song}
+                                        </li>
+                                      ))}
+                                    </ol>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
                       </div>
                     )}
                   </div>

@@ -12,7 +12,7 @@ export default function getCheckJwt() {
 
   return auth({
     audience: [audience],
-    issuerBaseURL: domain,
+    issuerBaseURL: `https://${domain}`,
     tokenSigningAlg: "RS256",
   });
 }

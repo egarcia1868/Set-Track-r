@@ -14,8 +14,6 @@ const API_URL =
   process.env.REACT_APP_API_URL || "https://api.setlist.fm/rest/1.0/";
 const API_KEY = process.env.SETLIST_FM_API_KEY;
 
-console.log("Concert service - API_KEY loaded:", API_KEY ? "Yes" : "No");
-
 export const saveConcertsForUser = async ({ concertData, user }) => {
   const userId = user.sub;
 

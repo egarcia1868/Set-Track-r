@@ -8,10 +8,6 @@ const __dirname = path.dirname(__filename);
 // Load environment variables first
 dotenv.config({ path: path.resolve(__dirname, "./.env") });
 
-console.log("Environment variables loaded:");
-console.log("AUTH0_DOMAIN:", process.env.AUTH0_DOMAIN);
-console.log("AUTH0_AUDIENCE:", process.env.AUTH0_AUDIENCE);
-
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -19,7 +15,7 @@ import concertRoutes from "./routes/concertRoutes.js";
 import cookieParser from "cookie-parser";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 const nodeEnv = process.env.NODE_ENV;
 
 const corsOptions = {
@@ -28,8 +24,13 @@ const corsOptions = {
 };
 
 if (nodeEnv === "production") {
-  // Allow only the frontend URL when in production
-  corsOptions.origin = "https://set-trackr.onrender.com";
+  // Allow multiple frontend URLs in production
+  corsOptions.origin = [
+    "https://set-trackr.onrender.com",
+    "https://set-trackr.netlify.app",
+    "https://settrackr.netlify.app",
+    // Add any other frontend deployment URLs here
+  ];
 } else {
   // Allow local frontend to access the backend during development
   corsOptions.origin = "http://localhost:3000"; // Update this if your local frontend runs on a different port
@@ -55,6 +56,7 @@ mongoose
     });
   })
   .catch((error) => {
-    console.log(error);
+    console.error("MongoDB connection error:", error.message);
+    process.exit(1);
   });
-// trigger restart
+// trigger restart - updated

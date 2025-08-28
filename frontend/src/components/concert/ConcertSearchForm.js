@@ -199,6 +199,7 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
             setError(null);
             setArtistName(e.target.value);
           }}
+          onFocus={() => setArtistName("")}
           placeholder="e.g. - Billy Strings, CAKE, Sturgill Simpson, etc."
           value={artistName}
         />
@@ -211,6 +212,7 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
             setYear("");
             setEventDate(e.target.value);
           }}
+          onFocus={() => setEventDate("")}
           value={eventDate}
         />
         <label htmlFor="year">Year of concert/s:</label>
@@ -222,6 +224,7 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
             setEventDate("");
             setYear(e.target.value);
           }}
+          onFocus={() => setYear("")}
           placeholder="e.g. - 2025, 2024, 2023 etc."
           value={year}
         />
@@ -233,6 +236,7 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
             setError(null);
             setCityName(e.target.value);
           }}
+          onFocus={() => setCityName("")}
           placeholder="e.g. - Austin, San Diego, Asheville, etc."
           value={cityName}
         />
@@ -244,6 +248,7 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
             setError(null);
             setVenueName(e.target.value);
           }}
+          onFocus={() => setVenueName("")}
           placeholder="e.g. - Moody Center, The Fillmore, The Ryman, etc."
           value={venueName}
         />
