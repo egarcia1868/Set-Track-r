@@ -59,13 +59,35 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
       return;
     }
 
-    // If we successfully get results, there might be more pages
-    if (page === 1) {
-      setHasMorePages(true);
-    }
-
     setConcertList(json);
     setIsModalOpen(true);
+
+    // Check if there's a next page by testing page + 1
+    const nextPageQuery = new URLSearchParams();
+    if (artistName) nextPageQuery.append("artistName", artistName);
+    if (eventDate) nextPageQuery.append("date", formattedDate);
+    if (cityName) nextPageQuery.append("cityName", cityName);
+    if (venueName) nextPageQuery.append("venueName", venueName);
+    if (year) nextPageQuery.append("year", year);
+    nextPageQuery.append("p", page + 1);
+
+    try {
+      const nextPageResponse = await fetch(
+        `${BASE_URL}/api/concerts?${nextPageQuery.toString()}`
+      );
+      
+      if (nextPageResponse.ok) {
+        const nextPageJson = await nextPageResponse.json();
+        // If next page has results, show Next button
+        setHasMorePages(nextPageJson.setlist && nextPageJson.setlist.length > 0);
+      } else {
+        // If next page returns error (like 404), no more pages
+        setHasMorePages(false);
+      }
+    } catch (error) {
+      // If there's an error checking next page, assume no more pages
+      setHasMorePages(false);
+    }
   };
 
   const handleSubmit = async (e) => {
