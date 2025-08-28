@@ -186,6 +186,8 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
         hasMorePages={hasMorePages}
         navigationDirection={navigationDirection}
       />
+      
+      {error && <div className="error">{error}</div>}
       <form className="create" onSubmit={handleSubmit}>
         <h3>Find new set list</h3>
         <label htmlFor="artistName">
@@ -272,7 +274,6 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
           </button>{" "}
           if you just want a sample search to see how it works)
         </p>
-        {error && <div className="error">{error}</div>}
       </form>
     </>
   );

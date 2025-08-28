@@ -1372,6 +1372,7 @@ body.modal-open {
 
 .bar-label {
   pointer-events: none;
+  fill: var(--primary);
 }
 
 .chart-tooltip {
@@ -1392,8 +1393,6 @@ body.modal-open {
 .chart-legend {
   max-width: 250px;
   align-self: center;
-  /* padding-top: 100px; */
-  /* max-height: 300px; */
   overflow-y: auto;
   flex: 1;
 }
