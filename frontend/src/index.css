@@ -368,12 +368,13 @@ body,
 
 /* Profile Settings Modal */
 .modal-overlay {
+  color: var(--primary);
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -392,30 +393,36 @@ body,
 
 .modal-overlay .modal-header {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
   padding: 20px;
   border-bottom: 1px solid #eee;
+  text-align: center;
 }
 
-.modal-overlay .modal-header h2 {
-  margin: 0;
-  color: #333;
-}
-
-.modal-overlay .close-btn {
+.artist-stats-modal .modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
   background: none;
   border: none;
   font-size: 24px;
   cursor: pointer;
-  color: #666;
+  color: #eee;
   padding: 0;
   width: 30px;
   height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1000;
 }
+
+.modal-overlay .modal-header h2 {
+  margin: 0;
+  color: var(--primary);
+}
+
 
 .modal-overlay .close-btn:hover {
   color: #333;
@@ -1235,9 +1242,16 @@ body.modal-open {
   height: 85vh;
   max-width: none;
   max-height: none;
-  overflow-y: auto;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+.artist-stats-modal .chart-container {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .modal-header {
@@ -1255,9 +1269,7 @@ body.modal-open {
 .chart-type-selector {
   display: flex;
   gap: 8px;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  justify-content: center;
 }
 
 .chart-type-btn {
@@ -1273,6 +1285,7 @@ body.modal-open {
 
 .chart-type-btn:hover {
   border-color: var(--primary);
+  color: var(--primary);
   background-color: rgba(26, 172, 131, 0.05);
 }
 
@@ -1286,24 +1299,31 @@ body.modal-open {
   display: flex;
   gap: 30px;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   flex: 1;
   min-height: 0;
   overflow: hidden;
   padding: 10px;
   height: 100%;
   width: 100%;
+  position: relative;
 }
 
 .pie-chart-wrapper {
-  position: relative;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   justify-content: center;
   align-items: center;
-  flex: 1;
-  width: 100%;
-  height: 100%;
-  min-height: 0;
+  width: 600px;
+  height: 600px;
+  pointer-events: none;
+}
+
+.pie-chart-wrapper svg {
+  pointer-events: all;
 }
 
 .pie-chart-wrapper svg {
@@ -1370,9 +1390,12 @@ body.modal-open {
 }
 
 .chart-legend {
-  max-width: 300px;
-  max-height: 300px;
+  max-width: 250px;
+  align-self: center;
+  /* padding-top: 100px; */
+  /* max-height: 300px; */
   overflow-y: auto;
+  flex: 1;
 }
 
 .legend-item {
@@ -1423,12 +1446,16 @@ body.modal-open {
   
   .pie-chart-wrapper {
     flex: 1;
-    min-height: 0;
+    min-height: 250px;
+    height: 350px;
+    order: 1;
   }
   
   .pie-chart-wrapper svg {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
   }
   
   .bar-chart-wrapper {
@@ -1445,6 +1472,8 @@ body.modal-open {
   .chart-legend {
     max-width: 100%;
     width: 100%;
+    display: block;
+    order: 2;
   }
   
   .artist-stats-modal {
@@ -1472,5 +1501,47 @@ body.modal-open {
   
   .chart-type-selector {
     justify-content: center;
+  }
+  
+  /* Hide stats indicator (Click for chart view) on mobile */
+  .stats-indicator {
+    display: none;
+  }
+  
+  /* Disable click functionality on profile stats for mobile */
+  .profile-stats {
+    cursor: default;
+    pointer-events: none;
+  }
+  
+  .profile-stats:hover {
+    transform: none;
+    box-shadow: none;
+    background-color: transparent;
+    border-color: initial;
+  }
+  
+  /* Hide emojis and show only text on mobile */
+  .chart-type-btn {
+    font-size: 14px;
+  }
+  
+  /* Use CSS to replace button content on mobile */
+  .chart-type-btn:nth-child(1) {
+    font-size: 0;
+  }
+  
+  .chart-type-btn:nth-child(1)::after {
+    content: "Pie Chart";
+    font-size: 14px;
+  }
+  
+  .chart-type-btn:nth-child(2) {
+    font-size: 0;
+  }
+  
+  .chart-type-btn:nth-child(2)::after {
+    content: "Bar Chart";
+    font-size: 14px;
   }
 }

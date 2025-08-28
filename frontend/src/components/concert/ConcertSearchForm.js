@@ -253,7 +253,7 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
           value={venueName}
         />
         <button type="submit">Look Up Set List</button>
-        <p className="subtitle">
+        <p>
           (
           <button
             type="button"

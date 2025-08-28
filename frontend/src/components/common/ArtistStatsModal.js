@@ -21,6 +21,20 @@ const ArtistStatsModal = ({ isOpen, onClose, concerts }) => {
     };
   }, [isOpen, onClose]);
 
+  // Handle modal body scroll prevention
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    
+    // Cleanup when component unmounts
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   // Calculate artist data for pie chart
@@ -163,7 +177,7 @@ const ArtistStatsModal = ({ isOpen, onClose, concerts }) => {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content artist-stats-modal" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Artist Distribution</h2>
+        <button className="modal-close" onClick={onClose}>×</button>
           <div className="chart-type-selector">
             <button 
               className={`chart-type-btn ${chartType === 'pie' ? 'active' : ''}`}
@@ -178,8 +192,8 @@ const ArtistStatsModal = ({ isOpen, onClose, concerts }) => {
               📊 Bar Chart
             </button>
           </div>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
+          <h2>Artist Distribution</h2>
+          </div>
         
         <div className="chart-container">
           {chartType === 'pie' ? (

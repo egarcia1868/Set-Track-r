@@ -70,6 +70,9 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
           create a song page that displays information about the specific song
           as well as when you've seen it
         </li>
+        <li>expand bar chart when phone is rotated</li>
+        <li>add page title to display username's profile</li>
+        <li>add ability to follow other users</li>
         <li>create pie chart divided by number of times per song vs total.</li>
       </ul>
       <h4 style={{ marginLeft: "1.5rem" }}>
