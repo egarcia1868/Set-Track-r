@@ -8,6 +8,11 @@ import {
   getPublicProfile,
   getUserProfile,
   updateProfile,
+  followUser,
+  unfollowUser,
+  getFollowing,
+  getFollowStatus,
+  searchUsers,
 } from "../controllers/concertController.js";
 
 // Temporary auth middleware to decode JWT tokens without verification
@@ -46,14 +51,21 @@ router.get("/", getConcert);
 // POST a new concert to DB
 router.post("/", saveConcerts);
 
-// DELETE a concert
-router.delete("/:artistId/:concertId", checkJwt, deleteConcert);
-
 // GET current user's profile (must come before the parameterized route)
 router.get("/profile", checkJwt, getUserProfile);
 
 // UPDATE user profile
 router.put("/profile", checkJwt, updateProfile);
+
+// Follow/unfollow routes (must come before the parameterized routes)
+router.post("/follow/:displayName", checkJwt, followUser);
+router.delete("/follow/:displayName", checkJwt, unfollowUser);
+router.get("/following", checkJwt, getFollowing);
+router.get("/follow-status/:displayName", checkJwt, getFollowStatus);
+router.get("/search-users", checkJwt, searchUsers);
+
+// DELETE a concert (must come after more specific routes to avoid conflicts)
+router.delete("/:artistId/:concertId", checkJwt, deleteConcert);
 
 // GET public profile (no auth required) - this should come last
 router.get("/profile/:username", getPublicProfile);

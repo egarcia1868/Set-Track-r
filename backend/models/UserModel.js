@@ -24,6 +24,20 @@ const userSchema = new Schema({
     isPublic: { type: Boolean, default: false },
     shareableId: { type: String, unique: true, sparse: true },
   },
+  following: [
+    {
+      userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+      displayName: { type: String, required: true },
+      followedAt: { type: Date, default: Date.now }
+    }
+  ],
+  followers: [
+    {
+      userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+      displayName: { type: String, required: true },
+      followedAt: { type: Date, default: Date.now }
+    }
+  ],
 });
 
 // Create a sparse unique index on displayName to ensure uniqueness while allowing empty values

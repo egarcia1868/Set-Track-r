@@ -4,6 +4,7 @@ import ArtistDetails from "../components/artist/ArtistDetails";
 import { useConcertsContext } from "../hooks/useConcertsContext";
 import ConcertSearchForm from "../components/concert/ConcertSearchForm";
 import ProfileSettings from "../components/common/ProfileSettings";
+import FollowingList from "../components/common/FollowingList";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const Dashboard = () => {
@@ -11,6 +12,7 @@ const Dashboard = () => {
   const { artists, dispatch } = useConcertsContext();
   const [isFetchingConcerts, setIsFetchingConcerts] = useState(true);
   const [showProfileSettings, setShowProfileSettings] = useState(false);
+  const [showFollowingList, setShowFollowingList] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [showConcertSearchModal, setShowConcertSearchModal] = useState(false);
 
@@ -96,12 +98,20 @@ const Dashboard = () => {
                 Find new setlist
               </button>
             </div>
-            <button 
-              className="profile-settings-btn"
-              onClick={() => setShowProfileSettings(true)}
-            >
-              Profile settings
-            </button>
+            <div className="dashboard-buttons">
+              <button 
+                className="profile-settings-btn"
+                onClick={() => setShowProfileSettings(true)}
+              >
+                Profile settings
+              </button>
+              <button 
+                className="following-list-btn"
+                onClick={() => setShowFollowingList(true)}
+              >
+                Following
+              </button>
+            </div>
           </div>
         </div>
         
@@ -169,6 +179,11 @@ const Dashboard = () => {
       <ProfileSettings 
         isOpen={showProfileSettings}
         onClose={() => setShowProfileSettings(false)}
+      />
+      
+      <FollowingList 
+        isOpen={showFollowingList}
+        onClose={() => setShowFollowingList(false)}
       />
     </div>
   );

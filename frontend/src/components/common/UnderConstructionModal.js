@@ -66,12 +66,7 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
         Improvement/s currently being worked:
       </h4>
       <ul>
-        <li>
-          create a song page that displays information about the specific song
-          as well as when you've seen it
-        </li>
         <li>add ability to follow other users</li>
-        <li>create pie chart divided by number of times per song vs total.</li>
       </ul>
       <h4 style={{ marginLeft: "1.5rem" }}>
         Planned upcoming improvements/bug fixes:

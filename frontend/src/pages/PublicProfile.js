@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
 import { BASE_URL } from "../utils/config";
 import ArtistStatsModal from "../components/common/ArtistStatsModal";
 import AllSongsModal from "../components/common/AllSongsModal";
 
 const PublicProfile = () => {
   const { username } = useParams();
+  const { isAuthenticated, getAccessTokenSilently, user } = useAuth0();
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -16,10 +18,18 @@ const PublicProfile = () => {
   const [bioExpanded, setBioExpanded] = useState(false);
   const [showAllSongsModal, setShowAllSongsModal] = useState(false);
   const [selectedArtist, setSelectedArtist] = useState(null);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
 
   useEffect(() => {
     fetchPublicProfile();
   }, [username]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (isAuthenticated && profileData) {
+      checkFollowStatus();
+    }
+  }, [isAuthenticated, profileData]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleArtist = (artistId) => {
     setExpandedArtists(prev => {
@@ -100,6 +110,99 @@ const PublicProfile = () => {
     }
   };
 
+  const checkFollowStatus = async () => {
+    if (!profileData?.profile?.displayName) return;
+    
+    try {
+      const token = await getAccessTokenSilently();
+      console.log("Checking follow status for:", profileData.profile.displayName);
+      const response = await fetch(`${BASE_URL}/api/concerts/follow-status/${encodeURIComponent(profileData.profile.displayName)}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Follow status response:", data);
+        console.log("Setting isFollowing to:", data.isFollowing);
+        setIsFollowing(data.isFollowing);
+      } else {
+        console.error("Follow status check failed with status:", response.status);
+      }
+    } catch (error) {
+      console.error("Error checking follow status:", error);
+    }
+  };
+
+  const handleFollow = async () => {
+    if (!profileData?.profile?.displayName) return;
+    
+    console.log("Starting follow for:", profileData.profile.displayName);
+    setFollowLoading(true);
+    try {
+      const token = await getAccessTokenSilently();
+      console.log("Got token, making follow request...");
+      const response = await fetch(`${BASE_URL}/api/concerts/follow/${encodeURIComponent(profileData.profile.displayName)}`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      console.log("Follow response status:", response.status);
+      if (response.ok) {
+        console.log("Follow successful, setting isFollowing to true");
+        setIsFollowing(true);
+      } else {
+        try {
+          const data = await response.json();
+          console.error("Follow error:", data.error);
+        } catch (parseError) {
+          console.error("Failed to parse error response:", parseError);
+        }
+      }
+    } catch (error) {
+      console.error("Error following user:", error);
+    }
+    console.log("Setting followLoading to false");
+    setFollowLoading(false);
+  };
+
+  const handleUnfollow = async () => {
+    if (!profileData?.profile?.displayName) return;
+    
+    console.log("Starting unfollow for:", profileData.profile.displayName);
+    setFollowLoading(true);
+    try {
+      const token = await getAccessTokenSilently();
+      console.log("Got token, making unfollow request...");
+      const response = await fetch(`${BASE_URL}/api/concerts/follow/${encodeURIComponent(profileData.profile.displayName)}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      console.log("Unfollow response status:", response.status);
+      if (response.ok) {
+        console.log("Unfollow successful, setting isFollowing to false");
+        setIsFollowing(false);
+      } else {
+        try {
+          const data = await response.json();
+          console.error("Unfollow error:", data.error);
+        } catch (parseError) {
+          console.error("Failed to parse error response:", parseError);
+        }
+      }
+    } catch (error) {
+      console.error("Error unfollowing user:", error);
+    }
+    console.log("Setting followLoading to false");
+    setFollowLoading(false);
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return "Date unknown";
     
@@ -169,7 +272,18 @@ const PublicProfile = () => {
   return (
     <div className="public-profile">
       <div className="profile-header">
-        <h1>{profileData.profile.displayName}</h1>
+        <div className="profile-header-top">
+          <h1>{profileData.profile.displayName}</h1>
+          {isAuthenticated && profileData?.profile?.displayName && user?.sub && (
+            <button 
+              className={`follow-btn ${isFollowing ? 'following' : ''}`}
+              onClick={isFollowing ? handleUnfollow : handleFollow}
+              disabled={followLoading}
+            >
+              {followLoading ? 'Loading...' : isFollowing ? 'Following' : 'Follow'}
+            </button>
+          )}
+        </div>
         {profileData.profile.bio && (
           <div className="profile-bio-container">
             <p className={`profile-bio ${!bioExpanded ? 'bio-truncated' : ''}`}>

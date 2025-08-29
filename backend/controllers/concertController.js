@@ -268,3 +268,191 @@ export const updateProfile = async (req, res) => {
     res.status(500).json({ error: "Could not update profile" });
   }
 };
+
+export const followUser = async (req, res) => {
+  try {
+    const auth0Id = req.auth?.payload.sub;
+    if (!auth0Id) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const { displayName } = req.params;
+    
+    // Find the current user
+    const currentUser = await User.findOne({ auth0Id });
+    if (!currentUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Find the user to follow by display name
+    const userToFollow = await User.findOne({ 
+      "profile.displayName": displayName,
+      "profile.isPublic": true 
+    });
+    
+    if (!userToFollow) {
+      return res.status(404).json({ error: "User not found or profile not public" });
+    }
+
+    if (currentUser._id.equals(userToFollow._id)) {
+      return res.status(400).json({ error: "Cannot follow yourself" });
+    }
+
+    // Check if already following
+    const alreadyFollowing = currentUser.following.some(follow => 
+      follow.userId.equals(userToFollow._id)
+    );
+
+    if (alreadyFollowing) {
+      return res.status(400).json({ error: "Already following this user" });
+    }
+
+    // Add to current user's following list
+    currentUser.following.push({
+      userId: userToFollow._id,
+      displayName: userToFollow.profile.displayName
+    });
+
+    // Add to target user's followers list
+    userToFollow.followers.push({
+      userId: currentUser._id,
+      displayName: currentUser.profile.displayName || "Music Fan"
+    });
+
+    await Promise.all([currentUser.save(), userToFollow.save()]);
+
+    res.json({ message: "Successfully followed user" });
+  } catch (error) {
+    console.error("Error following user:", error);
+    res.status(500).json({ error: "Could not follow user" });
+  }
+};
+
+export const unfollowUser = async (req, res) => {
+  try {
+    const auth0Id = req.auth?.payload.sub;
+    if (!auth0Id) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const { displayName } = req.params;
+    
+    // Find the current user
+    const currentUser = await User.findOne({ auth0Id });
+    if (!currentUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Find the user to unfollow by display name
+    const userToUnfollow = await User.findOne({ 
+      "profile.displayName": displayName
+    });
+    
+    if (!userToUnfollow) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Remove from current user's following list
+    currentUser.following = currentUser.following.filter(follow => 
+      !follow.userId.equals(userToUnfollow._id)
+    );
+
+    // Remove from target user's followers list
+    userToUnfollow.followers = userToUnfollow.followers.filter(follower => 
+      !follower.userId.equals(currentUser._id)
+    );
+
+    await Promise.all([currentUser.save(), userToUnfollow.save()]);
+
+    res.json({ message: "Successfully unfollowed user" });
+  } catch (error) {
+    console.error("Error unfollowing user:", error);
+    res.status(500).json({ error: "Could not unfollow user" });
+  }
+};
+
+export const getFollowing = async (req, res) => {
+  try {
+    const auth0Id = req.auth?.payload.sub;
+    if (!auth0Id) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const user = await User.findOne({ auth0Id }).populate('following.userId', 'profile.displayName profile.isPublic profile.bio');
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Filter to only show public profiles
+    const publicFollowing = user.following
+      .filter(follow => follow.userId && follow.userId.profile.isPublic)
+      .map(follow => ({
+        displayName: follow.displayName,
+        bio: follow.userId.profile.bio,
+        followedAt: follow.followedAt
+      }));
+
+    res.json({ following: publicFollowing });
+  } catch (error) {
+    console.error("Error fetching following list:", error);
+    res.status(500).json({ error: "Could not fetch following list" });
+  }
+};
+
+export const getFollowStatus = async (req, res) => {
+  try {
+    const auth0Id = req.auth?.payload.sub;
+    if (!auth0Id) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const { displayName } = req.params;
+    
+    const currentUser = await User.findOne({ auth0Id });
+    if (!currentUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const isFollowing = currentUser.following.some(follow => 
+      follow.displayName === displayName
+    );
+
+    res.json({ isFollowing });
+  } catch (error) {
+    console.error("Error checking follow status:", error);
+    res.status(500).json({ error: "Could not check follow status" });
+  }
+};
+
+export const searchUsers = async (req, res) => {
+  try {
+    const auth0Id = req.auth?.payload.sub;
+    if (!auth0Id) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const { q } = req.query;
+    if (!q || q.trim().length === 0) {
+      return res.json({ users: [] });
+    }
+
+    // Search for users with public profiles that match the query
+    const users = await User.find({
+      "profile.isPublic": true,
+      "profile.displayName": { $regex: q.trim(), $options: 'i' },
+      auth0Id: { $ne: auth0Id } // Exclude current user
+    })
+    .select('profile.displayName profile.bio')
+    .limit(20);
+
+    const results = users.map(user => ({
+      displayName: user.profile.displayName,
+      bio: user.profile.bio
+    }));
+
+    res.json({ users: results });
+  } catch (error) {
+    console.error("Error searching users:", error);
+    res.status(500).json({ error: "Could not search users" });
+  }
+};
