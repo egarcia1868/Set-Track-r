@@ -22,6 +22,7 @@ const PublicProfile = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
   const [showFollowersList, setShowFollowersList] = useState(false);
+  const [currentUserProfile, setCurrentUserProfile] = useState(null);
 
   useEffect(() => {
     fetchPublicProfile();
@@ -30,6 +31,7 @@ const PublicProfile = () => {
   useEffect(() => {
     if (isAuthenticated && profileData) {
       checkFollowStatus();
+      fetchCurrentUserProfile();
     }
   }, [isAuthenticated, profileData]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -124,6 +126,26 @@ const PublicProfile = () => {
       setError("Failed to load profile");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchCurrentUserProfile = async () => {
+    if (!isAuthenticated) return;
+    
+    try {
+      const token = await getAccessTokenSilently();
+      const response = await fetch(`${BASE_URL}/api/concerts/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setCurrentUserProfile(data.profile);
+      }
+    } catch (error) {
+      console.error("Error fetching current user profile:", error);
     }
   };
 
@@ -313,7 +335,8 @@ const PublicProfile = () => {
           <div className="profile-actions">
             {isAuthenticated &&
               profileData?.profile?.displayName &&
-              user?.sub && (
+              user?.sub &&
+              currentUserProfile?.displayName !== profileData.profile.displayName && (
                 <button
                   className={`follow-btn ${isFollowing ? "following" : ""}`}
                   onClick={isFollowing ? handleUnfollow : handleFollow}
