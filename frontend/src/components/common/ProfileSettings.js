@@ -8,7 +8,6 @@ const ProfileSettings = ({ isOpen, onClose }) => {
     displayName: "",
     bio: "",
     isPublic: false,
-    shareableId: "",
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -91,8 +90,8 @@ const ProfileSettings = ({ isOpen, onClose }) => {
   };
 
   const copyShareableUrl = () => {
-    if (profile.shareableId) {
-      const url = `${window.location.origin}/profile/${profile.shareableId}`;
+    if (profile.displayName) {
+      const url = `${window.location.origin}/profile/${encodeURIComponent(profile.displayName)}`;
       navigator.clipboard.writeText(url);
       setMessage("Shareable URL copied to clipboard!");
       
@@ -119,9 +118,6 @@ const ProfileSettings = ({ isOpen, onClose }) => {
       <div className="modal">
         <div className="modal-header">
           <h2>Profile Settings</h2>
-          <button className="close-btn" onClick={onClose}>
-            ×
-          </button>
         </div>
         
         <form onSubmit={handleSubmit} className="profile-form">
@@ -167,13 +163,13 @@ const ProfileSettings = ({ isOpen, onClose }) => {
             </p>
           </div>
 
-          {profile.isPublic && profile.shareableId && (
+          {profile.isPublic && profile.displayName && (
             <div className="form-group">
               <label>Shareable URL:</label>
               <div className="url-container">
                 <input
                   type="text"
-                  value={`${window.location.origin}/profile/${profile.shareableId}`}
+                  value={`${window.location.origin}/profile/${encodeURIComponent(profile.displayName)}`}
                   readOnly
                   className="shareable-url"
                 />

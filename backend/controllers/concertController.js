@@ -128,16 +128,27 @@ export const deleteConcert = async (req, res) => {
 
 export const getPublicProfile = async (req, res) => {
   try {
-    const { shareableId } = req.params;
-    console.log(`Public profile request for shareableId: ${shareableId}`);
+    const { username } = req.params;
+    const decodedUsername = decodeURIComponent(username);
+    console.log(`Public profile request for username: ${username} (decoded: ${decodedUsername})`);
     
-    const user = await User.findOne({ 
-      "profile.shareableId": shareableId,
+    // First try to find by displayName (new username-based URLs)
+    let user = await User.findOne({ 
+      "profile.displayName": decodedUsername,
       "profile.isPublic": true 
     });
     
+    // If not found, try to find by shareableId (backward compatibility)
     if (!user) {
-      console.log(`No public profile found for shareableId: ${shareableId}`);
+      console.log(`No user found by displayName, trying shareableId...`);
+      user = await User.findOne({ 
+        "profile.shareableId": decodedUsername,
+        "profile.isPublic": true 
+      });
+    }
+    
+    if (!user) {
+      console.log(`No public profile found for: ${decodedUsername}`);
       return res.status(404).json({ error: "Profile not found or not public" });
     }
     
@@ -195,7 +206,6 @@ export const getUserProfile = async (req, res) => {
         displayName: "",
         bio: "",
         isPublic: false,
-        shareableId: "",
       },
     });
   } catch (error) {
@@ -225,20 +235,23 @@ export const updateProfile = async (req, res) => {
         displayName: "",
         bio: "",
         isPublic: false,
-        shareableId: "",
       };
     }
 
-    // Generate shareable ID if making profile public for the first time
-    if (isPublic && !user.profile.shareableId) {
-      // Generate a random 12-character ID
-      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-      let shareableId = '';
-      for (let i = 0; i < 12; i++) {
-        shareableId += chars.charAt(Math.floor(Math.random() * chars.length));
+    // Check for display name uniqueness if displayName is being updated
+    if (displayName && displayName.trim() && displayName !== user.profile.displayName) {
+      const existingUser = await User.findOne({ 
+        "profile.displayName": displayName.trim(),
+        auth0Id: { $ne: auth0Id } // Exclude current user
+      });
+      
+      if (existingUser) {
+        return res.status(400).json({ 
+          error: "This display name is already taken. Please choose another name." 
+        });
       }
-      user.profile.shareableId = shareableId;
     }
+
 
     user.profile.displayName = displayName || user.profile.displayName;
     user.profile.bio = bio !== undefined ? bio : user.profile.bio;

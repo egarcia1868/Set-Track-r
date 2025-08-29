@@ -26,4 +26,11 @@ const userSchema = new Schema({
   },
 });
 
+// Create a sparse unique index on displayName to ensure uniqueness while allowing empty values
+userSchema.index({ "profile.displayName": 1 }, { 
+  unique: true, 
+  sparse: true,
+  partialFilterExpression: { "profile.displayName": { $ne: "" } }
+});
+
 export default model("User", userSchema);

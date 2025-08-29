@@ -659,6 +659,185 @@ body,
   color: #0056b3;
 }
 
+/* See all songs button */
+.see-all-songs-btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 15px auto;
+  display: block;
+  transition: background-color 0.3s ease;
+}
+
+.see-all-songs-btn:hover {
+  background: #158f6b;
+}
+
+/* All Songs Modal */
+.all-songs-modal {
+  width: 90vw;
+  max-width: 600px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.all-songs-modal .modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #eee;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.all-songs-modal .modal-close:hover {
+  color: #333;
+}
+
+.all-songs-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  min-height: 0;
+}
+
+.songs-summary {
+  text-align: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.songs-summary p {
+  margin: 0;
+  color: #eee;
+  font-size: 14px;
+}
+
+.songs-list-container {
+  flex: 1;
+  min-height: 0;
+}
+
+.all-songs-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.song-count-item {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.song-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.song-header:hover {
+  background-color: #f8f9fa;
+  margin: 0 -10px;
+  padding: 12px 10px;
+  border-radius: 4px;
+}
+
+.song-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.song-count-item:last-child {
+  border-bottom: none;
+}
+
+.song-name {
+  flex: 1;
+  font-weight: 500;
+  color: var(--primary);
+}
+
+.play-count {
+  background: var(--primary);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  min-width: 60px;
+  text-align: center;
+}
+
+.expand-icon {
+  color: #999;
+  font-size: 12px;
+  transition: transform 0.2s ease;
+}
+
+.performance-list {
+  background-color: #f8f9fa;
+  margin: 10px 0 0 0;
+  border-radius: 6px;
+  padding: 15px;
+}
+
+.performance-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 14px;
+}
+
+.performance-item:last-child {
+  border-bottom: none;
+}
+
+.performance-date {
+  font-weight: 500;
+  color: var(--primary);
+  min-width: 100px;
+}
+
+.performance-venue {
+  font-weight: 500;
+  flex: 1;
+  margin: 0 15px;
+}
+
+.performance-location {
+  color: #666;
+  font-size: 13px;
+  text-align: right;
+}
+
+.no-songs {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  margin: 40px 0;
+}
+
 /* Mobile search button styles */
 .mobile-search-btn-container {
   display: none;

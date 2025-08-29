@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { BASE_URL } from "../utils/config";
 import ArtistStatsModal from "../components/common/ArtistStatsModal";
+import AllSongsModal from "../components/common/AllSongsModal";
 
 const PublicProfile = () => {
-  const { shareableId } = useParams();
+  const { username } = useParams();
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,10 +14,12 @@ const PublicProfile = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showStatsModal, setShowStatsModal] = useState(false);
   const [bioExpanded, setBioExpanded] = useState(false);
+  const [showAllSongsModal, setShowAllSongsModal] = useState(false);
+  const [selectedArtist, setSelectedArtist] = useState(null);
 
   useEffect(() => {
     fetchPublicProfile();
-  }, [shareableId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [username]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleArtist = (artistId) => {
     setExpandedArtists(prev => {
@@ -63,7 +66,7 @@ const PublicProfile = () => {
 
   const fetchPublicProfile = async () => {
     try {
-      const response = await fetch(`${BASE_URL}/api/concerts/profile/${shareableId}`);
+      const response = await fetch(`${BASE_URL}/api/concerts/profile/${encodeURIComponent(username)}`);
       
       if (response.ok) {
         const data = await response.json();
@@ -265,7 +268,20 @@ const PublicProfile = () => {
                       </div>
                     </div>
                     {isExpanded && (
-                      <div className="concerts-list">
+                      <>
+                        {artist.concerts.length > 1 && (
+                          <button 
+                            className="see-all-songs-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedArtist(artist);
+                              setShowAllSongsModal(true);
+                            }}
+                          >
+                            See all songs
+                          </button>
+                        )}
+                        <div className="concerts-list">
                         {artist.concerts
                           .sort((a, b) => new Date(b.eventDate) - new Date(a.eventDate))
                           .map((concert) => {
@@ -334,7 +350,8 @@ const PublicProfile = () => {
                               </div>
                             );
                           })}
-                      </div>
+                        </div>
+                      </>
                     )}
                   </div>
                 );
@@ -347,6 +364,15 @@ const PublicProfile = () => {
         isOpen={showStatsModal}
         onClose={() => setShowStatsModal(false)}
         concerts={profileData?.concerts || []}
+      />
+      
+      <AllSongsModal 
+        isOpen={showAllSongsModal}
+        onClose={() => {
+          setShowAllSongsModal(false);
+          setSelectedArtist(null);
+        }}
+        artist={selectedArtist}
       />
     </div>
   );

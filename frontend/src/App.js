@@ -16,7 +16,7 @@ function App() {
         <div className="pages">
           <Routes>
             <Route path="/" element={<RootRoute />} />
-            <Route path="/profile/:shareableId" element={<PublicProfile />} />
+            <Route path="/profile/:username" element={<PublicProfile />} />
             <Route
               path="/dashboard"
               element={

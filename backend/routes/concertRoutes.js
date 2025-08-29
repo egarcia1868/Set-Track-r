@@ -56,7 +56,7 @@ router.get("/profile", checkJwt, getUserProfile);
 router.put("/profile", checkJwt, updateProfile);
 
 // GET public profile (no auth required) - this should come last
-router.get("/profile/:shareableId", getPublicProfile);
+router.get("/profile/:username", getPublicProfile);
 
 // CURRENTLY UNUSED.  WOULD NEED TO BE REWORKED TO WORK WITH NEW CONCERT DATA
 // PLAN IS TO USE THIS FOR EDITING A CONCERT (e.g. GOT TO CONCERT LATE OR LEFT EARLY)
