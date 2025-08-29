@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
-import { BASE_URL } from '../../utils/config';
+import { useState, useEffect } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
+import { BASE_URL } from "../../utils/config";
 
 const FollowingList = ({ isOpen, onClose }) => {
   const { getAccessTokenSilently } = useAuth0();
   const [following, setFollowing] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
-  const [followingSearchTerm, setFollowingSearchTerm] = useState('');
+  const [followingSearchTerm, setFollowingSearchTerm] = useState("");
 
   useEffect(() => {
     if (isOpen) {
@@ -26,7 +26,7 @@ const FollowingList = ({ isOpen, onClose }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         setFollowing(data.following);
@@ -39,7 +39,7 @@ const FollowingList = ({ isOpen, onClose }) => {
   };
 
   const handleProfileClick = (displayName) => {
-    window.open(`/profile/${encodeURIComponent(displayName)}`, '_blank');
+    window.open(`/profile/${encodeURIComponent(displayName)}`, "_blank");
   };
 
   const searchUsers = async (query) => {
@@ -51,12 +51,15 @@ const FollowingList = ({ isOpen, onClose }) => {
     setSearchLoading(true);
     try {
       const token = await getAccessTokenSilently();
-      const response = await fetch(`${BASE_URL}/api/concerts/search-users?q=${encodeURIComponent(query)}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const response = await fetch(
+        `${BASE_URL}/api/concerts/search-users?q=${encodeURIComponent(query)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
-      
+      );
+
       if (response.ok) {
         const data = await response.json();
         setSearchResults(data.users || []);
@@ -79,28 +82,28 @@ const FollowingList = ({ isOpen, onClose }) => {
   }, [searchTerm]);
 
   // Filter following list based on search term
-  const filteredFollowing = following.filter(user => 
-    user.displayName.toLowerCase().includes(followingSearchTerm.toLowerCase())
+  const filteredFollowing = following.filter((user) =>
+    user.displayName.toLowerCase().includes(followingSearchTerm.toLowerCase()),
   );
 
   // Handle escape key press
   useEffect(() => {
     const handleEscapeKey = (event) => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         onClose();
       }
     };
 
     if (isOpen) {
-      document.addEventListener('keydown', handleEscapeKey);
-      document.body.classList.add('modal-open');
+      document.addEventListener("keydown", handleEscapeKey);
+      document.body.classList.add("modal-open");
     } else {
-      document.body.classList.remove('modal-open');
+      document.body.classList.remove("modal-open");
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscapeKey);
-      document.body.classList.remove('modal-open');
+      document.removeEventListener("keydown", handleEscapeKey);
+      document.body.classList.remove("modal-open");
     };
   }, [isOpen, onClose]);
 
@@ -108,13 +111,17 @@ const FollowingList = ({ isOpen, onClose }) => {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content following-list-modal" onClick={e => e.stopPropagation()}>
+      <div
+        className="modal-content following-list-modal"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="modal-header">
-          
-        <button className="modal-close" onClick={onClose}>×</button>
+          <button className="modal-close" onClick={onClose}>
+            ×
+          </button>
           {/* <h2>Following</h2> */}
         </div>
-        
+
         <div className="following-content">
           <div className="user-search-container">
             <input
@@ -124,7 +131,9 @@ const FollowingList = ({ isOpen, onClose }) => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="user-search"
             />
-            {searchLoading && <div className="search-loading">Searching...</div>}
+            {searchLoading && (
+              <div className="search-loading">Searching...</div>
+            )}
           </div>
 
           {searchTerm.trim() && searchResults.length > 0 && (
@@ -132,7 +141,11 @@ const FollowingList = ({ isOpen, onClose }) => {
               <h3>Search Results</h3>
               <div className="following-list">
                 {searchResults.map((user, index) => (
-                  <div key={index} className="following-item" onClick={() => handleProfileClick(user.displayName)}>
+                  <div
+                    key={index}
+                    className="following-item"
+                    onClick={() => handleProfileClick(user.displayName)}
+                  >
                     <div className="following-info">
                       <h3 className="following-name">{user.displayName}</h3>
                       {user.bio && <p className="following-bio">{user.bio}</p>}
@@ -143,9 +156,13 @@ const FollowingList = ({ isOpen, onClose }) => {
             </div>
           )}
 
-          {searchTerm.trim() && searchResults.length === 0 && !searchLoading && (
-            <p className="no-results">No users found matching "{searchTerm}"</p>
-          )}
+          {searchTerm.trim() &&
+            searchResults.length === 0 &&
+            !searchLoading && (
+              <p className="no-results">
+                No users found matching "{searchTerm}"
+              </p>
+            )}
 
           {!searchTerm.trim() && (
             <>
@@ -166,16 +183,23 @@ const FollowingList = ({ isOpen, onClose }) => {
               ) : following.length === 0 ? (
                 <p className="no-following">You're not following anyone yet.</p>
               ) : filteredFollowing.length === 0 ? (
-                <p className="no-results">No following users match "{followingSearchTerm}"</p>
+                <p className="no-results">
+                  No following users match "{followingSearchTerm}"
+                </p>
               ) : (
                 <div className="following-list">
                   {filteredFollowing.map((user, index) => (
-                    <div key={index} className="following-item" onClick={() => handleProfileClick(user.displayName)}>
+                    <div
+                      key={index}
+                      className="following-item"
+                      onClick={() => handleProfileClick(user.displayName)}
+                    >
                       <div className="following-info">
                         <h3 className="following-name">{user.displayName}</h3>
                       </div>
                       <div className="following-date">
-                        Followed {new Date(user.followedAt).toLocaleDateString()}
+                        Followed{" "}
+                        {new Date(user.followedAt).toLocaleDateString()}
                       </div>
                     </div>
                   ))}

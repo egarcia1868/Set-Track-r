@@ -186,7 +186,7 @@ const ConcertSearchForm = ({ refreshConcerts }) => {
         hasMorePages={hasMorePages}
         navigationDirection={navigationDirection}
       />
-      
+
       {error && <div className="error">{error}</div>}
       <form className="create" onSubmit={handleSubmit}>
         <h3>Find new set list</h3>

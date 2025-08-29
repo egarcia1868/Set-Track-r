@@ -66,19 +66,18 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
         Improvement/s currently being worked:
       </h4>
       <ul>
-        <li>add ability to follow other users</li>
-      </ul>
-      <h4 style={{ marginLeft: "1.5rem" }}>
-        Planned upcoming improvements/bug fixes:
-      </h4>
-      <ul>
-        <li>Start switching to utilizing MUI or shadcn/ui for components.</li>
+        {" "}
         <li>
           See if feasible when adding a band, to display other bands at that
           show. (ex. - enter King Gizz & 11/15/2024, King Gizz would show up,
           but also the opener King Stingray. Perhaps within a dropdown in the
           same component.)
         </li>
+      </ul>
+      <h4 style={{ marginLeft: "1.5rem" }}>
+        Planned upcoming improvements/bug fixes:
+      </h4>
+      <ul>
         <li>
           add ability to remove specific songs from "seen" set (for accurate
           tracking if arrived late/left early)

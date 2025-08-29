@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import axios from "axios";
 import path from "path";
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from "url";
 import Artist from "../models/ArtistModel.js";
 import User from "../models/UserModel.js";
 

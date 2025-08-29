@@ -4,6 +4,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { BASE_URL } from "../utils/config";
 import ArtistStatsModal from "../components/common/ArtistStatsModal";
 import AllSongsModal from "../components/common/AllSongsModal";
+import PublicFollowersList from "../components/common/PublicFollowersList";
 
 const PublicProfile = () => {
   const { username } = useParams();
@@ -20,6 +21,7 @@ const PublicProfile = () => {
   const [selectedArtist, setSelectedArtist] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
+  const [showFollowersList, setShowFollowersList] = useState(false);
 
   useEffect(() => {
     fetchPublicProfile();
@@ -32,7 +34,7 @@ const PublicProfile = () => {
   }, [isAuthenticated, profileData]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleArtist = (artistId) => {
-    setExpandedArtists(prev => {
+    setExpandedArtists((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(artistId)) {
         newSet.delete(artistId);
@@ -44,7 +46,7 @@ const PublicProfile = () => {
   };
 
   const toggleSetlist = (concertId) => {
-    setExpandedSetlists(prev => {
+    setExpandedSetlists((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(concertId)) {
         newSet.delete(concertId);
@@ -57,7 +59,9 @@ const PublicProfile = () => {
 
   const expandAll = () => {
     if (profileData?.concerts) {
-      const allArtistIds = profileData.concerts.map(artist => artist.artistId);
+      const allArtistIds = profileData.concerts.map(
+        (artist) => artist.artistId,
+      );
       setExpandedArtists(new Set(allArtistIds));
     }
   };
@@ -66,18 +70,24 @@ const PublicProfile = () => {
     setExpandedArtists(new Set());
   };
 
-  const allExpanded = profileData?.concerts ? 
-    profileData.concerts.every(artist => expandedArtists.has(artist.artistId)) : false;
+  const allExpanded = profileData?.concerts
+    ? profileData.concerts.every((artist) =>
+        expandedArtists.has(artist.artistId),
+      )
+    : false;
 
   // Filter artists based on search term
-  const filteredArtists = profileData?.concerts?.filter(artist =>
-    artist.artistName.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
+  const filteredArtists =
+    profileData?.concerts?.filter((artist) =>
+      artist.artistName.toLowerCase().includes(searchTerm.toLowerCase()),
+    ) || [];
 
   const fetchPublicProfile = async () => {
     try {
-      const response = await fetch(`${BASE_URL}/api/concerts/profile/${encodeURIComponent(username)}`);
-      
+      const response = await fetch(
+        `${BASE_URL}/api/concerts/profile/${encodeURIComponent(username)}`,
+      );
+
       if (response.ok) {
         const data = await response.json();
         console.log("Public profile data:", data);
@@ -88,9 +98,16 @@ const PublicProfile = () => {
           if (firstConcerts && firstConcerts.length > 0) {
             console.log("Date formats found:");
             firstConcerts.slice(0, 3).forEach((concert, i) => {
-              console.log(`Concert ${i}: eventDate = "${concert.eventDate}" (type: ${typeof concert.eventDate})`);
+              console.log(
+                `Concert ${i}: eventDate = "${concert.eventDate}" (type: ${typeof concert.eventDate})`,
+              );
               console.log(`Concert ${i} full structure:`, concert);
-              console.log(`Concert ${i} has sets:`, !!concert.sets, 'Sets length:', concert.sets?.length);
+              console.log(
+                `Concert ${i} has sets:`,
+                !!concert.sets,
+                "Sets length:",
+                concert.sets?.length,
+              );
               console.log(`Concert ${i} venue structure:`, concert.venue);
               console.log(`Concert ${i} city structure:`, concert.city);
             });
@@ -112,23 +129,32 @@ const PublicProfile = () => {
 
   const checkFollowStatus = async () => {
     if (!profileData?.profile?.displayName) return;
-    
+
     try {
       const token = await getAccessTokenSilently();
-      console.log("Checking follow status for:", profileData.profile.displayName);
-      const response = await fetch(`${BASE_URL}/api/concerts/follow-status/${encodeURIComponent(profileData.profile.displayName)}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      console.log(
+        "Checking follow status for:",
+        profileData.profile.displayName,
+      );
+      const response = await fetch(
+        `${BASE_URL}/api/concerts/follow-status/${encodeURIComponent(profileData.profile.displayName)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
-      
+      );
+
       if (response.ok) {
         const data = await response.json();
         console.log("Follow status response:", data);
         console.log("Setting isFollowing to:", data.isFollowing);
         setIsFollowing(data.isFollowing);
       } else {
-        console.error("Follow status check failed with status:", response.status);
+        console.error(
+          "Follow status check failed with status:",
+          response.status,
+        );
       }
     } catch (error) {
       console.error("Error checking follow status:", error);
@@ -137,19 +163,22 @@ const PublicProfile = () => {
 
   const handleFollow = async () => {
     if (!profileData?.profile?.displayName) return;
-    
+
     console.log("Starting follow for:", profileData.profile.displayName);
     setFollowLoading(true);
     try {
       const token = await getAccessTokenSilently();
       console.log("Got token, making follow request...");
-      const response = await fetch(`${BASE_URL}/api/concerts/follow/${encodeURIComponent(profileData.profile.displayName)}`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const response = await fetch(
+        `${BASE_URL}/api/concerts/follow/${encodeURIComponent(profileData.profile.displayName)}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
-      
+      );
+
       console.log("Follow response status:", response.status);
       if (response.ok) {
         console.log("Follow successful, setting isFollowing to true");
@@ -171,19 +200,22 @@ const PublicProfile = () => {
 
   const handleUnfollow = async () => {
     if (!profileData?.profile?.displayName) return;
-    
+
     console.log("Starting unfollow for:", profileData.profile.displayName);
     setFollowLoading(true);
     try {
       const token = await getAccessTokenSilently();
       console.log("Got token, making unfollow request...");
-      const response = await fetch(`${BASE_URL}/api/concerts/follow/${encodeURIComponent(profileData.profile.displayName)}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const response = await fetch(
+        `${BASE_URL}/api/concerts/follow/${encodeURIComponent(profileData.profile.displayName)}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
-      
+      );
+
       console.log("Unfollow response status:", response.status);
       if (response.ok) {
         console.log("Unfollow successful, setting isFollowing to false");
@@ -205,36 +237,40 @@ const PublicProfile = () => {
 
   const formatDate = (dateString) => {
     if (!dateString) return "Date unknown";
-    
+
     // Handle different date formats
     let date;
-    
-    if (dateString.includes('-')) {
+
+    if (dateString.includes("-")) {
       // Handle formats like "DD-MM-YYYY" or "YYYY-MM-DD"
-      const parts = dateString.split('-');
+      const parts = dateString.split("-");
       if (parts.length === 3) {
         if (parts[0].length === 4) {
           // YYYY-MM-DD format - use UTC to avoid timezone offset
           const [year, month, day] = parts;
-          date = new Date(Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day)));
+          date = new Date(
+            Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day)),
+          );
         } else {
           // DD-MM-YYYY format (common in some APIs)
           const [day, month, year] = parts;
-          date = new Date(Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day)));
+          date = new Date(
+            Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day)),
+          );
         }
       } else {
-        date = new Date(dateString + 'T00:00:00Z');
+        date = new Date(dateString + "T00:00:00Z");
       }
     } else {
-      date = new Date(dateString + 'T00:00:00Z');
+      date = new Date(dateString + "T00:00:00Z");
     }
-    
+
     // Check if date is valid
     if (isNaN(date.getTime())) {
       console.warn("Invalid date string:", dateString);
       return "Date unknown";
     }
-    
+
     return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
@@ -274,27 +310,41 @@ const PublicProfile = () => {
       <div className="profile-header">
         <div className="profile-header-top">
           <h1>{profileData.profile.displayName}</h1>
-          {isAuthenticated && profileData?.profile?.displayName && user?.sub && (
-            <button 
-              className={`follow-btn ${isFollowing ? 'following' : ''}`}
-              onClick={isFollowing ? handleUnfollow : handleFollow}
-              disabled={followLoading}
+          <div className="profile-actions">
+            {isAuthenticated &&
+              profileData?.profile?.displayName &&
+              user?.sub && (
+                <button
+                  className={`follow-btn ${isFollowing ? "following" : ""}`}
+                  onClick={isFollowing ? handleUnfollow : handleFollow}
+                  disabled={followLoading}
+                >
+                  {followLoading
+                    ? "Loading..."
+                    : isFollowing
+                      ? "Following"
+                      : "Follow"}
+                </button>
+              )}
+            <button
+              className="followers-btn"
+              onClick={() => setShowFollowersList(true)}
             >
-              {followLoading ? 'Loading...' : isFollowing ? 'Following' : 'Follow'}
+              Followers
             </button>
-          )}
+          </div>
         </div>
         {profileData.profile.bio && (
           <div className="profile-bio-container">
-            <p className={`profile-bio ${!bioExpanded ? 'bio-truncated' : ''}`}>
+            <p className={`profile-bio ${!bioExpanded ? "bio-truncated" : ""}`}>
               {profileData.profile.bio}
             </p>
             {profileData.profile.bio.length > 150 && (
-              <button 
+              <button
                 className="bio-toggle-btn"
                 onClick={() => setBioExpanded(!bioExpanded)}
               >
-                {bioExpanded ? 'Show less' : 'Show more'}
+                {bioExpanded ? "Show less" : "Show more"}
               </button>
             )}
           </div>
@@ -302,11 +352,15 @@ const PublicProfile = () => {
         <div className="profile-stats" onClick={() => setShowStatsModal(true)}>
           <div className="stat-row">
             <div className="stat">
-              <span className="stat-number">{profileData.stats.totalConcerts}</span>
+              <span className="stat-number">
+                {profileData.stats.totalConcerts}
+              </span>
               <span className="stat-label">Concerts</span>
             </div>
             <div className="stat">
-              <span className="stat-number">{profileData.stats.totalArtists}</span>
+              <span className="stat-number">
+                {profileData.stats.totalArtists}
+              </span>
               <span className="stat-label">Artists</span>
             </div>
           </div>
@@ -319,8 +373,7 @@ const PublicProfile = () => {
 
       <div className="concerts-section">
         <div className="concerts-header">
-          
-        <h2>Concert History</h2>
+          <h2>Concert History</h2>
           {profileData.concerts.length > 0 && (
             <input
               type="text"
@@ -331,7 +384,7 @@ const PublicProfile = () => {
             />
           )}
           {profileData.concerts.length > 0 && (
-            <button 
+            <button
               className="expand-collapse-all-btn"
               onClick={allExpanded ? collapseAll : expandAll}
             >
@@ -339,7 +392,7 @@ const PublicProfile = () => {
             </button>
           )}
         </div>
-        
+
         {searchTerm && profileData.concerts.length > 0 && (
           <div className="search-results-info">
             {filteredArtists.length} of {profileData.concerts.length} artists
@@ -349,32 +402,37 @@ const PublicProfile = () => {
         {profileData.concerts.length === 0 ? (
           <p className="no-concerts">No concerts recorded yet.</p>
         ) : filteredArtists.length === 0 ? (
-          <p className="no-concerts">No artists found matching "{searchTerm}"</p>
+          <p className="no-concerts">
+            No artists found matching "{searchTerm}"
+          </p>
         ) : (
           <div className="artists-list">
             {filteredArtists
               .sort((a, b) => {
                 // Helper function to get sort name (ignoring "The" prefix)
                 const getSortName = (artistName) => {
-                  if (artistName.toLowerCase().startsWith('the ')) {
+                  if (artistName.toLowerCase().startsWith("the ")) {
                     return artistName.substring(4); // Remove "The " prefix
                   }
                   return artistName;
                 };
-                return getSortName(a.artistName).localeCompare(getSortName(b.artistName));
+                return getSortName(a.artistName).localeCompare(
+                  getSortName(b.artistName),
+                );
               })
               .map((artist) => {
                 const isExpanded = expandedArtists.has(artist.artistId);
                 return (
                   <div key={artist.artistId} className="artist-card">
-                    <div 
+                    <div
                       className="artist-header"
                       onClick={() => toggleArtist(artist.artistId)}
                     >
                       <h3 className="artist-name">{artist.artistName}</h3>
                       <div className="artist-summary">
                         <span className="concert-count">
-                          {artist.concerts.length} concert{artist.concerts.length !== 1 ? "s" : ""}
+                          {artist.concerts.length} concert
+                          {artist.concerts.length !== 1 ? "s" : ""}
                         </span>
                         <span className="expand-icon">
                           {isExpanded ? "▼" : "▲"}
@@ -384,7 +442,7 @@ const PublicProfile = () => {
                     {isExpanded && (
                       <>
                         {artist.concerts.length > 1 && (
-                          <button 
+                          <button
                             className="see-all-songs-btn"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -396,74 +454,92 @@ const PublicProfile = () => {
                           </button>
                         )}
                         <div className="concerts-list">
-                        {artist.concerts
-                          .sort((a, b) => new Date(b.eventDate) - new Date(a.eventDate))
-                          .map((concert) => {
-                            const setlistExpanded = expandedSetlists.has(concert.concertId);
-                            const hasSetlist = concert.sets && concert.sets.length > 0;
-                            
-                            // Flatten all songs from all sets into a single array
-                            const allSongs = hasSetlist ? 
-                              concert.sets.flatMap(set => 
-                                set.song ? set.song.map(song => song.name) : []
-                              ) : [];
-                            
-                            return (
-                              <div key={concert.concertId} className="concert-item-detailed">
-                                <div className="concert-main-info">
-                                  <div className="concert-header-info">
-                                    <div className="concert-venue">
-                                      {typeof concert.venue === 'object' 
-                                        ? concert.venue?.name || 'Unknown Venue' 
-                                        : concert.venue || 'Unknown Venue'}
+                          {artist.concerts
+                            .sort(
+                              (a, b) =>
+                                new Date(b.eventDate) - new Date(a.eventDate),
+                            )
+                            .map((concert) => {
+                              const setlistExpanded = expandedSetlists.has(
+                                concert.concertId,
+                              );
+                              const hasSetlist =
+                                concert.sets && concert.sets.length > 0;
+
+                              // Flatten all songs from all sets into a single array
+                              const allSongs = hasSetlist
+                                ? concert.sets.flatMap((set) =>
+                                    set.song
+                                      ? set.song.map((song) => song.name)
+                                      : [],
+                                  )
+                                : [];
+
+                              return (
+                                <div
+                                  key={concert.concertId}
+                                  className="concert-item-detailed"
+                                >
+                                  <div className="concert-main-info">
+                                    <div className="concert-header-info">
+                                      <div className="concert-venue">
+                                        {typeof concert.venue === "object"
+                                          ? concert.venue?.name ||
+                                            "Unknown Venue"
+                                          : concert.venue || "Unknown Venue"}
+                                      </div>
+                                      <div className="concert-location">
+                                        {concert.venue?.city
+                                          ? `${concert.venue.city.name}, ${concert.venue.city.state}, ${concert.venue.city.country.name}`
+                                          : concert.city
+                                            ? typeof concert.city === "object"
+                                              ? concert.city?.name ||
+                                                "Unknown City"
+                                              : concert.city
+                                            : "Unknown Location"}
+                                      </div>
+                                      <div className="concert-date">
+                                        {formatDate(concert.eventDate)}
+                                      </div>
                                     </div>
-                                    <div className="concert-location">
-                                      {concert.venue?.city ? (
-                                        `${concert.venue.city.name}, ${concert.venue.city.state}, ${concert.venue.city.country.name}`
-                                      ) : concert.city ? (
-                                        typeof concert.city === 'object' ? concert.city?.name || 'Unknown City' : concert.city
-                                      ) : (
-                                        'Unknown Location'
-                                      )}
-                                    </div>
-                                    <div className="concert-date">{formatDate(concert.eventDate)}</div>
+
+                                    {hasSetlist && (
+                                      <button
+                                        className="setlist-toggle-btn"
+                                        onClick={() =>
+                                          toggleSetlist(concert.concertId)
+                                        }
+                                      >
+                                        <span className="setlist-text">
+                                          Setlist ({allSongs.length} songs)
+                                        </span>
+                                        <span className="setlist-arrow">
+                                          {setlistExpanded ? "▼" : "▲"}
+                                        </span>
+                                      </button>
+                                    )}
+
+                                    {!hasSetlist && (
+                                      <div className="no-setlist">
+                                        Setlist unavailable
+                                      </div>
+                                    )}
                                   </div>
-                                  
-                                  {hasSetlist && (
-                                    <button 
-                                      className="setlist-toggle-btn"
-                                      onClick={() => toggleSetlist(concert.concertId)}
-                                    >
-                                      <span className="setlist-text">
-                                        Setlist ({allSongs.length} songs)
-                                      </span>
-                                      <span className="setlist-arrow">
-                                        {setlistExpanded ? "▼" : "▲"}
-                                      </span>
-                                    </button>
-                                  )}
-                                  
-                                  {!hasSetlist && (
-                                    <div className="no-setlist">
-                                      Setlist unavailable
+
+                                  {hasSetlist && setlistExpanded && (
+                                    <div className="setlist-content">
+                                      <ol className="songs-list">
+                                        {allSongs.map((song, index) => (
+                                          <li key={index} className="song-item">
+                                            {song}
+                                          </li>
+                                        ))}
+                                      </ol>
                                     </div>
                                   )}
                                 </div>
-                                
-                                {hasSetlist && setlistExpanded && (
-                                  <div className="setlist-content">
-                                    <ol className="songs-list">
-                                      {allSongs.map((song, index) => (
-                                        <li key={index} className="song-item">
-                                          {song}
-                                        </li>
-                                      ))}
-                                    </ol>
-                                  </div>
-                                )}
-                              </div>
-                            );
-                          })}
+                              );
+                            })}
                         </div>
                       </>
                     )}
@@ -473,20 +549,26 @@ const PublicProfile = () => {
           </div>
         )}
       </div>
-      
-      <ArtistStatsModal 
+
+      <ArtistStatsModal
         isOpen={showStatsModal}
         onClose={() => setShowStatsModal(false)}
         concerts={profileData?.concerts || []}
       />
-      
-      <AllSongsModal 
+
+      <AllSongsModal
         isOpen={showAllSongsModal}
         onClose={() => {
           setShowAllSongsModal(false);
           setSelectedArtist(null);
         }}
         artist={selectedArtist}
+      />
+
+      <PublicFollowersList
+        isOpen={showFollowersList}
+        onClose={() => setShowFollowersList(false)}
+        displayName={profileData?.profile?.displayName}
       />
     </div>
   );

@@ -5,6 +5,7 @@ import { useConcertsContext } from "../hooks/useConcertsContext";
 import ConcertSearchForm from "../components/concert/ConcertSearchForm";
 import ProfileSettings from "../components/common/ProfileSettings";
 import FollowingList from "../components/common/FollowingList";
+import FollowersList from "../components/common/FollowersList";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const Dashboard = () => {
@@ -13,20 +14,21 @@ const Dashboard = () => {
   const [isFetchingConcerts, setIsFetchingConcerts] = useState(true);
   const [showProfileSettings, setShowProfileSettings] = useState(false);
   const [showFollowingList, setShowFollowingList] = useState(false);
+  const [showFollowersList, setShowFollowersList] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [showConcertSearchModal, setShowConcertSearchModal] = useState(false);
 
   // Handle modal body scroll prevention
   useEffect(() => {
     if (showConcertSearchModal) {
-      document.body.classList.add('modal-open');
+      document.body.classList.add("modal-open");
     } else {
-      document.body.classList.remove('modal-open');
+      document.body.classList.remove("modal-open");
     }
-    
+
     // Cleanup when component unmounts
     return () => {
-      document.body.classList.remove('modal-open');
+      document.body.classList.remove("modal-open");
     };
   }, [showConcertSearchModal]);
 
@@ -62,17 +64,19 @@ const Dashboard = () => {
 
   // Helper function to get sort name (ignoring "The" prefix)
   const getSortName = (artistName) => {
-    if (artistName.toLowerCase().startsWith('the ')) {
+    if (artistName.toLowerCase().startsWith("the ")) {
       return artistName.substring(4); // Remove "The " prefix
     }
     return artistName;
   };
 
   // Filter and sort artists
-  const filteredArtists = artists.filter(artist =>
-    artist.artistName.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredArtists = artists.filter((artist) =>
+    artist.artistName.toLowerCase().includes(searchTerm.toLowerCase()),
   );
-  filteredArtists.sort((a, b) => getSortName(a.artistName).localeCompare(getSortName(b.artistName)));
+  filteredArtists.sort((a, b) =>
+    getSortName(a.artistName).localeCompare(getSortName(b.artistName)),
+  );
 
   return (
     <div className="home">
@@ -82,7 +86,7 @@ const Dashboard = () => {
             {artists.length > 0 && (
               <input
                 type="text"
-                placeholder="Search artists..."
+                placeholder="Search your artists..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="artist-search-input-inline"
@@ -91,7 +95,7 @@ const Dashboard = () => {
           </div>
           <div className="header-buttons">
             <div className="mobile-search-btn-header">
-              <button 
+              <button
                 className="mobile-search-btn-small"
                 onClick={() => setShowConcertSearchModal(true)}
               >
@@ -99,22 +103,28 @@ const Dashboard = () => {
               </button>
             </div>
             <div className="dashboard-buttons">
-              <button 
+              <button
                 className="profile-settings-btn"
                 onClick={() => setShowProfileSettings(true)}
               >
                 Profile settings
               </button>
-              <button 
+              <button
                 className="following-list-btn"
                 onClick={() => setShowFollowingList(true)}
               >
                 Following
               </button>
+              <button
+                className="followers-list-btn"
+                onClick={() => setShowFollowersList(true)}
+              >
+                Followers
+              </button>
             </div>
           </div>
         </div>
-        
+
         <div className="mobile-search-field">
           {artists.length > 0 && (
             <input
@@ -126,13 +136,13 @@ const Dashboard = () => {
             />
           )}
         </div>
-        
+
         {searchTerm && artists.length > 0 && (
           <div className="search-results-info">
             {filteredArtists.length} of {artists.length} artists
           </div>
         )}
-        
+
         {isFetchingConcerts ? (
           <div>Loading...</div>
         ) : artists.length === 0 ? (
@@ -147,19 +157,19 @@ const Dashboard = () => {
           </div>
         )}
       </div>
-      
+
       {/* Desktop form - hidden on mobile */}
       <div className="desktop-search-form">
         <ConcertSearchForm refreshConcerts={fetchConcerts} />
       </div>
-      
+
       {/* Mobile modal */}
       {showConcertSearchModal && (
         <div className="modal-overlay">
           <div className="concert-search-modal">
             <div className="modal-header">
               <h2>Find new setlist</h2>
-              <button 
+              <button
                 className="close-btn"
                 onClick={() => setShowConcertSearchModal(false)}
               >
@@ -167,23 +177,28 @@ const Dashboard = () => {
               </button>
             </div>
             <div className="modal-content">
-              <ConcertSearchForm 
-                refreshConcerts={fetchConcerts} 
+              <ConcertSearchForm
+                refreshConcerts={fetchConcerts}
                 onClose={() => setShowConcertSearchModal(false)}
               />
             </div>
           </div>
         </div>
       )}
-      
-      <ProfileSettings 
+
+      <ProfileSettings
         isOpen={showProfileSettings}
         onClose={() => setShowProfileSettings(false)}
       />
-      
-      <FollowingList 
+
+      <FollowingList
         isOpen={showFollowingList}
         onClose={() => setShowFollowingList(false)}
+      />
+
+      <FollowersList
+        isOpen={showFollowersList}
+        onClose={() => setShowFollowersList(false)}
       />
     </div>
   );

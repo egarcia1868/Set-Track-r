@@ -130,28 +130,30 @@ export const getPublicProfile = async (req, res) => {
   try {
     const { username } = req.params;
     const decodedUsername = decodeURIComponent(username);
-    console.log(`Public profile request for username: ${username} (decoded: ${decodedUsername})`);
-    
+    console.log(
+      `Public profile request for username: ${username} (decoded: ${decodedUsername})`,
+    );
+
     // First try to find by displayName (new username-based URLs)
-    let user = await User.findOne({ 
+    let user = await User.findOne({
       "profile.displayName": decodedUsername,
-      "profile.isPublic": true 
+      "profile.isPublic": true,
     });
-    
+
     // If not found, try to find by shareableId (backward compatibility)
     if (!user) {
       console.log(`No user found by displayName, trying shareableId...`);
-      user = await User.findOne({ 
+      user = await User.findOne({
         "profile.shareableId": decodedUsername,
-        "profile.isPublic": true 
+        "profile.isPublic": true,
       });
     }
-    
+
     if (!user) {
       console.log(`No public profile found for: ${decodedUsername}`);
       return res.status(404).json({ error: "Profile not found or not public" });
     }
-    
+
     console.log(`Found public profile for user: ${user._id}`);
 
     const artistIds = user.artistsSeenLive.map((entry) => entry.artistId);
@@ -179,7 +181,10 @@ export const getPublicProfile = async (req, res) => {
       },
       concerts: concertData,
       stats: {
-        totalConcerts: concertData.reduce((sum, artist) => sum + artist.concerts.length, 0),
+        totalConcerts: concertData.reduce(
+          (sum, artist) => sum + artist.concerts.length,
+          0,
+        ),
         totalArtists: concertData.length,
       },
     });
@@ -204,6 +209,7 @@ export const getUserProfile = async (req, res) => {
     res.json({
       profile: user.profile || {
         displayName: "",
+        name: "",
         bio: "",
         isPublic: false,
       },
@@ -217,14 +223,14 @@ export const getUserProfile = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const auth0Id = req.auth?.payload.sub;
-    
+
     if (!auth0Id) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    const { displayName, bio, isPublic } = req.body;
+    const { displayName, name, bio, isPublic } = req.body;
     const user = await User.findOne({ auth0Id });
-    
+
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -233,29 +239,49 @@ export const updateProfile = async (req, res) => {
     if (!user.profile) {
       user.profile = {
         displayName: "",
+        name: "",
         bio: "",
         isPublic: false,
       };
     }
 
     // Check for display name uniqueness if displayName is being updated
-    if (displayName && displayName.trim() && displayName !== user.profile.displayName) {
-      const existingUser = await User.findOne({ 
+    if (
+      displayName &&
+      displayName.trim() &&
+      displayName !== user.profile.displayName
+    ) {
+      console.log(
+        `Checking uniqueness for display name: "${displayName.trim()}"`,
+      );
+      console.log(`Current user's display name: "${user.profile.displayName}"`);
+
+      const existingUser = await User.findOne({
         "profile.displayName": displayName.trim(),
-        auth0Id: { $ne: auth0Id } // Exclude current user
+        auth0Id: { $ne: auth0Id }, // Exclude current user
       });
-      
+
+      console.log(
+        `Found existing user with same display name:`,
+        existingUser ? "Yes" : "No",
+      );
+
       if (existingUser) {
-        return res.status(400).json({ 
-          error: "This display name is already taken. Please choose another name." 
+        console.log(
+          `Rejecting duplicate display name: "${displayName.trim()}"`,
+        );
+        return res.status(400).json({
+          error:
+            "This display name is already taken. Please choose another name.",
         });
       }
     }
 
-
     user.profile.displayName = displayName || user.profile.displayName;
+    user.profile.name = name !== undefined ? name : user.profile.name;
     user.profile.bio = bio !== undefined ? bio : user.profile.bio;
-    user.profile.isPublic = isPublic !== undefined ? isPublic : user.profile.isPublic;
+    user.profile.isPublic =
+      isPublic !== undefined ? isPublic : user.profile.isPublic;
 
     await user.save();
 
@@ -277,7 +303,7 @@ export const followUser = async (req, res) => {
     }
 
     const { displayName } = req.params;
-    
+
     // Find the current user
     const currentUser = await User.findOne({ auth0Id });
     if (!currentUser) {
@@ -285,13 +311,15 @@ export const followUser = async (req, res) => {
     }
 
     // Find the user to follow by display name
-    const userToFollow = await User.findOne({ 
+    const userToFollow = await User.findOne({
       "profile.displayName": displayName,
-      "profile.isPublic": true 
+      "profile.isPublic": true,
     });
-    
+
     if (!userToFollow) {
-      return res.status(404).json({ error: "User not found or profile not public" });
+      return res
+        .status(404)
+        .json({ error: "User not found or profile not public" });
     }
 
     if (currentUser._id.equals(userToFollow._id)) {
@@ -299,8 +327,8 @@ export const followUser = async (req, res) => {
     }
 
     // Check if already following
-    const alreadyFollowing = currentUser.following.some(follow => 
-      follow.userId.equals(userToFollow._id)
+    const alreadyFollowing = currentUser.following.some((follow) =>
+      follow.userId.equals(userToFollow._id),
     );
 
     if (alreadyFollowing) {
@@ -310,13 +338,13 @@ export const followUser = async (req, res) => {
     // Add to current user's following list
     currentUser.following.push({
       userId: userToFollow._id,
-      displayName: userToFollow.profile.displayName
+      displayName: userToFollow.profile.displayName,
     });
 
     // Add to target user's followers list
     userToFollow.followers.push({
       userId: currentUser._id,
-      displayName: currentUser.profile.displayName || "Music Fan"
+      displayName: currentUser.profile.displayName || "Music Fan",
     });
 
     await Promise.all([currentUser.save(), userToFollow.save()]);
@@ -336,7 +364,7 @@ export const unfollowUser = async (req, res) => {
     }
 
     const { displayName } = req.params;
-    
+
     // Find the current user
     const currentUser = await User.findOne({ auth0Id });
     if (!currentUser) {
@@ -344,22 +372,22 @@ export const unfollowUser = async (req, res) => {
     }
 
     // Find the user to unfollow by display name
-    const userToUnfollow = await User.findOne({ 
-      "profile.displayName": displayName
+    const userToUnfollow = await User.findOne({
+      "profile.displayName": displayName,
     });
-    
+
     if (!userToUnfollow) {
       return res.status(404).json({ error: "User not found" });
     }
 
     // Remove from current user's following list
-    currentUser.following = currentUser.following.filter(follow => 
-      !follow.userId.equals(userToUnfollow._id)
+    currentUser.following = currentUser.following.filter(
+      (follow) => !follow.userId.equals(userToUnfollow._id),
     );
 
     // Remove from target user's followers list
-    userToUnfollow.followers = userToUnfollow.followers.filter(follower => 
-      !follower.userId.equals(currentUser._id)
+    userToUnfollow.followers = userToUnfollow.followers.filter(
+      (follower) => !follower.userId.equals(currentUser._id),
     );
 
     await Promise.all([currentUser.save(), userToUnfollow.save()]);
@@ -378,24 +406,92 @@ export const getFollowing = async (req, res) => {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    const user = await User.findOne({ auth0Id }).populate('following.userId', 'profile.displayName profile.isPublic profile.bio');
+    const user = await User.findOne({ auth0Id }).populate(
+      "following.userId",
+      "profile.displayName profile.isPublic profile.bio",
+    );
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
     // Filter to only show public profiles
     const publicFollowing = user.following
-      .filter(follow => follow.userId && follow.userId.profile.isPublic)
-      .map(follow => ({
+      .filter((follow) => follow.userId && follow.userId.profile.isPublic)
+      .map((follow) => ({
         displayName: follow.displayName,
         bio: follow.userId.profile.bio,
-        followedAt: follow.followedAt
+        followedAt: follow.followedAt,
       }));
 
     res.json({ following: publicFollowing });
   } catch (error) {
     console.error("Error fetching following list:", error);
     res.status(500).json({ error: "Could not fetch following list" });
+  }
+};
+
+export const getFollowers = async (req, res) => {
+  try {
+    const auth0Id = req.auth?.payload.sub;
+    if (!auth0Id) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const user = await User.findOne({ auth0Id }).populate(
+      "followers.userId",
+      "profile.displayName profile.isPublic profile.bio",
+    );
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Filter to only show public profiles
+    const publicFollowers = user.followers
+      .filter((follower) => follower.userId && follower.userId.profile.isPublic)
+      .map((follower) => ({
+        displayName: follower.displayName,
+        bio: follower.userId.profile.bio,
+        followedAt: follower.followedAt,
+      }));
+
+    res.json({ followers: publicFollowers });
+  } catch (error) {
+    console.error("Error fetching followers list:", error);
+    res.status(500).json({ error: "Could not fetch followers list" });
+  }
+};
+
+export const getPublicFollowers = async (req, res) => {
+  try {
+    const { displayName } = req.params;
+    const decodedDisplayName = decodeURIComponent(displayName);
+
+    // Find the user by display name
+    const user = await User.findOne({
+      "profile.displayName": decodedDisplayName,
+      "profile.isPublic": true,
+    }).populate(
+      "followers.userId",
+      "profile.displayName profile.isPublic profile.bio",
+    );
+
+    if (!user) {
+      return res.status(404).json({ error: "Public profile not found" });
+    }
+
+    // Filter to only show public profiles
+    const publicFollowers = user.followers
+      .filter((follower) => follower.userId && follower.userId.profile.isPublic)
+      .map((follower) => ({
+        displayName: follower.displayName,
+        bio: follower.userId.profile.bio,
+        followedAt: follower.followedAt,
+      }));
+
+    res.json({ followers: publicFollowers });
+  } catch (error) {
+    console.error("Error fetching public followers list:", error);
+    res.status(500).json({ error: "Could not fetch public followers list" });
   }
 };
 
@@ -407,14 +503,14 @@ export const getFollowStatus = async (req, res) => {
     }
 
     const { displayName } = req.params;
-    
+
     const currentUser = await User.findOne({ auth0Id });
     if (!currentUser) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const isFollowing = currentUser.following.some(follow => 
-      follow.displayName === displayName
+    const isFollowing = currentUser.following.some(
+      (follow) => follow.displayName === displayName,
     );
 
     res.json({ isFollowing });
@@ -439,15 +535,15 @@ export const searchUsers = async (req, res) => {
     // Search for users with public profiles that match the query
     const users = await User.find({
       "profile.isPublic": true,
-      "profile.displayName": { $regex: q.trim(), $options: 'i' },
-      auth0Id: { $ne: auth0Id } // Exclude current user
+      "profile.displayName": { $regex: q.trim(), $options: "i" },
+      auth0Id: { $ne: auth0Id }, // Exclude current user
     })
-    .select('profile.displayName profile.bio')
-    .limit(20);
+      .select("profile.displayName profile.bio")
+      .limit(20);
 
-    const results = users.map(user => ({
+    const results = users.map((user) => ({
       displayName: user.profile.displayName,
-      bio: user.profile.bio
+      bio: user.profile.bio,
     }));
 
     res.json({ users: results });

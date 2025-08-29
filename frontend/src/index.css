@@ -423,7 +423,6 @@ body,
   color: var(--primary);
 }
 
-
 .modal-overlay .close-btn:hover {
   color: #333;
 }
@@ -543,7 +542,7 @@ body,
   justify-content: flex-end;
 }
 
-.modal-overlay .btn-primary, 
+.modal-overlay .btn-primary,
 .modal-overlay .btn-secondary {
   padding: 10px 20px;
   border-radius: 4px;
@@ -662,6 +661,13 @@ body,
   cursor: not-allowed;
 }
 
+/* Profile Actions Container */
+.profile-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
 /* Following List Modal */
 .following-list-modal {
   width: 90vw;
@@ -745,9 +751,11 @@ body,
   flex-wrap: wrap;
 }
 
-.following-list-btn {
+/* Dashboard buttons - rectangular like Profile settings */
+.following-list-btn,
+.followers-list-btn {
   padding: 10px 20px;
-  background: var(--primary);
+  background: #007bff;
   color: white;
   border: none;
   border-radius: 4px;
@@ -755,8 +763,26 @@ body,
   font-size: 14px;
 }
 
-.following-list-btn:hover {
-  background: #159c6b;
+.following-list-btn:hover,
+.followers-list-btn:hover {
+  background: #0056b3;
+}
+
+/* Public profile followers button - rounded like Follow button */
+.followers-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 80px;
+}
+
+.followers-btn:hover {
+  background: #0056b3;
 }
 
 /* User Search */
@@ -1161,7 +1187,9 @@ body.modal-open {
   align-items: center;
   gap: 20px;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   padding: 20px 30px;
   border-radius: 12px;
   margin: 20px auto;
@@ -1208,8 +1236,13 @@ body.modal-open {
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
 }
 
 .stat {
@@ -1345,7 +1378,7 @@ body.modal-open {
 
 .artist-name {
   margin: 0 5px 0 0;
-  
+
   color: #333;
   font-size: 1.3rem;
 }
@@ -1495,7 +1528,7 @@ body.modal-open {
   .profile-stats {
     gap: 20px;
   }
-  
+
   .public-profile {
     padding: 0;
   }
@@ -1503,20 +1536,20 @@ body.modal-open {
   .stat-number {
     font-size: 1.5rem;
   }
-  
+
   .profile-header h1 {
     font-size: 2rem;
   }
-  
+
   .artist-search-input {
     max-width: 100%;
   }
-  
+
   .modal-overlay .modal {
     margin: 20px;
     width: calc(100% - 40px);
   }
-  
+
   .concerts-header {
     flex-direction: column;
     text-align: center;
@@ -1524,29 +1557,29 @@ body.modal-open {
     align-items: center;
     gap: 15px;
   }
-  
+
   /* Center search input on mobile profile page */
   .concerts-header .artist-search-input-inline {
     width: 280px;
     max-width: 90%;
     margin-bottom: 0;
   }
-  
+
   /* Remove margin from mobile dashboard search input */
   .mobile-search-input {
     margin-bottom: 0;
   }
-  
+
   /* Center expand/collapse button on mobile profile page */
   .concerts-header .expand-collapse-all-btn {
     align-self: center;
   }
-  
+
   /* Center concert count on mobile */
   .concert-count {
     text-align: center;
   }
-  
+
   /* Center dashboard header on mobile */
   .dashboard-header {
     display: flex;
@@ -1554,61 +1587,60 @@ body.modal-open {
     align-items: center;
     gap: 15px;
   }
-  
+
   /* Center header buttons on mobile */
   .header-buttons {
     justify-content: center;
   }
-  
+
   /* Hide desktop form on mobile */
   .desktop-search-form {
     display: none;
   }
-  
+
   /* Show mobile elements on mobile */
   .mobile-search-btn-header {
     display: block;
   }
-  
+
   .mobile-search-field {
     display: flex;
     justify-content: center;
   }
-  
+
   /* Center and size mobile search input */
   .mobile-search-input {
     width: 300px;
     max-width: 90%;
   }
-  
+
   /* Hide desktop search field on mobile */
   .desktop-search-field {
     display: none;
   }
-  
+
   /* Full width layout on mobile */
   .home {
     display: block;
     gap: 0;
   }
-  
+
   /* Full width concert details on mobile */
   .concert-details {
     margin: 20px 0;
     width: 100%;
     box-sizing: border-box;
   }
-  
+
   /* Single column artists on mobile */
   .artists-grid {
     flex-direction: column;
   }
-  
+
   .artists-grid .concert-details {
     width: 100%;
   }
-  
-  
+
   .concerts-section h2 {
     text-align: center;
     flex: none;
@@ -1616,17 +1648,17 @@ body.modal-open {
     transform: none;
     left: auto;
   }
-  
+
   .concert-main-info {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
   }
-  
+
   .songs-list {
     columns: 1;
   }
-  
+
   .setlist-toggle-btn {
     align-self: flex-end;
   }
@@ -1838,103 +1870,103 @@ body.modal-open {
     gap: 10px;
     padding: 5px;
   }
-  
+
   .pie-chart-wrapper {
     flex: 1;
     min-height: 250px;
     height: 350px;
     order: 1;
   }
-  
+
   .pie-chart-wrapper svg {
     width: 100%;
     height: 100%;
     max-width: none;
     max-height: none;
   }
-  
+
   .bar-chart-wrapper {
     flex: 1;
     min-height: 0;
   }
-  
+
   .bar-chart-wrapper svg {
     width: 100%;
     max-width: 500px;
     height: 300px;
   }
-  
+
   .chart-legend {
     max-width: 100%;
     width: 100%;
     display: block;
     order: 2;
   }
-  
+
   .artist-stats-modal {
     width: 95vw;
     height: 85vh;
   }
-  
+
   .profile-stats .stat-row {
     gap: 30px;
   }
-  
+
   .chart-icon {
     font-size: 20px;
   }
-  
+
   .click-hint {
     font-size: 11px;
   }
-  
+
   .modal-header {
     flex-direction: column;
     align-items: stretch;
     text-align: center;
   }
-  
+
   .chart-type-selector {
     justify-content: center;
   }
-  
+
   /* Hide stats indicator (Click for chart view) on mobile */
   .stats-indicator {
     display: none;
   }
-  
+
   /* Disable click functionality on profile stats for mobile */
   .profile-stats {
     cursor: default;
     pointer-events: none;
   }
-  
+
   .profile-stats:hover {
     transform: none;
     box-shadow: none;
     background-color: transparent;
     border-color: initial;
   }
-  
+
   /* Hide emojis and show only text on mobile */
   .chart-type-btn {
     font-size: 14px;
   }
-  
+
   /* Use CSS to replace button content on mobile */
   .chart-type-btn:nth-child(1) {
     font-size: 0;
   }
-  
+
   .chart-type-btn:nth-child(1)::after {
     content: "Pie Chart";
     font-size: 14px;
   }
-  
+
   .chart-type-btn:nth-child(2) {
     font-size: 0;
   }
-  
+
   .chart-type-btn:nth-child(2)::after {
     content: "Bar Chart";
     font-size: 14px;

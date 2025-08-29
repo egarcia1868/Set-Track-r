@@ -11,6 +11,8 @@ import {
   followUser,
   unfollowUser,
   getFollowing,
+  getFollowers,
+  getPublicFollowers,
   getFollowStatus,
   searchUsers,
 } from "../controllers/concertController.js";
@@ -19,7 +21,7 @@ import {
 // TODO: Replace with proper Auth0 JWT verification once configuration is resolved
 const checkJwt = (req, res, next) => {
   try {
-    const token = req.headers.authorization?.replace('Bearer ', '');
+    const token = req.headers.authorization?.replace("Bearer ", "");
     if (token) {
       const decoded = jwt.decode(token);
       if (decoded && decoded.sub) {
@@ -61,6 +63,7 @@ router.put("/profile", checkJwt, updateProfile);
 router.post("/follow/:displayName", checkJwt, followUser);
 router.delete("/follow/:displayName", checkJwt, unfollowUser);
 router.get("/following", checkJwt, getFollowing);
+router.get("/followers", checkJwt, getFollowers);
 router.get("/follow-status/:displayName", checkJwt, getFollowStatus);
 router.get("/search-users", checkJwt, searchUsers);
 
@@ -69,6 +72,9 @@ router.delete("/:artistId/:concertId", checkJwt, deleteConcert);
 
 // GET public profile (no auth required) - this should come last
 router.get("/profile/:username", getPublicProfile);
+
+// GET public followers (no auth required)
+router.get("/profile/:displayName/followers", getPublicFollowers);
 
 // CURRENTLY UNUSED.  WOULD NEED TO BE REWORKED TO WORK WITH NEW CONCERT DATA
 // PLAN IS TO USE THIS FOR EDITING A CONCERT (e.g. GOT TO CONCERT LATE OR LEFT EARLY)
