@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 const AllSongsModal = ({ isOpen, onClose, artist }) => {
   const [expandedSongs, setExpandedSongs] = useState(new Set());
+  const [searchTerm, setSearchTerm] = useState('');
 
   const toggleSong = (songName) => {
     setExpandedSongs(prev => {
@@ -105,16 +106,29 @@ const AllSongsModal = ({ isOpen, onClose, artist }) => {
       return date;
     };
 
-    // Convert to array and sort by count (descending), then sort performances by date
+    // Convert to array and sort by count (descending), then alphabetically by name for same count
     return Object.values(songData)
       .map(song => ({
         ...song,
         performances: song.performances.sort((a, b) => parseEventDate(b.date) - parseEventDate(a.date))
       }))
-      .sort((a, b) => b.count - a.count);
+      .sort((a, b) => {
+        // First sort by count (descending)
+        if (b.count !== a.count) {
+          return b.count - a.count;
+        }
+        // If counts are equal, sort alphabetically by name
+        return a.name.localeCompare(b.name);
+      });
   };
 
   const allSongs = aggregateSongs();
+  
+  // Filter songs based on search term
+  const filteredSongs = allSongs.filter(song => 
+    song.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  
   const totalSongs = allSongs.reduce((sum, song) => sum + song.count, 0);
 
   // Format date function (reuse from PublicProfile)
@@ -165,12 +179,24 @@ const AllSongsModal = ({ isOpen, onClose, artist }) => {
             <p><strong>{allSongs.length}</strong> unique songs played <strong>{totalSongs}</strong> times across <strong>{artist.concerts.length}</strong> concerts</p>
           </div>
           
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder="Search songs..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="song-search"
+            />
+          </div>
+          
           <div className="songs-list-container">
             {allSongs.length === 0 ? (
               <p className="no-songs">No setlist data available for this artist.</p>
+            ) : filteredSongs.length === 0 ? (
+              <p className="no-songs">No songs match your search.</p>
             ) : (
               <ol className="all-songs-list">
-                {allSongs.map((song, index) => {
+                {filteredSongs.map((song, index) => {
                   const isExpanded = expandedSongs.has(song.name);
                   return (
                     <li key={index} className="song-count-item">

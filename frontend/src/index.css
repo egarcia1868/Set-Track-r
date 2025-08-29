@@ -1079,10 +1079,13 @@ body.modal-open {
 }
 
 .search-container {
-  margin-bottom: 30px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.song-search {
+  margin: 10px 0;
 }
 
 .artist-search-input {
