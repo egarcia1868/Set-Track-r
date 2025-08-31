@@ -17,24 +17,47 @@ import {
   searchUsers,
 } from "../controllers/concertController.js";
 
-// Temporary auth middleware to decode JWT tokens without verification
-// TODO: Replace with proper Auth0 JWT verification once configuration is resolved
-const checkJwt = (req, res, next) => {
+// Simple middleware to extract user ID from Auth0 token
+const checkJwt = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.replace("Bearer ", "");
-    if (token) {
+    if (!token) {
+      return res.status(401).json({ error: "Authorization token required" });
+    }
+
+    // For encrypted JWE tokens, we need to get the user info from Auth0's userinfo endpoint
+    const parts = token.split('.');
+    if (parts.length === 5) { // JWE format
+      try {
+        // Make request to Auth0 userinfo endpoint to get user details
+        const response = await fetch(`https://${process.env.AUTH0_DOMAIN}/userinfo`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          const userInfo = await response.json();
+          req.auth = { payload: { sub: userInfo.sub } };
+        } else {
+          return res.status(401).json({ error: "Invalid token - could not get user info" });
+        }
+      } catch (e) {
+        console.error("Error getting user info:", e);
+        return res.status(401).json({ error: "Invalid token format" });
+      }
+    } else {
+      // Try regular JWT decode
       const decoded = jwt.decode(token);
       if (decoded && decoded.sub) {
         req.auth = { payload: { sub: decoded.sub } };
       } else {
         return res.status(401).json({ error: "Invalid token format" });
       }
-    } else {
-      return res.status(401).json({ error: "Authorization token required" });
     }
     next();
   } catch (error) {
-    console.error("Error decoding token:", error);
+    console.error("Token processing error:", error);
     return res.status(401).json({ error: "Invalid token" });
   }
 };

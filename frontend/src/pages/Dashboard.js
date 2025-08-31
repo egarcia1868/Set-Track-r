@@ -42,7 +42,11 @@ const Dashboard = () => {
       });
       const json = await response.json();
 
+      console.log("Dashboard: API response status:", response.status);
+      console.log("Dashboard: API response data:", json);
+
       if (response.ok) {
+        console.log("Dashboard: Setting artists data:", json);
         dispatch({ type: "UPDATE_ARTISTS", payload: [...json] });
       } else {
         console.error("Error fetching concerts:", json);

@@ -73,7 +73,15 @@ const Navbar = () => {
               </button>
             </div>
           ) : (
-            <button className="auth login" onClick={loginWithRedirect}>
+            <button 
+              className="auth login" 
+              onClick={() => {
+                console.log("Login button clicked");
+                loginWithRedirect().catch(error => {
+                  console.error("Login error:", error);
+                });
+              }}
+            >
               Log In
             </button>
           )}

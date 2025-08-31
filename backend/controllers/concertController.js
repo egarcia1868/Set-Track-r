@@ -49,12 +49,15 @@ export const saveConcerts = async (req, res) => {
 
 export const getSavedConcerts = async (req, res) => {
   try {
-    const auth0Id = req.auth?.payload.sub;
+    const auth0Id = req.auth?.payload?.sub;
+    console.log("getSavedConcerts: auth0Id =", auth0Id);
+    console.log("getSavedConcerts: req.auth =", req.auth);
     if (!auth0Id) {
       return res.status(401).json({ error: "Unauthorized: no auth0 ID found" });
     }
 
     const user = await User.findOne({ auth0Id });
+    console.log("getSavedConcerts: user found =", !!user, user ? `with ${user.artistsSeenLive.length} artists` : "null");
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }

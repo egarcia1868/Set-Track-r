@@ -9,6 +9,8 @@ const domain = process.env.REACT_APP_AUTH0_DOMAIN;
 const clientId = process.env.REACT_APP_AUTH0_CLIENT_ID;
 const audience = process.env.REACT_APP_AUTH0_AUDIENCE;
 
+console.log("Auth0 config:", { domain, clientId, audience });
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
@@ -16,13 +18,8 @@ root.render(
     <Auth0Provider
       domain={domain}
       clientId={clientId}
-      authorizationParams={{
-        redirect_uri: window.location.origin,
-        audience,
-      }}
-      cacheLocation="localstorage"
-      useRefreshTokens={true}
-      useRefreshTokensFallback={false}
+      redirectUri={window.location.origin}
+      audience={audience}
     >
       <ConcertsContextProvider>
         <App />
