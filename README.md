@@ -186,7 +186,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👤 Author
 
-**Eduardo Garcia**
+**Eric Garcia**
 - GitHub: [@egarcia1868](https://github.com/egarcia1868)
 
 ## 🙏 Acknowledgments
