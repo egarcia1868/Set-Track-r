@@ -23,18 +23,14 @@ const corsOptions = {
   credentials: true,
 };
 
-if (nodeEnv === "production") {
-  // Allow multiple frontend URLs in production
-  corsOptions.origin = [
-    "https://set-trackr.onrender.com",
-    "https://set-trackr.netlify.app",
-    "https://settrackr.netlify.app",
-    // Add any other frontend deployment URLs here
-  ];
-} else {
-  // Allow local frontend to access the backend during development
-  corsOptions.origin = "http://localhost:3000"; // Update this if your local frontend runs on a different port
-}
+// Always allow production URLs and add localhost for development
+corsOptions.origin = [
+  "https://set-trackr.onrender.com",
+  "https://set-trackr.netlify.app", 
+  "https://settrackr.netlify.app",
+  "https://main--settrackr.netlify.app",
+  "http://localhost:3000", // Local development
+];
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
