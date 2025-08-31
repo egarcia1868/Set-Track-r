@@ -18,12 +18,8 @@ root.render(
     <Auth0Provider
       domain={domain}
       clientId={clientId}
-      authorizationParams={{
-        redirect_uri: window.location.origin,
-        audience: audience,
-      }}
-      cacheLocation="localstorage"
-      useRefreshTokens={true}
+      redirectUri={window.location.origin}
+      audience={audience}
     >
       <ConcertsContextProvider>
         <App />

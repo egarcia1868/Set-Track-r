@@ -98,21 +98,23 @@ const Dashboard = () => {
             )}
           </div>
           <div className="header-buttons">
-            <div className="mobile-search-btn-header">
-              <button
-                className="mobile-search-btn-small"
-                onClick={() => setShowConcertSearchModal(true)}
-              >
-                Find new setlist
-              </button>
-            </div>
-            <div className="dashboard-buttons">
+            <div className="primary-actions">
+              <div className="mobile-search-btn-header">
+                <button
+                  className="mobile-search-btn-small"
+                  onClick={() => setShowConcertSearchModal(true)}
+                >
+                  Find new setlist
+                </button>
+              </div>
               <button
                 className="profile-settings-btn"
                 onClick={() => setShowProfileSettings(true)}
               >
                 Profile settings
               </button>
+            </div>
+            <div className="social-actions">
               <button
                 className="following-list-btn"
                 onClick={() => setShowFollowingList(true)}
