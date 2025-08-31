@@ -30,16 +30,21 @@ const checkJwt = async (req, res, next) => {
     if (parts.length === 5) { // JWE format
       try {
         // Make request to Auth0 userinfo endpoint to get user details
+        console.log("Making userinfo request to:", `https://${process.env.AUTH0_DOMAIN}/userinfo`);
         const response = await fetch(`https://${process.env.AUTH0_DOMAIN}/userinfo`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
         
+        console.log("Userinfo response status:", response.status);
         if (response.ok) {
           const userInfo = await response.json();
+          console.log("User info received:", userInfo);
           req.auth = { payload: { sub: userInfo.sub } };
         } else {
+          const errorText = await response.text();
+          console.log("Userinfo error:", errorText);
           return res.status(401).json({ error: "Invalid token - could not get user info" });
         }
       } catch (e) {
