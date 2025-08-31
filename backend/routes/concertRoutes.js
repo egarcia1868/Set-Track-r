@@ -30,8 +30,9 @@ const checkJwt = async (req, res, next) => {
     if (parts.length === 5) { // JWE format
       try {
         // Make request to Auth0 userinfo endpoint to get user details
-        console.log("Making userinfo request to:", `https://${process.env.AUTH0_DOMAIN}/userinfo`);
-        const response = await fetch(`https://${process.env.AUTH0_DOMAIN}/userinfo`, {
+        const userinfoUrl = `https://${process.env.AUTH0_DOMAIN}/userinfo`;
+        console.log("Making userinfo request to:", userinfoUrl);
+        const response = await fetch(userinfoUrl, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
