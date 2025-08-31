@@ -168,7 +168,7 @@ Set Track'r uses Auth0 for secure authentication and authorization. Users can si
 ## 🌐 Deployment
 
 The application is deployed using:
-- **Frontend**: Render/Netlify
+- **Frontend**: Render
 - **Backend**: Render
 - **Database**: MongoDB Atlas
 
