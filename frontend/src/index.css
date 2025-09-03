@@ -2419,3 +2419,19 @@ body.modal-open {
     font-size: 14px;
   }
 }
+
+/* Artist Link Styling */
+.artist-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.artist-link:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+.artist-link:visited {
+  color: inherit;
+}

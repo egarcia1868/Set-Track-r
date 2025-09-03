@@ -42,7 +42,7 @@ function App() {
               }
             />
             <Route
-              path="/artist"
+              path="/artist/:artistName?"
               element={
                 <PrivateRoute>
                   <ArtistConcerts />

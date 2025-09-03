@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useState, useMemo, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useUserConcerts } from "../context/UserConcertsContext";
@@ -9,7 +9,8 @@ import SongsDetails from "../components/concert/SongsDetails";
 const ArtistConcerts = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthenticated } = useAuth();
+  const { artistName: urlArtistName } = useParams();
+  const { isAuthenticated, getAccessTokenSilently } = useAuth();
   const { 
     userConcerts, 
     isAlreadySaved, 
@@ -17,17 +18,66 @@ const ArtistConcerts = () => {
     removeConcertFromCollection 
   } = useUserConcerts();
 
-  const { artist = {} } = location.state || {};
-  const { artistName } = artist;
-  const [concertList, setConcertList] = useState(artist?.concerts || []);
+  const [artist, setArtist] = useState({});
+  const [concertList, setConcertList] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Get artist name from URL or state
+  const artistName = urlArtistName ? decodeURIComponent(urlArtistName) : artist?.artistName;
   const [expandTracks, setExpandTracks] = useState(false);
   const [expandedSetlists, setExpandedSetlists] = useState(new Set());
   const [otherArtistsData, setOtherArtistsData] = useState({});
   const [loadingOtherArtists, setLoadingOtherArtists] = useState({});
+  const [expandedYears, setExpandedYears] = useState(new Set());
 
   useEffect(() => {
-    if (!location.state) navigate("/");
-  }, [location.state, navigate]);
+    const loadArtistData = async () => {
+      setLoading(true);
+      
+      // If we have artist data from navigation state, use it
+      if (location.state?.artist) {
+        setArtist(location.state.artist);
+        setConcertList(location.state.artist.concerts || []);
+        setLoading(false);
+        return;
+      }
+      
+      // If we have artistName from URL, fetch the data
+      if (urlArtistName && isAuthenticated) {
+        try {
+          const token = await getAccessTokenSilently();
+          const response = await fetch(`${BASE_URL}/api/concerts/user/saved`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            const decodedArtistName = decodeURIComponent(urlArtistName);
+            const foundArtist = data.find(a => a.artistName === decodedArtistName);
+            
+            if (foundArtist) {
+              setArtist(foundArtist);
+              setConcertList(foundArtist.concerts || []);
+            } else {
+              // Artist not found in user's collection
+              navigate("/");
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching artist data:', error);
+          navigate("/");
+        }
+      } else if (!urlArtistName) {
+        navigate("/");
+      }
+      
+      setLoading(false);
+    };
+
+    loadArtistData();
+  }, [urlArtistName, location.state, isAuthenticated, getAccessTokenSilently, navigate]);
 
   const handleRemoveFromMySets = async (setlistData) => {
     const success = await removeConcertFromCollection(setlistData);
@@ -120,9 +170,12 @@ const ArtistConcerts = () => {
     [sortedConcerts],
   );
 
-  const [expandedYears, setExpandedYears] = useState(
-    new Set(sortedConcertYears),
-  );
+  // Expand all years when concert data is loaded
+  useEffect(() => {
+    if (sortedConcertYears.length > 0) {
+      setExpandedYears(new Set(sortedConcertYears));
+    }
+  }, [sortedConcertYears]);
 
   const toggleYear = (year) => {
     setExpandedYears((prev) => {
@@ -138,7 +191,21 @@ const ArtistConcerts = () => {
     );
   };
 
-  if (!location.state) return null;
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '50vh',
+        fontSize: '1.2rem'
+      }}>
+        Loading artist...
+      </div>
+    );
+  }
+
+  if (!artistName) return null;
 
   return (
     <>
