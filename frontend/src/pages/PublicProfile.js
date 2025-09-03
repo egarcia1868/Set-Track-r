@@ -23,6 +23,8 @@ const PublicProfile = () => {
   const [followLoading, setFollowLoading] = useState(false);
   const [showFollowersList, setShowFollowersList] = useState(false);
   const [currentUserProfile, setCurrentUserProfile] = useState(null);
+  const [otherArtistsData, setOtherArtistsData] = useState({});
+  const [loadingOtherArtists, setLoadingOtherArtists] = useState({});
 
   useEffect(() => {
     fetchPublicProfile();
@@ -218,6 +220,98 @@ const PublicProfile = () => {
     }
     console.log("Setting followLoading to false");
     setFollowLoading(false);
+  };
+
+  const handleAddToMySets = async (setlistData) => {
+    if (!isAuthenticated) {
+      alert("You must be logged in to add concerts to your collection.");
+      return;
+    }
+
+    try {
+      console.log("Adding setlist to collection:", setlistData);
+      
+      const token = await getAccessTokenSilently();
+      const response = await fetch(`${BASE_URL}/api/concerts`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          concertData: [setlistData], // Wrap in array since backend expects iterable
+          user: user,
+        }),
+      });
+
+      console.log("Add concert response status:", response.status);
+      
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log("Add concert success:", responseData);
+        alert(`Added ${setlistData.artist?.name || "concert"} to your collection!`);
+      } else {
+        const errorData = await response.json();
+        console.error("Failed to add concert:", errorData);
+        alert(`Failed to add concert: ${errorData.error || "Unknown error"}`);
+      }
+    } catch (error) {
+      console.error("Error adding concert:", error);
+      alert("Error adding concert to your collection.");
+    }
+  };
+
+  const handleShowOtherArtists = async (concert) => {
+    const concertKey = concert.concertId;
+    
+    // If already loaded, toggle dropdown
+    if (otherArtistsData[concertKey]) {
+      setOtherArtistsData(prev => ({
+        ...prev,
+        [concertKey]: null
+      }));
+      return;
+    }
+
+    try {
+      setLoadingOtherArtists(prev => ({ ...prev, [concertKey]: true }));
+      
+      const venue = typeof concert.venue === "object" ? concert.venue?.name : concert.venue;
+      const date = concert.eventDate;
+      
+      console.log("Searching for other artists at:", { date, venueName: venue });
+      
+      const response = await fetch(`${BASE_URL}/api/concerts?date=${encodeURIComponent(date)}&venueName=${encodeURIComponent(venue)}`);
+      
+      if (response.ok) {
+        const concertData = await response.json();
+        console.log("Other artists found:", concertData);
+        
+        // Store the full setlist data (not just artist names)
+        const setlists = concertData.setlist || [];
+        console.log("Raw setlist data:", setlists);
+        console.log("Sample setlist structure:", setlists[0]);
+        
+        setOtherArtistsData(prev => ({
+          ...prev,
+          [concertKey]: setlists
+        }));
+      } else {
+        console.error("Failed to fetch other artists:", response.status);
+        setOtherArtistsData(prev => ({
+          ...prev,
+          [concertKey]: []
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching other artists:", error);
+      setOtherArtistsData(prev => ({
+        ...prev,
+        [concertKey]: []
+      }));
+    } finally {
+      setLoadingOtherArtists(prev => ({ ...prev, [concertKey]: false }));
+    }
   };
 
   const handleUnfollow = async () => {
@@ -525,6 +619,50 @@ const PublicProfile = () => {
                                       <div className="concert-date">
                                         {formatDate(concert.eventDate)}
                                       </div>
+                                    </div>
+                                    
+                                    <div className="concert-actions">
+                                      <button
+                                        className="other-artists-link"
+                                        onClick={() => handleShowOtherArtists(concert)}
+                                        title="View other artists who performed at this show"
+                                        disabled={loadingOtherArtists[concert.concertId]}
+                                      >
+                                        {loadingOtherArtists[concert.concertId] 
+                                          ? "Loading..." 
+                                          : otherArtistsData[concert.concertId] 
+                                            ? "Hide other artists" 
+                                            : "Show other artists at this show →"
+                                        }
+                                      </button>
+                                      
+                                      {otherArtistsData[concert.concertId] && (
+                                        <div className="other-artists-dropdown">
+                                          {otherArtistsData[concert.concertId].length > 0 ? (
+                                            <ul className="other-artists-list">
+                                              {otherArtistsData[concert.concertId].map((setlist, index) => (
+                                                <li key={index} className="other-artist-item">
+                                                  <span className="artist-name">
+                                                    {setlist.artist?.name || "Unknown Artist"}
+                                                  </span>
+                                                  <button
+                                                    className="add-to-sets-btn"
+                                                    onClick={() => handleAddToMySets(setlist)}
+                                                    disabled={!isAuthenticated}
+                                                    title={isAuthenticated ? "Add this concert to your collection" : "Login to add concerts"}
+                                                  >
+                                                    Add to my sets
+                                                  </button>
+                                                </li>
+                                              ))}
+                                            </ul>
+                                          ) : (
+                                            <div className="no-other-artists">
+                                              No other artists found for this show.
+                                            </div>
+                                          )}
+                                        </div>
+                                      )}
                                     </div>
 
                                     {hasSetlist && (
