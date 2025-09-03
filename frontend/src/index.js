@@ -4,6 +4,8 @@ import { Auth0Provider } from "@auth0/auth0-react";
 import "./index.css";
 import App from "./App";
 import { ConcertsContextProvider } from "./context/ConcertsContext";
+import { AuthProvider } from "./context/AuthContext";
+import { UserConcertsProvider } from "./context/UserConcertsContext";
 
 const domain = process.env.REACT_APP_AUTH0_DOMAIN;
 const clientId = process.env.REACT_APP_AUTH0_CLIENT_ID;
@@ -21,9 +23,13 @@ root.render(
       redirectUri={window.location.origin}
       audience={audience}
     >
-      <ConcertsContextProvider>
-        <App />
-      </ConcertsContextProvider>
+      <AuthProvider>
+        <UserConcertsProvider>
+          <ConcertsContextProvider>
+            <App />
+          </ConcertsContextProvider>
+        </UserConcertsProvider>
+      </AuthProvider>
     </Auth0Provider>
   </React.StrictMode>,
 );

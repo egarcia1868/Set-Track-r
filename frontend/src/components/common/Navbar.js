@@ -1,41 +1,11 @@
 import { Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useState, useEffect } from "react";
-import { BASE_URL } from "../../utils/config";
+import { useAuth } from "../../context/AuthContext";
 
 const Navbar = () => {
-  const {
-    loginWithRedirect,
-    logout,
-    isAuthenticated,
-    user,
-    getAccessTokenSilently,
-  } = useAuth0();
-  const [userProfile, setUserProfile] = useState(null);
+  const { loginWithRedirect, logout } = useAuth0();
+  const { isAuthenticated, user, userProfile } = useAuth();
 
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      if (isAuthenticated) {
-        try {
-          const token = await getAccessTokenSilently();
-          const response = await fetch(`${BASE_URL}/api/concerts/profile`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            setUserProfile(data.profile);
-          }
-        } catch (error) {
-          console.error("Error fetching user profile:", error);
-        }
-      }
-    };
-
-    fetchUserProfile();
-  }, [isAuthenticated, getAccessTokenSilently]);
 
   // Get the display name: use profile.name if available, otherwise fall back to user.name
   const getDisplayName = () => {

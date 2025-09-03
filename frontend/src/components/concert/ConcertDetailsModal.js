@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
+import { useAuth } from "../../context/AuthContext";
+import { useUserConcerts } from "../../context/UserConcertsContext";
 import { BASE_URL } from "../../utils/config";
-import { useAuth0 } from "@auth0/auth0-react";
 import NewConcertDetails from "./NewConcertDetails";
 
 const ConcertDetailsModal = ({
@@ -14,47 +15,14 @@ const ConcertDetailsModal = ({
   hasMorePages = true,
   navigationDirection = null,
 }) => {
-  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
+  const { isAuthenticated, user, getAccessTokenSilently } = useAuth();
+  const { userConcerts, isAlreadySaved } = useUserConcerts();
   const [error, setError] = useState(null);
   const [checkedConcertIds, setCheckedConcertIds] = useState(new Set());
-  const [userConcerts, setUserConcerts] = useState([]);
   const selectedConcerts = concertList.filter((c) =>
     checkedConcertIds.has(c.id),
   );
 
-  const fetchUserConcerts = async () => {
-    if (!isAuthenticated) return;
-    
-    try {
-      const token = await getAccessTokenSilently();
-      const response = await fetch(`${BASE_URL}/api/concerts/user/saved`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setUserConcerts(data);
-      }
-    } catch (error) {
-      console.error("Error fetching user concerts:", error);
-    }
-  };
-
-  const isAlreadySaved = (concert) => {
-    return userConcerts.some(artist => 
-      artist.concerts?.some(userConcert => 
-        userConcert.concertId === concert.id
-      )
-    );
-  };
-
-  useEffect(() => {
-    if (isOpen && isAuthenticated) {
-      fetchUserConcerts();
-    }
-  }, [isOpen, isAuthenticated]);
 
   const handleCheckboxChange = (concertId) => (e) => {
     e.stopPropagation();

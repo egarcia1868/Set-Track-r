@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useMemo, useEffect } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../context/AuthContext";
+import { useUserConcerts } from "../context/UserConcertsContext";
 import { BASE_URL } from "../utils/config";
 import ConcertItemDetailed from "../components/concert/ConcertItemDetailed";
 import SongsDetails from "../components/concert/SongsDetails";
@@ -8,7 +9,13 @@ import SongsDetails from "../components/concert/SongsDetails";
 const ArtistConcerts = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthenticated, getAccessTokenSilently, user } = useAuth0();
+  const { isAuthenticated } = useAuth();
+  const { 
+    userConcerts, 
+    isAlreadySaved, 
+    addConcertToCollection, 
+    removeConcertFromCollection 
+  } = useUserConcerts();
 
   const { artist = {} } = location.state || {};
   const { artistName } = artist;
@@ -17,121 +24,20 @@ const ArtistConcerts = () => {
   const [expandedSetlists, setExpandedSetlists] = useState(new Set());
   const [otherArtistsData, setOtherArtistsData] = useState({});
   const [loadingOtherArtists, setLoadingOtherArtists] = useState({});
-  const [userConcerts, setUserConcerts] = useState([]);
 
   useEffect(() => {
     if (!location.state) navigate("/");
   }, [location.state, navigate]);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetchUserConcerts();
-    }
-  }, [isAuthenticated]);
-
-  const fetchUserConcerts = async () => {
-    if (!isAuthenticated) return;
-    
-    try {
-      const token = await getAccessTokenSilently();
-      const response = await fetch(`${BASE_URL}/api/concerts/user/saved`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setUserConcerts(data);
-      }
-    } catch (error) {
-      console.error("Error fetching user concerts:", error);
-    }
-  };
-
-  const isAlreadySaved = (setlist) => {
-    return userConcerts.some(artist => 
-      artist.concerts?.some(concert => 
-        concert.concertId === setlist.id
-      )
-    );
-  };
-
-  const handleAddToMySets = async (setlistData) => {
-    if (!isAuthenticated) {
-      return;
-    }
-
-    try {
-      const token = await getAccessTokenSilently();
-      const response = await fetch(`${BASE_URL}/api/concerts`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          concertData: [setlistData],
-          user: user,
-        }),
-      });
-      
-      if (response.ok) {
-        // Refresh user concerts to update the UI
-        fetchUserConcerts();
-      } else {
-        const errorData = await response.json();
-        console.error("Failed to add concert:", errorData);
-      }
-    } catch (error) {
-      console.error("Error adding concert:", error);
-    }
-  };
-
   const handleRemoveFromMySets = async (setlistData) => {
-    if (!isAuthenticated) {
-      return;
-    }
-
-    try {
-      const token = await getAccessTokenSilently();
-      
-      // Find the artist and concert in userConcerts to get the proper IDs
-      const artistEntry = userConcerts.find(artist => 
-        artist.concerts?.some(concert => concert.concertId === setlistData.id)
-      );
-      
-      if (!artistEntry) {
-        return;
-      }
-
-      const concertEntry = artistEntry.concerts.find(concert => concert.concertId === setlistData.id);
-      
-      const response = await fetch(`${BASE_URL}/api/concerts/${artistEntry.artistId}/${concertEntry.concertId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        // Refresh user concerts to update the UI
-        fetchUserConcerts();
-        
-        // If the removed concert belongs to the current artist, remove it from the display
-        if (setlistData.artist?.name && 
-            setlistData.artist.name.toLowerCase() === artistName.toLowerCase()) {
-          setConcertList(prev => prev.filter(concert => 
-            concert.concertId !== setlistData.id && concert.id !== setlistData.id
-          ));
-        }
-      } else {
-        const errorData = await response.json();
-        console.error("Failed to remove concert:", errorData);
-      }
-    } catch (error) {
-      console.error("Error removing concert:", error);
+    const success = await removeConcertFromCollection(setlistData);
+    
+    // If the removed concert belongs to the current artist, remove it from the display
+    if (success && setlistData.artist?.name && 
+        setlistData.artist.name.toLowerCase() === artistName.toLowerCase()) {
+      setConcertList(prev => prev.filter(concert => 
+        concert.concertId !== setlistData.id && concert.id !== setlistData.id
+      ));
     }
   };
 
@@ -284,10 +190,7 @@ const ArtistConcerts = () => {
                         handleShowOtherArtists={handleShowOtherArtists}
                         otherArtistsData={otherArtistsData}
                         loadingOtherArtists={loadingOtherArtists}
-                        isAlreadySaved={isAlreadySaved}
-                        handleAddToMySets={handleAddToMySets}
                         handleRemoveFromMySets={handleRemoveFromMySets}
-                        isAuthenticated={isAuthenticated}
                         currentArtistName={artistName}
                       />
                     ))}

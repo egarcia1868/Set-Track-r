@@ -66,13 +66,15 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
         Improvement/s currently being worked:
       </h4>
       <ul>
-        {" "}
-        <li>
-          See if feasible when adding a band, to display other bands at that
-          show. (ex. - enter King Gizz & 11/15/2024, King Gizz would show up,
-          but also the opener King Stingray. Perhaps within a dropdown in the
-          same component.)
+      <li>Find reliable api for artist images to display</li>
+      <li>
+          Used prop drilling out of convenience from Dashboard -- ConcertForm --
+          ConcertDetailsModal. When finished with more important tasks, refactor
+          to use context.
         </li>
+        <li>Fix refresh logout issue on deployed</li>
+        <li>Artists still not showing as on list on show other artists listing</li>
+        <li>Add Open in new tab for Dashboard artists</li>
       </ul>
       <h4 style={{ marginLeft: "1.5rem" }}>
         Planned upcoming improvements/bug fixes:
@@ -81,12 +83,6 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
         <li>
           add ability to remove specific songs from "seen" set (for accurate
           tracking if arrived late/left early)
-        </li>
-        <li>Find reliable api for artist images to display</li>
-        <li>
-          Used prop drilling out of convenience from Dashboard -- ConcertForm --
-          ConcertDetailsModal. When finished with more important tasks, refactor
-          to use context.
         </li>
         <li>Update and optimize styling (desktop and mobile)</li>
       </ul>

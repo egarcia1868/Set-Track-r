@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
+import { useUserConcerts } from "../../context/UserConcertsContext";
 import RemoveConfirmationModal from "../common/RemoveConfirmationModal";
 
 const ConcertItemDetailed = ({ 
@@ -8,12 +10,11 @@ const ConcertItemDetailed = ({
   handleShowOtherArtists, 
   otherArtistsData, 
   loadingOtherArtists, 
-  isAlreadySaved, 
-  handleAddToMySets, 
   handleRemoveFromMySets,
-  isAuthenticated,
   currentArtistName // New prop to identify the current artist being viewed
 }) => {
+  const { isAuthenticated } = useAuth();
+  const { isAlreadySaved, addConcertToCollection } = useUserConcerts();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [pendingRemoval, setPendingRemoval] = useState(null);
 
@@ -160,7 +161,7 @@ const ConcertItemDetailed = ({
                         ) : (
                           <button
                             className="add-to-sets-btn"
-                            onClick={() => handleAddToMySets(setlist)}
+                            onClick={() => addConcertToCollection(setlist)}
                             title="Add this concert to your collection"
                           >
                             Add to my sets
