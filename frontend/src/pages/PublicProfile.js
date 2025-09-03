@@ -25,6 +25,7 @@ const PublicProfile = () => {
   const [currentUserProfile, setCurrentUserProfile] = useState(null);
   const [otherArtistsData, setOtherArtistsData] = useState({});
   const [loadingOtherArtists, setLoadingOtherArtists] = useState({});
+  const [userConcerts, setUserConcerts] = useState([]);
 
   useEffect(() => {
     fetchPublicProfile();
@@ -34,6 +35,7 @@ const PublicProfile = () => {
     if (isAuthenticated && profileData) {
       checkFollowStatus();
       fetchCurrentUserProfile();
+      fetchUserConcerts();
     }
   }, [isAuthenticated, profileData]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -129,6 +131,34 @@ const PublicProfile = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchUserConcerts = async () => {
+    if (!isAuthenticated) return;
+    
+    try {
+      const token = await getAccessTokenSilently();
+      const response = await fetch(`${BASE_URL}/api/concerts/user/saved`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setUserConcerts(data);
+      }
+    } catch (error) {
+      console.error("Error fetching user concerts:", error);
+    }
+  };
+
+  const isAlreadySaved = (setlist) => {
+    return userConcerts.some(artist => 
+      artist.concerts?.some(concert => 
+        concert.concertId === setlist.id
+      )
+    );
   };
 
   const fetchCurrentUserProfile = async () => {
@@ -645,14 +675,20 @@ const PublicProfile = () => {
                                                   <span className="artist-name">
                                                     {setlist.artist?.name || "Unknown Artist"}
                                                   </span>
-                                                  <button
-                                                    className="add-to-sets-btn"
-                                                    onClick={() => handleAddToMySets(setlist)}
-                                                    disabled={!isAuthenticated}
-                                                    title={isAuthenticated ? "Add this concert to your collection" : "Login to add concerts"}
-                                                  >
-                                                    Add to my sets
-                                                  </button>
+                                                  {isAlreadySaved(setlist) ? (
+                                                    <span className="already-saved-text">
+                                                      Already in collection
+                                                    </span>
+                                                  ) : (
+                                                    <button
+                                                      className="add-to-sets-btn"
+                                                      onClick={() => handleAddToMySets(setlist)}
+                                                      disabled={!isAuthenticated}
+                                                      title={isAuthenticated ? "Add this concert to your collection" : "Login to add concerts"}
+                                                    >
+                                                      Add to my sets
+                                                    </button>
+                                                  )}
                                                 </li>
                                               ))}
                                             </ul>

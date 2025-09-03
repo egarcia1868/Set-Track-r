@@ -1184,6 +1184,14 @@ body,
   cursor: not-allowed;
 }
 
+.already-saved-text {
+  color: #28a745;
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-style: italic;
+  white-space: nowrap;
+}
+
 .no-other-artists {
   color: #666;
   font-style: italic;
