@@ -31,10 +31,7 @@ const NewConcertDetails = ({ concert, isChecked, onCheckboxChange, isAlreadySave
   });
 
   return (
-    <div
-      className="concert-details"
-      onClick={() => setShowSetList((prev) => !prev)}
-    >
+    <div className="concert-details">
       <h3>{artist.name}</h3>
       <p>
         <strong>{venueName}</strong>
@@ -43,7 +40,15 @@ const NewConcertDetails = ({ concert, isChecked, onCheckboxChange, isAlreadySave
         {cityName}, {state}, {countryName}
       </p>
       <p>{outputDate}</p>
-      <p>setlist {showSetList ? "▼" : "▲"}</p>
+      <p 
+        onClick={(e) => {
+          e.stopPropagation();
+          setShowSetList((prev) => !prev);
+        }}
+        style={{ cursor: "pointer" }}
+      >
+        setlist {showSetList ? "▼" : "▲"}
+      </p>
       {showSetList &&
         (sets ? (
           sets.map((set, index) => (

@@ -66,15 +66,7 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
         Improvement/s currently being worked:
       </h4>
       <ul>
-      <li>Find reliable api for artist images to display</li>
-      <li>
-          Used prop drilling out of convenience from Dashboard -- ConcertForm --
-          ConcertDetailsModal. When finished with more important tasks, refactor
-          to use context.
-        </li>
-        <li>Fix refresh logout issue on deployed</li>
-        <li>Artists still not showing as on list on show other artists listing</li>
-        <li>Add Open in new tab for Dashboard artists</li>
+        <li>Find reliable api for artist images to display</li>
       </ul>
       <h4 style={{ marginLeft: "1.5rem" }}>
         Planned upcoming improvements/bug fixes:
@@ -84,7 +76,6 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
           add ability to remove specific songs from "seen" set (for accurate
           tracking if arrived late/left early)
         </li>
-        <li>Update and optimize styling (desktop and mobile)</li>
       </ul>
       <form method="dialog" id="modal-actions">
         <button style={{ marginBottom: "2rem" }}>Close</button>

@@ -29,7 +29,7 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Navbar />
-        <div className="pages">
+        <main className="pages">
           <Routes>
             <Route path="/" element={<RootRoute />} />
             <Route path="/profile/:username" element={<PublicProfile />} />
@@ -50,7 +50,7 @@ function App() {
               }
             />
           </Routes>
-        </div>
+        </main>
         <Footer />
       </BrowserRouter>
     </div>

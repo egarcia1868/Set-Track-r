@@ -83,8 +83,8 @@ const Dashboard = () => {
   );
 
   return (
-    <div className="home">
-      <div className="concerts">
+    <main className="home">
+      <section className="concerts">
         <div className="dashboard-header">
           <div className="desktop-search-field">
             {artists.length > 0 && (
@@ -156,18 +156,18 @@ const Dashboard = () => {
         ) : filteredArtists.length === 0 ? (
           <h3>No artists found matching "{searchTerm}"</h3>
         ) : (
-          <div className="artists-grid">
+          <section className="artists-grid" aria-label="Your artists collection">
             {filteredArtists.map((artist) => (
               <ArtistDetails key={artist._id} artist={artist} />
             ))}
-          </div>
+          </section>
         )}
-      </div>
+      </section>
 
       {/* Desktop form - hidden on mobile */}
-      <div className="desktop-search-form">
+      <aside className="desktop-search-form">
         <ConcertSearchForm refreshConcerts={fetchConcerts} />
-      </div>
+      </aside>
 
       {/* Mobile modal */}
       {showConcertSearchModal && (
@@ -206,7 +206,7 @@ const Dashboard = () => {
         isOpen={showFollowersList}
         onClose={() => setShowFollowersList(false)}
       />
-    </div>
+    </main>
   );
 };
 

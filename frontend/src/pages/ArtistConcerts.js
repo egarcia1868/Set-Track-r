@@ -208,28 +208,35 @@ const ArtistConcerts = () => {
   if (!artistName) return null;
 
   return (
-    <>
-      <h1>{artistName}</h1>
-      <div className="concerts">
+    <main>
+      <header>
+        <h1>{artistName}</h1>
+      </header>
+      <section className="concerts">
         <h2>
           Songs By # Of Times Seen{" "}
-          <span
-            style={{ fontSize: ".5rem", cursor: "pointer", color: "#1a0dab" }}
+          <button
+            className="text-button"
+            style={{ fontSize: ".5rem" }}
             onClick={() => setExpandTracks((prev) => !prev)}
+            aria-expanded={expandTracks}
+            aria-label={`${expandTracks ? 'Collapse' : 'Expand'} song statistics`}
           >
             {expandTracks ? "collapse" : "expand"}
-          </span>
+          </button>
         </h2>
         {expandTracks ? <SongsDetails concerts={concertList} /> : null}
 
         <h2>
           Concerts By Year{" "}
-          <span
-            style={{ fontSize: ".5rem", cursor: "pointer", color: "#1a0dab" }}
+          <button
+            className="text-button"
+            style={{ fontSize: ".5rem" }}
             onClick={expandOrCollapseAll}
+            aria-label={`${expandedYears.size > 0 ? 'Collapse all' : 'Expand all'} concert years`}
           >
             {expandedYears.size > 0 ? "collapse all" : "expand all"}
-          </span>
+          </button>
         </h2>
 
         {sortedConcertYears.length > 0 ? (
@@ -268,8 +275,8 @@ const ArtistConcerts = () => {
         ) : (
           <p>No concerts for this artist</p>
         )}
-      </div>
-    </>
+      </section>
+    </main>
   );
 };
 
