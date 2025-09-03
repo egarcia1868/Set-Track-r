@@ -5,6 +5,7 @@ import { BASE_URL } from "../utils/config";
 import ArtistStatsModal from "../components/common/ArtistStatsModal";
 import AllSongsModal from "../components/common/AllSongsModal";
 import PublicFollowersList from "../components/common/PublicFollowersList";
+import ConcertItemDetailed from "../components/concert/ConcertItemDetailed";
 
 const PublicProfile = () => {
   const { username } = useParams();
@@ -607,137 +608,20 @@ const PublicProfile = () => {
                               (a, b) =>
                                 new Date(b.eventDate) - new Date(a.eventDate),
                             )
-                            .map((concert) => {
-                              const setlistExpanded = expandedSetlists.has(
-                                concert.concertId,
-                              );
-                              const hasSetlist =
-                                concert.sets && concert.sets.length > 0;
-
-                              // Flatten all songs from all sets into a single array
-                              const allSongs = hasSetlist
-                                ? concert.sets.flatMap((set) =>
-                                    set.song
-                                      ? set.song.map((song) => song.name)
-                                      : [],
-                                  )
-                                : [];
-
-                              return (
-                                <div
-                                  key={concert.concertId}
-                                  className="concert-item-detailed"
-                                >
-                                  <div className="concert-main-info">
-                                    <div className="concert-header-info">
-                                      <div className="concert-venue">
-                                        {typeof concert.venue === "object"
-                                          ? concert.venue?.name ||
-                                            "Unknown Venue"
-                                          : concert.venue || "Unknown Venue"}
-                                      </div>
-                                      <div className="concert-location">
-                                        {concert.venue?.city
-                                          ? `${concert.venue.city.name}, ${concert.venue.city.state}, ${concert.venue.city.country.name}`
-                                          : concert.city
-                                            ? typeof concert.city === "object"
-                                              ? concert.city?.name ||
-                                                "Unknown City"
-                                              : concert.city
-                                            : "Unknown Location"}
-                                      </div>
-                                      <div className="concert-date">
-                                        {formatDate(concert.eventDate)}
-                                      </div>
-                                    </div>
-                                    
-                                    <div className="concert-actions">
-                                      <button
-                                        className="other-artists-link"
-                                        onClick={() => handleShowOtherArtists(concert)}
-                                        title="View other artists who performed at this show"
-                                        disabled={loadingOtherArtists[concert.concertId]}
-                                      >
-                                        {loadingOtherArtists[concert.concertId] 
-                                          ? "Loading..." 
-                                          : otherArtistsData[concert.concertId] 
-                                            ? "Hide other artists" 
-                                            : "Show other artists at this show →"
-                                        }
-                                      </button>
-                                      
-                                      {otherArtistsData[concert.concertId] && (
-                                        <div className="other-artists-dropdown">
-                                          {otherArtistsData[concert.concertId].length > 0 ? (
-                                            <ul className="other-artists-list">
-                                              {otherArtistsData[concert.concertId].map((setlist, index) => (
-                                                <li key={index} className="other-artist-item">
-                                                  <span className="artist-name">
-                                                    {setlist.artist?.name || "Unknown Artist"}
-                                                  </span>
-                                                  {isAlreadySaved(setlist) ? (
-                                                    <span className="already-saved-text">
-                                                      Already in collection
-                                                    </span>
-                                                  ) : (
-                                                    <button
-                                                      className="add-to-sets-btn"
-                                                      onClick={() => handleAddToMySets(setlist)}
-                                                      disabled={!isAuthenticated}
-                                                      title={isAuthenticated ? "Add this concert to your collection" : "Login to add concerts"}
-                                                    >
-                                                      Add to my sets
-                                                    </button>
-                                                  )}
-                                                </li>
-                                              ))}
-                                            </ul>
-                                          ) : (
-                                            <div className="no-other-artists">
-                                              No other artists found for this show.
-                                            </div>
-                                          )}
-                                        </div>
-                                      )}
-                                    </div>
-
-                                    {hasSetlist && (
-                                      <button
-                                        className="setlist-toggle-btn"
-                                        onClick={() =>
-                                          toggleSetlist(concert.concertId)
-                                        }
-                                      >
-                                        <span className="setlist-text">
-                                          Setlist ({allSongs.length} songs)
-                                        </span>
-                                        <span className="setlist-arrow">
-                                          {setlistExpanded ? "▼" : "▲"}
-                                        </span>
-                                      </button>
-                                    )}
-
-                                    {!hasSetlist && (
-                                      <div className="no-setlist">
-                                        Setlist unavailable
-                                      </div>
-                                    )}
-                                  </div>
-
-                                  {hasSetlist && setlistExpanded && (
-                                    <div className="setlist-content">
-                                      <ol className="songs-list">
-                                        {allSongs.map((song, index) => (
-                                          <li key={index} className="song-item">
-                                            {song}
-                                          </li>
-                                        ))}
-                                      </ol>
-                                    </div>
-                                  )}
-                                </div>
-                              );
-                            })}
+                            .map((concert) => (
+                              <ConcertItemDetailed
+                                key={concert.concertId}
+                                concert={concert}
+                                expandedSetlists={expandedSetlists}
+                                toggleSetlist={toggleSetlist}
+                                handleShowOtherArtists={handleShowOtherArtists}
+                                otherArtistsData={otherArtistsData}
+                                loadingOtherArtists={loadingOtherArtists}
+                                isAlreadySaved={isAlreadySaved}
+                                handleAddToMySets={handleAddToMySets}
+                                isAuthenticated={isAuthenticated}
+                              />
+                            ))}
                         </div>
                       </>
                     )}
