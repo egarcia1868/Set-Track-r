@@ -660,6 +660,7 @@ const PublicProfile = () => {
                                 handleAddToMySets={handleAddToMySets}
                                 handleRemoveFromMySets={handleRemoveFromMySets}
                                 isAuthenticated={isAuthenticated}
+                                currentArtistName={null}
                               />
                             ))}
                         </div>

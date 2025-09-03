@@ -118,6 +118,14 @@ const ArtistConcerts = () => {
       if (response.ok) {
         // Refresh user concerts to update the UI
         fetchUserConcerts();
+        
+        // If the removed concert belongs to the current artist, remove it from the display
+        if (setlistData.artist?.name && 
+            setlistData.artist.name.toLowerCase() === artistName.toLowerCase()) {
+          setConcertList(prev => prev.filter(concert => 
+            concert.concertId !== setlistData.id && concert.id !== setlistData.id
+          ));
+        }
       } else {
         const errorData = await response.json();
         console.error("Failed to remove concert:", errorData);
@@ -280,6 +288,7 @@ const ArtistConcerts = () => {
                         handleAddToMySets={handleAddToMySets}
                         handleRemoveFromMySets={handleRemoveFromMySets}
                         isAuthenticated={isAuthenticated}
+                        currentArtistName={artistName}
                       />
                     ))}
                 </div>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import RemoveConfirmationModal from "../common/RemoveConfirmationModal";
 
 const ConcertItemDetailed = ({ 
   concert, 
@@ -10,8 +11,42 @@ const ConcertItemDetailed = ({
   isAlreadySaved, 
   handleAddToMySets, 
   handleRemoveFromMySets,
-  isAuthenticated 
+  isAuthenticated,
+  currentArtistName // New prop to identify the current artist being viewed
 }) => {
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [pendingRemoval, setPendingRemoval] = useState(null);
+
+  const handleRemoveClick = (setlist) => {
+    // Check if this concert belongs to the current artist being viewed
+    const concertArtistName = setlist.artist?.name;
+    const shouldShowConfirmation = currentArtistName && 
+      concertArtistName && 
+      concertArtistName.toLowerCase() === currentArtistName.toLowerCase() &&
+      localStorage.getItem('skipRemoveConfirmation') !== 'true';
+
+    if (shouldShowConfirmation) {
+      setPendingRemoval(setlist);
+      setShowConfirmModal(true);
+    } else {
+      // Remove without confirmation
+      handleRemoveFromMySets(setlist);
+    }
+  };
+
+  const confirmRemoval = () => {
+    if (pendingRemoval) {
+      handleRemoveFromMySets(pendingRemoval);
+      setPendingRemoval(null);
+    }
+    setShowConfirmModal(false);
+  };
+
+  const cancelRemoval = () => {
+    setPendingRemoval(null);
+    setShowConfirmModal(false);
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return "Date unknown";
 
@@ -117,7 +152,7 @@ const ConcertItemDetailed = ({
                         isAlreadySaved(setlist) ? (
                           <button
                             className="remove-from-sets-btn"
-                            onClick={() => handleRemoveFromMySets(setlist)}
+                            onClick={() => handleRemoveClick(setlist)}
                             title="Remove this concert from your collection"
                           >
                             Remove from my sets
@@ -176,6 +211,13 @@ const ConcertItemDetailed = ({
           </ol>
         </div>
       )}
+
+      <RemoveConfirmationModal
+        isOpen={showConfirmModal}
+        onConfirm={confirmRemoval}
+        onCancel={cancelRemoval}
+        artistName={currentArtistName}
+      />
     </div>
   );
 };
