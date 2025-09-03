@@ -9,6 +9,7 @@ const ConcertItemDetailed = ({
   loadingOtherArtists, 
   isAlreadySaved, 
   handleAddToMySets, 
+  handleRemoveFromMySets,
   isAuthenticated 
 }) => {
   const formatDate = (dateString) => {
@@ -112,19 +113,24 @@ const ConcertItemDetailed = ({
                       <span className="artist-name">
                         {setlist.artist?.name || "Unknown Artist"}
                       </span>
-                      {isAlreadySaved(setlist) ? (
-                        <span className="already-saved-text">
-                          Already in collection
-                        </span>
-                      ) : (
-                        <button
-                          className="add-to-sets-btn"
-                          onClick={() => handleAddToMySets(setlist)}
-                          disabled={!isAuthenticated}
-                          title={isAuthenticated ? "Add this concert to your collection" : "Login to add concerts"}
-                        >
-                          Add to my sets
-                        </button>
+                      {isAuthenticated && (
+                        isAlreadySaved(setlist) ? (
+                          <button
+                            className="remove-from-sets-btn"
+                            onClick={() => handleRemoveFromMySets(setlist)}
+                            title="Remove this concert from your collection"
+                          >
+                            Remove from my sets
+                          </button>
+                        ) : (
+                          <button
+                            className="add-to-sets-btn"
+                            onClick={() => handleAddToMySets(setlist)}
+                            title="Add this concert to your collection"
+                          >
+                            Add to my sets
+                          </button>
+                        )
                       )}
                     </li>
                   ))}

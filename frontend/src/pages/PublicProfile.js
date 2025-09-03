@@ -255,7 +255,6 @@ const PublicProfile = () => {
 
   const handleAddToMySets = async (setlistData) => {
     if (!isAuthenticated) {
-      alert("You must be logged in to add concerts to your collection.");
       return;
     }
 
@@ -280,15 +279,55 @@ const PublicProfile = () => {
       if (response.ok) {
         const responseData = await response.json();
         console.log("Add concert success:", responseData);
-        alert(`Added ${setlistData.artist?.name || "concert"} to your collection!`);
+        // Refresh user concerts to update the UI
+        fetchUserConcerts();
       } else {
         const errorData = await response.json();
         console.error("Failed to add concert:", errorData);
-        alert(`Failed to add concert: ${errorData.error || "Unknown error"}`);
       }
     } catch (error) {
       console.error("Error adding concert:", error);
-      alert("Error adding concert to your collection.");
+    }
+  };
+
+  const handleRemoveFromMySets = async (setlistData) => {
+    if (!isAuthenticated) {
+      return;
+    }
+
+    try {
+      console.log("Removing setlist from collection:", setlistData);
+      
+      const token = await getAccessTokenSilently();
+      
+      // Find the artist and concert in userConcerts to get the proper IDs
+      const artistEntry = userConcerts.find(artist => 
+        artist.concerts?.some(concert => concert.concertId === setlistData.id)
+      );
+      
+      if (!artistEntry) {
+        return;
+      }
+
+      const concertEntry = artistEntry.concerts.find(concert => concert.concertId === setlistData.id);
+      
+      const response = await fetch(`${BASE_URL}/api/concerts/${artistEntry.artistId}/${concertEntry.concertId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        // Refresh user concerts to update the UI
+        fetchUserConcerts();
+      } else {
+        const errorData = await response.json();
+        console.error("Failed to remove concert:", errorData);
+      }
+    } catch (error) {
+      console.error("Error removing concert:", error);
     }
   };
 
@@ -619,6 +658,7 @@ const PublicProfile = () => {
                                 loadingOtherArtists={loadingOtherArtists}
                                 isAlreadySaved={isAlreadySaved}
                                 handleAddToMySets={handleAddToMySets}
+                                handleRemoveFromMySets={handleRemoveFromMySets}
                                 isAuthenticated={isAuthenticated}
                               />
                             ))}
