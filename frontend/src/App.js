@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
 
 import ArtistConcerts from "./pages/ArtistConcerts";
 import Dashboard from "./pages/Dashboard";
@@ -9,6 +10,21 @@ import PrivateRoute from "./components/common/PrivateRoute";
 import RootRoute from "./pages/RootRoute";
 
 function App() {
+  const { isLoading } = useAuth0();
+
+  if (isLoading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        fontSize: '1.2rem'
+      }}>
+        Loading...
+      </div>
+    );
+  }
   return (
     <div className="App">
       <BrowserRouter>

@@ -51,6 +51,10 @@ export const AuthProvider = ({ children }) => {
     if (isAuthenticated && user && !userProfile && !isLoadingProfile) {
       fetchUserProfile();
     }
+    // Clear profile when user logs out
+    if (!isAuthenticated) {
+      setUserProfile(null);
+    }
   }, [isAuthenticated, user]);
 
   const value = {

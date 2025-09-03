@@ -22,6 +22,10 @@ root.render(
       clientId={clientId}
       redirectUri={window.location.origin}
       audience={audience}
+      cacheLocation="localstorage"
+      useRefreshTokens={true}
+      useRefreshTokensFallback={true}
+      scope="openid profile email"
     >
       <AuthProvider>
         <UserConcertsProvider>
