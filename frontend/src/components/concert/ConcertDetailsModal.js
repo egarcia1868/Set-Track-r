@@ -14,12 +14,47 @@ const ConcertDetailsModal = ({
   hasMorePages = true,
   navigationDirection = null,
 }) => {
-  const { user } = useAuth0();
+  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const [error, setError] = useState(null);
   const [checkedConcertIds, setCheckedConcertIds] = useState(new Set());
+  const [userConcerts, setUserConcerts] = useState([]);
   const selectedConcerts = concertList.filter((c) =>
     checkedConcertIds.has(c.id),
   );
+
+  const fetchUserConcerts = async () => {
+    if (!isAuthenticated) return;
+    
+    try {
+      const token = await getAccessTokenSilently();
+      const response = await fetch(`${BASE_URL}/api/concerts/user/saved`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setUserConcerts(data);
+      }
+    } catch (error) {
+      console.error("Error fetching user concerts:", error);
+    }
+  };
+
+  const isAlreadySaved = (concert) => {
+    return userConcerts.some(artist => 
+      artist.concerts?.some(userConcert => 
+        userConcert.concertId === concert.id
+      )
+    );
+  };
+
+  useEffect(() => {
+    if (isOpen && isAuthenticated) {
+      fetchUserConcerts();
+    }
+  }, [isOpen, isAuthenticated]);
 
   const handleCheckboxChange = (concertId) => (e) => {
     e.stopPropagation();
@@ -176,6 +211,8 @@ const ConcertDetailsModal = ({
                 concert={concert}
                 isChecked={checkedConcertIds.has(concert.id)}
                 onCheckboxChange={handleCheckboxChange(concert.id)}
+                isAlreadySaved={isAlreadySaved(concert)}
+                isAuthenticated={isAuthenticated}
               />
             ))
           )}

@@ -92,6 +92,16 @@ header a {
   /* width: auto; */
 }
 
+.already-in-collection-text {
+  font-size: 0.65rem;
+  color: #28a745;
+  font-style: italic;
+  position: static !important;
+  top: auto !important;
+  right: auto !important;
+  padding: 0 !important;
+}
+
 /* homepage */
 .home {
   display: grid;
