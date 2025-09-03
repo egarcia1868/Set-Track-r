@@ -150,9 +150,9 @@ dialog {
   position: absolute;
   top: 20px;
   right: 20px;
-  background: #f1f1f1;
+  /* background: #f1f1f1; */
   padding: 6px;
-  border-radius: 50%;
+  /* border-radius: 50%; */
   color: #333;
 }
 
@@ -1196,6 +1196,162 @@ body,
   color: #666;
   font-style: italic;
   font-size: 0.9rem;
+}
+
+/* Fix for concert details page styling conflicts */
+.concert-details .concert-actions {
+  margin: 10px 0;
+  width: 100%;
+  clear: both;
+  position: relative;
+}
+
+.concert-details .other-artists-link {
+  background: none;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  padding: 0;
+  transition: color 0.2s ease;
+  display: block;
+  text-align: center !important;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.concert-details .other-artists-link:hover {
+  color: #158f6b;
+  text-decoration: none;
+}
+
+.concert-details .other-artists-link:disabled {
+  color: #999;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+.concert-details .other-artists-dropdown {
+  position: static;
+  margin-top: 10px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  padding: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left !important; /* Override the parent's text-align: center */
+}
+
+.concert-details .other-artists-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  text-align: left !important;
+}
+
+.concert-details .other-artist-item {
+  padding: 8px 0;
+  color: #333;
+  font-size: 0.9rem;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 10px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  text-align: left !important;
+  position: relative !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin: 0 !important;
+}
+
+.concert-details .other-artist-item:not(:last-child) {
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 8px;
+  margin-bottom: 4px;
+}
+
+.concert-details .artist-name {
+  flex: 1 !important;
+  font-weight: 500 !important;
+  text-align: left !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  position: static !important;
+}
+
+.concert-details .add-to-sets-btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0 !important;
+  position: static !important;
+  margin: 0 !important;
+}
+
+.concert-details .add-to-sets-btn:hover:not(:disabled) {
+  background: #158f6b;
+}
+
+.concert-details .add-to-sets-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.concert-details .already-saved-text {
+  color: #28a745;
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-style: italic;
+  white-space: nowrap;
+  flex-shrink: 0 !important;
+  position: static !important;
+  margin: 0 !important;
+}
+
+/* Super specific override to fix the layout issue */
+div.concert-details div.other-artists-dropdown ul.other-artists-list li.other-artist-item {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  text-align: left !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  
+  position: static !important;
+  left: auto !important;
+  right: auto !important;
+  transform: none !important;
+  float: none !important;
+}
+
+div.concert-details div.other-artists-dropdown ul.other-artists-list li.other-artist-item span.artist-name {
+  flex: 1 !important;
+  text-align: left !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  position: static !important;
+}
+
+div.concert-details div.other-artists-dropdown ul.other-artists-list li.other-artist-item button.add-to-sets-btn,
+div.concert-details div.other-artists-dropdown ul.other-artists-list li.other-artist-item span.already-saved-text {
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+  position: static !important;
 }
 
 /* Mobile dashboard header layout */
