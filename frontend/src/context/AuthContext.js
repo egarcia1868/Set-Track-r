@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
 
       if (response.ok) {
         const profileData = await response.json();
-        setUserProfile(profileData);
+        setUserProfile(profileData.profile);
       } else {
         console.error('Failed to fetch user profile:', response.status);
         setUserProfile(null);

@@ -52,7 +52,7 @@ const ProfileSettings = ({ isOpen, onClose }) => {
   const fetchProfile = async () => {
     try {
       const token = await getAccessTokenSilently();
-      const response = await fetch(`${BASE_URL}/api/concerts/profile`, {
+      const response = await fetch(`${BASE_URL}/api/users/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -74,27 +74,13 @@ const ProfileSettings = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("=== FRONTEND: Profile update form submitted ===");
     setLoading(true);
     setMessage("");
 
     try {
-      console.log("Getting access token...");
       const token = await getAccessTokenSilently();
-      console.log("Token received, length:", token?.length);
 
-      console.log(
-        "Sending profile update to:",
-        `${BASE_URL}/api/concerts/profile`,
-      );
-      console.log("Request data:", {
-        displayName: profile.displayName,
-        name: profile.name,
-        bio: profile.bio,
-        isPublic: profile.isPublic,
-      });
-
-      const response = await fetch(`${BASE_URL}/api/concerts/profile`, {
+      const response = await fetch(`${BASE_URL}/api/users/profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -109,10 +95,6 @@ const ProfileSettings = ({ isOpen, onClose }) => {
       });
 
       const data = await response.json();
-      console.log("Profile update response:", {
-        status: response.status,
-        data,
-      });
 
       if (response.ok) {
         setProfile((prev) => ({ ...prev, ...data.profile }));
@@ -162,7 +144,7 @@ const ProfileSettings = ({ isOpen, onClose }) => {
       // Check if display name is unique before allowing public profile
       try {
         const token = await getAccessTokenSilently();
-        const response = await fetch(`${BASE_URL}/api/concerts/profile`, {
+        const response = await fetch(`${BASE_URL}/api/users/profile`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -194,7 +176,7 @@ const ProfileSettings = ({ isOpen, onClose }) => {
         }
 
         // If validation passes, now make it public
-        const publicResponse = await fetch(`${BASE_URL}/api/concerts/profile`, {
+        const publicResponse = await fetch(`${BASE_URL}/api/users/profile`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",

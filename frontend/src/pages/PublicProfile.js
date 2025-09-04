@@ -97,29 +97,6 @@ const PublicProfile = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Public profile data:", data);
-        if (data.concerts && data.concerts.length > 0) {
-          console.log("First artist concerts:", data.concerts[0].concerts);
-          // Log date formats to debug Invalid Date issue
-          const firstConcerts = data.concerts[0].concerts;
-          if (firstConcerts && firstConcerts.length > 0) {
-            console.log("Date formats found:");
-            firstConcerts.slice(0, 3).forEach((concert, i) => {
-              console.log(
-                `Concert ${i}: eventDate = "${concert.eventDate}" (type: ${typeof concert.eventDate})`,
-              );
-              console.log(`Concert ${i} full structure:`, concert);
-              console.log(
-                `Concert ${i} has sets:`,
-                !!concert.sets,
-                "Sets length:",
-                concert.sets?.length,
-              );
-              console.log(`Concert ${i} venue structure:`, concert.venue);
-              console.log(`Concert ${i} city structure:`, concert.city);
-            });
-          }
-        }
         setProfileData(data);
       } else if (response.status === 404) {
         setError("Profile not found or not public");
@@ -140,7 +117,7 @@ const PublicProfile = () => {
     
     try {
       const token = await getAccessTokenSilently();
-      const response = await fetch(`${BASE_URL}/api/concerts/profile`, {
+      const response = await fetch(`${BASE_URL}/api/users/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -160,12 +137,8 @@ const PublicProfile = () => {
 
     try {
       const token = await getAccessTokenSilently();
-      console.log(
-        "Checking follow status for:",
-        profileData.profile.displayName,
-      );
       const response = await fetch(
-        `${BASE_URL}/api/concerts/follow-status/${encodeURIComponent(profileData.profile.displayName)}`,
+        `${BASE_URL}/api/users/follow-status/${encodeURIComponent(profileData.profile.displayName)}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -175,8 +148,6 @@ const PublicProfile = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Follow status response:", data);
-        console.log("Setting isFollowing to:", data.isFollowing);
         setIsFollowing(data.isFollowing);
       } else {
         console.error(
@@ -192,13 +163,11 @@ const PublicProfile = () => {
   const handleFollow = async () => {
     if (!profileData?.profile?.displayName) return;
 
-    console.log("Starting follow for:", profileData.profile.displayName);
     setFollowLoading(true);
     try {
       const token = await getAccessTokenSilently();
-      console.log("Got token, making follow request...");
       const response = await fetch(
-        `${BASE_URL}/api/concerts/follow/${encodeURIComponent(profileData.profile.displayName)}`,
+        `${BASE_URL}/api/users/follow/${encodeURIComponent(profileData.profile.displayName)}`,
         {
           method: "POST",
           headers: {
@@ -207,9 +176,9 @@ const PublicProfile = () => {
         },
       );
 
-      console.log("Follow response status:", response.status);
+      //console.log("Follow response status:", response.status);
       if (response.ok) {
-        console.log("Follow successful, setting isFollowing to true");
+        //console.log("Follow successful, setting isFollowing to true");
         setIsFollowing(true);
       } else {
         try {
@@ -222,7 +191,7 @@ const PublicProfile = () => {
     } catch (error) {
       console.error("Error following user:", error);
     }
-    console.log("Setting followLoading to false");
+    //console.log("Setting followLoading to false");
     setFollowLoading(false);
   };
 
@@ -245,18 +214,18 @@ const PublicProfile = () => {
       const venue = typeof concert.venue === "object" ? concert.venue?.name : concert.venue;
       const date = concert.eventDate;
       
-      console.log("Searching for other artists at:", { date, venueName: venue });
+      //console.log("Searching for other artists at:", { date, venueName: venue });
       
       const response = await fetch(`${BASE_URL}/api/concerts?date=${encodeURIComponent(date)}&venueName=${encodeURIComponent(venue)}`);
       
       if (response.ok) {
         const concertData = await response.json();
-        console.log("Other artists found:", concertData);
+        //console.log("Other artists found:", concertData);
         
         // Store the full setlist data (not just artist names)
         const setlists = concertData.setlist || [];
-        console.log("Raw setlist data:", setlists);
-        console.log("Sample setlist structure:", setlists[0]);
+        //console.log("Raw setlist data:", setlists);
+        //console.log("Sample setlist structure:", setlists[0]);
         
         setOtherArtistsData(prev => ({
           ...prev,
@@ -283,13 +252,13 @@ const PublicProfile = () => {
   const handleUnfollow = async () => {
     if (!profileData?.profile?.displayName) return;
 
-    console.log("Starting unfollow for:", profileData.profile.displayName);
+    //console.log("Starting unfollow for:", profileData.profile.displayName);
     setFollowLoading(true);
     try {
       const token = await getAccessTokenSilently();
-      console.log("Got token, making unfollow request...");
+      //console.log("Got token, making unfollow request...");
       const response = await fetch(
-        `${BASE_URL}/api/concerts/follow/${encodeURIComponent(profileData.profile.displayName)}`,
+        `${BASE_URL}/api/users/follow/${encodeURIComponent(profileData.profile.displayName)}`,
         {
           method: "DELETE",
           headers: {
@@ -298,9 +267,9 @@ const PublicProfile = () => {
         },
       );
 
-      console.log("Unfollow response status:", response.status);
+      //console.log("Unfollow response status:", response.status);
       if (response.ok) {
-        console.log("Unfollow successful, setting isFollowing to false");
+        //console.log("Unfollow successful, setting isFollowing to false");
         setIsFollowing(false);
       } else {
         try {
@@ -313,7 +282,7 @@ const PublicProfile = () => {
     } catch (error) {
       console.error("Error unfollowing user:", error);
     }
-    console.log("Setting followLoading to false");
+    //console.log("Setting followLoading to false");
     setFollowLoading(false);
   };
 

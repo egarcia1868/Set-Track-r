@@ -7,13 +7,14 @@ const Navbar = () => {
   const { isAuthenticated, user, userProfile } = useAuth();
 
 
-  // Get the display name: use profile.name if available, otherwise fall back to user.name
+  // Get the display name: use database userProfile.name first, then fall back to Auth0 user.name
   const getDisplayName = () => {
-    if (userProfile?.name) {
-      return userProfile.name;
-    }
-    return user?.name || "User";
+    // if (userProfile?.name) {
+    //   return userProfile.name;
+    // }
+    return userProfile?.name || "User";
   };
+
 
   return (
     <header>
