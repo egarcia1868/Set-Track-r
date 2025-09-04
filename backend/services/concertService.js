@@ -79,6 +79,7 @@ export const saveConcertsForUser = async ({ concertData, user }) => {
 export const getConcertFromAPI = async (params) => {
   const queryString = new URLSearchParams(params).toString();
   try {
+    // Get the initial search results
     const response = await axios.get(
       `${API_URL}search/setlists/?${queryString}`,
       {
@@ -88,8 +89,69 @@ export const getConcertFromAPI = async (params) => {
         },
       },
     );
+    
+    const initialData = response.data;
+    if (!initialData.setlist || initialData.setlist.length === 0) {
+      return initialData;
+    }
 
-    return response.data;
+    // For each concert, try to find other artists who performed at the same venue on the same date
+    const enhancedSetlists = [];
+    const processedVenueDates = new Set();
+
+    for (const setlist of initialData.setlist) {
+      const venueId = setlist.venue.id;
+      const eventDate = setlist.eventDate;
+      const venueDate = `${venueId}-${eventDate}`;
+
+      // Add the original setlist
+      enhancedSetlists.push(setlist);
+
+      // Skip if we've already processed this venue/date combination
+      if (processedVenueDates.has(venueDate)) {
+        continue;
+      }
+      processedVenueDates.add(venueDate);
+
+      try {
+        // Search for other setlists at the same venue on the same date
+        const venueSearchParams = new URLSearchParams({
+          venueId: venueId,
+          date: eventDate
+        });
+
+        const venueResponse = await axios.get(
+          `${API_URL}search/setlists/?${venueSearchParams.toString()}`,
+          {
+            headers: {
+              "x-api-key": API_KEY,
+              Accept: "application/json",
+            },
+          },
+        );
+
+        if (venueResponse.data.setlist) {
+          // Add any additional artists from the same venue/date that aren't already included
+          for (const venueSetlist of venueResponse.data.setlist) {
+            const isDuplicate = enhancedSetlists.some(existing => 
+              existing.id === venueSetlist.id
+            );
+            
+            if (!isDuplicate) {
+              enhancedSetlists.push(venueSetlist);
+            }
+          }
+        }
+      } catch (venueError) {
+        // If venue search fails, just continue with the original setlist
+        console.error("Error fetching additional artists for venue:", venueError.message);
+      }
+    }
+
+    return {
+      ...initialData,
+      setlist: enhancedSetlists
+    };
   } catch (error) {
     console.error(
       "Error fetching concert from API:",

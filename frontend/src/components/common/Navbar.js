@@ -37,7 +37,12 @@ const Navbar = () => {
               <button
                 className="auth login"
                 onClick={() =>
-                  logout({ logoutParams: { returnTo: window.location.origin } })
+                  logout({ 
+                    logoutParams: { 
+                      returnTo: window.location.origin,
+                      federated: true
+                    }
+                  })
                 }
               >
                 Log Out
@@ -47,8 +52,11 @@ const Navbar = () => {
             <button 
               className="auth login" 
               onClick={() => {
-                console.log("Login button clicked");
-                loginWithRedirect().catch(error => {
+                loginWithRedirect({
+                  authorizationParams: {
+                    prompt: 'login'
+                  }
+                }).catch(error => {
                   console.error("Login error:", error);
                 });
               }}

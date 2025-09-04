@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useUserConcerts } from "../../context/UserConcertsContext";
 import { BASE_URL } from "../../utils/config";
-import NewConcertDetails from "./NewConcertDetails";
+import GroupedConcertDetails from "./GroupedConcertDetails";
 
 const ConcertDetailsModal = ({
   isOpen,
@@ -18,21 +18,72 @@ const ConcertDetailsModal = ({
   const { isAuthenticated, user, getAccessTokenSilently } = useAuth();
   const { userConcerts, isAlreadySaved } = useUserConcerts();
   const [error, setError] = useState(null);
-  const [checkedConcertIds, setCheckedConcertIds] = useState(new Set());
+  const [selectedConcertIds, setSelectedConcertIds] = useState(new Set());
   const selectedConcerts = concertList.filter((c) =>
-    checkedConcertIds.has(c.id),
+    selectedConcertIds.has(c.id),
   );
 
-
-  const handleCheckboxChange = (concertId) => (e) => {
-    e.stopPropagation();
-    setCheckedConcertIds((prev) => {
-      const updated = new Set(prev);
-      if (e.target.checked) {
-        updated.add(concertId);
-      } else {
-        updated.delete(concertId);
+  // Group concerts by venue, city, and date
+  const groupedConcerts = useMemo(() => {
+    const groups = {};
+    
+    concertList.forEach(concert => {
+      // Create a more specific key to ensure proper grouping
+      const venueId = concert.venue.id || concert.venue.name;
+      const cityName = concert.venue.city.name;
+      const eventDate = concert.eventDate;
+      const key = `${venueId}-${cityName}-${eventDate}`;
+      
+      if (!groups[key]) {
+        groups[key] = {
+          venue: concert.venue.name,
+          city: concert.venue.city.name,
+          state: concert.venue.city.state,
+          country: concert.venue.city.country.name,
+          date: concert.eventDate,
+          concerts: []
+        };
       }
+      
+      groups[key].concerts.push(concert);
+    });
+    
+    // Add debug logging to see what's being grouped
+    console.log("Grouped concerts:", Object.values(groups).map(group => ({
+      venue: group.venue,
+      date: group.date,
+      artistCount: group.concerts.length,
+      artists: group.concerts.map(c => c.artist.name)
+    })));
+    
+    return Object.values(groups);
+  }, [concertList]);
+
+
+  const handleConcertToggle = (concertId) => {
+    setSelectedConcertIds(prev => {
+      const updated = new Set(prev);
+      if (updated.has(concertId)) {
+        updated.delete(concertId);
+      } else {
+        updated.add(concertId);
+      }
+      return updated;
+    });
+  };
+
+  const handleSelectAll = (venueGroup, selectAll) => {
+    setSelectedConcertIds(prev => {
+      const updated = new Set(prev);
+      
+      venueGroup.concerts.forEach(concert => {
+        if (selectAll && !isAlreadySaved(concert)) {
+          updated.add(concert.id);
+        } else {
+          updated.delete(concert.id);
+        }
+      });
+      
       return updated;
     });
   };
@@ -173,14 +224,15 @@ const ConcertDetailsModal = ({
           {!concertList || concertList.length === 0 ? (
             <p>Loading...</p>
           ) : (
-            concertList.map((concert) => (
-              <NewConcertDetails
-                key={concert.concertId || concert.id}
-                concert={concert}
-                isChecked={checkedConcertIds.has(concert.id)}
-                onCheckboxChange={handleCheckboxChange(concert.id)}
-                isAlreadySaved={isAlreadySaved(concert)}
+            groupedConcerts.map((venueGroup, index) => (
+              <GroupedConcertDetails
+                key={`${venueGroup.venue}-${venueGroup.city}-${venueGroup.date}`}
+                venueGroup={venueGroup}
+                selectedConcerts={Array.from(selectedConcertIds)}
+                onConcertToggle={handleConcertToggle}
+                onSelectAll={handleSelectAll}
                 isAuthenticated={isAuthenticated}
+                userConcerts={userConcerts}
               />
             ))
           )}

@@ -1790,7 +1790,6 @@ body.modal-open {
 }
 
 .artist-header {
-  padding: 20px;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
@@ -2476,4 +2475,146 @@ main > header {
 main > header h1 {
   background: transparent;
   margin: 20px 0;
+}
+
+/* Grouped Concert Details Styling */
+.grouped-concert-details {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 15px 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.venue-header {
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.venue-header h3 {
+  margin: 0 0 8px 0;
+  color: #333;
+  font-size: 1.4rem;
+}
+
+.venue-header p {
+  margin: 4px 0;
+  color: #666;
+  font-size: 1rem;
+}
+
+.select-all-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-weight: 500;
+  color: #007bff;
+  cursor: pointer;
+}
+
+.artists-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.artist-item {
+  background: #f8f9fa;
+  border-radius: 4px;
+  padding: 2px 8px;
+  min-height: auto;
+}
+
+.artist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.artist-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
+  line-height: 1.2;
+}
+
+.artist-actions {
+  flex-shrink: 0;
+  height: 18px;
+  display: flex;
+  align-items: center;
+}
+
+.already-in-collection-text {
+  font-size: 0.8rem;
+  color: #666;
+  font-style: italic;
+  line-height: 18px;
+  margin: 0;
+  height: 18px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  line-height: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+.checkbox-label input[type="checkbox"] {
+  margin: 0;
+  vertical-align: middle;
+}
+
+.setlist-section {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.set-details {
+  margin-bottom: 15px;
+}
+
+.set-details p {
+  margin: 0 0 8px 0;
+  color: #333;
+}
+
+.set-details ol {
+  margin: 0;
+  padding-left: 20px;
+  color: #555;
+}
+
+.set-details li {
+  margin-bottom: 4px;
+}
+
+.concert-links {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #e0e0e0;
+}
+
+@media (max-width: 768px) {
+  .artists-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .artist-header {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .artist-actions {
+    flex-shrink: 0;
+  }
 }
