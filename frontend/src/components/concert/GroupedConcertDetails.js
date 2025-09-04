@@ -31,24 +31,6 @@ const GroupedConcertDetails = ({
     onSelectAll(venueGroup, newSelectAll);
   };
 
-  const handleSelectAllConcert = () => {
-    const newSelectAllConcert = !selectAllConcert;
-    setSelectAllConcert(newSelectAllConcert);
-    
-    // Get all concerts from this venue/date (initial + additional)
-    const allConcerts = [...concerts, ...additionalArtists];
-    
-    // Toggle each concert that isn't already saved
-    allConcerts.forEach(concert => {
-      const alreadySaved = isAlreadySaved(concert);
-      const isCurrentlySelected = selectedConcerts.includes(concert.id);
-      
-      if (!alreadySaved && ((newSelectAllConcert && !isCurrentlySelected) || (!newSelectAllConcert && isCurrentlySelected))) {
-        onConcertToggle(concert.id, concert);
-      }
-    });
-  };
-
   const formatDate = (dateString) => {
     const [day, month, year] = dateString.split("-");
     const formattedDate = new Date(`${year}-${month}-${day}T00:00:00`);
@@ -66,6 +48,31 @@ const GroupedConcertDetails = ({
         savedConcert.concertId === concert.id
       )
     );
+  };
+
+  // Check if all artists from this concert are selected
+  const allConcerts = [...concerts, ...additionalArtists];
+  const availableConcerts = allConcerts.filter(concert => !isAlreadySaved(concert));
+  const allConcertArtistsSelected = availableConcerts.length > 0 && 
+    availableConcerts.every(concert => selectedConcerts.includes(concert.id));
+
+  const handleSelectAllConcert = () => {
+    // Toggle each available concert based on current state
+    availableConcerts.forEach(concert => {
+      const isCurrentlySelected = selectedConcerts.includes(concert.id);
+      
+      if (allConcertArtistsSelected) {
+        // If all are selected, unselect all
+        if (isCurrentlySelected) {
+          onConcertToggle(concert.id, concert);
+        }
+      } else {
+        // If not all are selected, select all
+        if (!isCurrentlySelected) {
+          onConcertToggle(concert.id, concert);
+        }
+      }
+    });
   };
 
   const loadAdditionalArtists = async () => {
@@ -135,15 +142,17 @@ const GroupedConcertDetails = ({
             </button>
           )}
           
-          {showAdditional && isAuthenticated && (
-            <label className="select-all-label">
-              <input
-                type="checkbox"
-                checked={selectAllConcert}
-                onChange={handleSelectAllConcert}
-              />
-              Select all artists from this concert
-            </label>
+          {showAdditional && isAuthenticated && availableConcerts.length > 0 && (
+            <button
+              className="select-all-link"
+              onClick={handleSelectAllConcert}
+              type="button"
+            >
+              {allConcertArtistsSelected 
+                ? "Unselect all artists from this concert"
+                : "Select all artists from this concert"
+              }
+            </button>
           )}
         </div>
       </div>
