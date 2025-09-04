@@ -2635,4 +2635,14 @@ main > header h1 {
   .artist-actions {
     flex-shrink: 0;
   }
+
+  .select-all-container {
+    text-align: center;
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  .select-all-label {
+    justify-content: center;
+  }
 }
