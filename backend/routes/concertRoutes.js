@@ -7,6 +7,7 @@ import {
   getConcert,
   getPublicProfile,
   getPublicFollowers,
+  getAdditionalArtists,
 } from "../controllers/concertController.js";
 
 // Simple middleware to extract user ID from Auth0 token
@@ -65,6 +66,9 @@ router.get("/user/saved", checkJwt, getSavedConcerts);
 
 // GET a single concert from API
 router.get("/", getConcert);
+
+// GET additional artists by venue and date
+router.get("/additional/:venueId/:eventDate", getAdditionalArtists);
 
 // POST a new concert to DB
 router.post("/", saveConcerts);

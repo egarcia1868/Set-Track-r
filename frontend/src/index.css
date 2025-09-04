@@ -2496,9 +2496,37 @@ main > header h1 {
   text-align: left;
 }
 
-.select-all-container {
-  text-align: right;
+.venue-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 10px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.load-more-button {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.load-more-button:hover:not(:disabled) {
+  background: #218838;
+}
+
+.load-more-button:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+.additional-artist {
+  border-left-color: #28a745;
+  background: #f0f8f0;
 }
 
 .venue-header h3 {
@@ -2636,10 +2664,10 @@ main > header h1 {
     flex-shrink: 0;
   }
 
-  .select-all-container {
-    text-align: center;
-    margin-top: 10px;
-    width: 100%;
+  .venue-actions {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
   }
 
   .select-all-label {

@@ -1,6 +1,6 @@
 import Artist from "../models/ArtistModel.js";
 import User from "../models/UserModel.js";
-import { getConcertFromAPI } from "../services/concertService.js";
+import { getConcertFromAPI, getAdditionalArtistsByVenueDate } from "../services/concertService.js";
 import { saveConcertsForUser } from "../services/concertService.js";
 
 export const getConcert = async (req, res) => {
@@ -550,5 +550,26 @@ export const searchUsers = async (req, res) => {
   } catch (error) {
     console.error("Error searching users:", error);
     res.status(500).json({ error: "Could not search users" });
+  }
+};
+
+export const getAdditionalArtists = async (req, res) => {
+  const { venueId, eventDate } = req.params;
+
+  try {
+    if (!venueId || !eventDate) {
+      return res.status(400).json({ error: "venueId and eventDate are required." });
+    }
+
+    const concertData = await getAdditionalArtistsByVenueDate(venueId, eventDate);
+
+    if (!concertData) {
+      return res.status(404).json({ error: "No additional artists found for this venue/date." });
+    }
+
+    res.json(concertData);
+  } catch (error) {
+    console.error("Error fetching additional artists:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
