@@ -12,6 +12,7 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import concertRoutes from "./routes/concertRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import cookieParser from "cookie-parser";
 
 const app = express();
@@ -36,6 +37,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/concerts", concertRoutes);
+app.use("/api/users", userRoutes);
 
 // Add a simple test route for backend
 app.get("/", (req, res) => {

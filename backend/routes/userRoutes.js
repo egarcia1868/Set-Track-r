@@ -1,12 +1,14 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import {
-  deleteConcert,
-  getSavedConcerts,
-  saveConcerts,
-  getConcert,
-  getPublicProfile,
-  getPublicFollowers,
+  getUserProfile,
+  updateProfile,
+  followUser,
+  unfollowUser,
+  getFollowing,
+  getFollowers,
+  getFollowStatus,
+  searchUsers,
 } from "../controllers/concertController.js";
 
 // Simple middleware to extract user ID from Auth0 token
@@ -59,36 +61,21 @@ const checkJwt = async (req, res, next) => {
     return res.status(401).json({ error: "Invalid token" });
   }
 };
+
 const router = express.Router();
 
-// GET all saved concerts
-router.get("/user/saved", checkJwt, getSavedConcerts);
+// User profile routes
+router.get("/profile", checkJwt, getUserProfile);
+router.put("/profile", checkJwt, updateProfile);
 
-// UNSURE WHY I CREATED THIS, BUT IT'S NOT USED
-// GET a single concert from DB
-// router.get("/:id", getSavedConcert);
+// Following/followers routes
+router.post("/follow/:userId", checkJwt, followUser);
+router.delete("/follow/:userId", checkJwt, unfollowUser);
+router.get("/following", checkJwt, getFollowing);
+router.get("/followers", checkJwt, getFollowers);
+router.get("/follow-status/:userId", checkJwt, getFollowStatus);
 
-// GET a single concert from API
-router.get("/", getConcert);
-
-// POST a new concert to DB
-router.post("/", saveConcerts);
-
-
-// DELETE a concert (must come after more specific routes to avoid conflicts)
-router.delete("/:artistId/:concertId", checkJwt, deleteConcert);
-
-// GET public profile (no auth required) - this should come last
-router.get("/profile/:username", getPublicProfile);
-
-// GET public followers (no auth required)
-router.get("/profile/:displayName/followers", getPublicFollowers);
-
-// CURRENTLY UNUSED.  WOULD NEED TO BE REWORKED TO WORK WITH NEW CONCERT DATA
-// PLAN IS TO USE THIS FOR EDITING A CONCERT (e.g. GOT TO CONCERT LATE OR LEFT EARLY)
-// UPDATE a concert
-// router.patch("/:id", (req, res) => {
-//   res.json({ mssg: "UPDATE a concert" });
-// });
+// User search
+router.get("/search", searchUsers);
 
 export default router;
