@@ -14,6 +14,7 @@ const GroupedConcertDetails = ({
   const [additionalArtists, setAdditionalArtists] = useState([]);
   const [loadingAdditional, setLoadingAdditional] = useState(false);
   const [showAdditional, setShowAdditional] = useState(false);
+  const [selectAllConcert, setSelectAllConcert] = useState(false);
 
   const { venue, city, state, country, date, concerts } = venueGroup;
   
@@ -28,6 +29,24 @@ const GroupedConcertDetails = ({
     const newSelectAll = !selectAll;
     setSelectAll(newSelectAll);
     onSelectAll(venueGroup, newSelectAll);
+  };
+
+  const handleSelectAllConcert = () => {
+    const newSelectAllConcert = !selectAllConcert;
+    setSelectAllConcert(newSelectAllConcert);
+    
+    // Get all concerts from this venue/date (initial + additional)
+    const allConcerts = [...concerts, ...additionalArtists];
+    
+    // Toggle each concert that isn't already saved
+    allConcerts.forEach(concert => {
+      const alreadySaved = isAlreadySaved(concert);
+      const isCurrentlySelected = selectedConcerts.includes(concert.id);
+      
+      if (!alreadySaved && ((newSelectAllConcert && !isCurrentlySelected) || (!newSelectAllConcert && isCurrentlySelected))) {
+        onConcertToggle(concert.id, concert);
+      }
+    });
   };
 
   const formatDate = (dateString) => {
@@ -115,6 +134,17 @@ const GroupedConcertDetails = ({
               {loadingAdditional ? "Loading..." : "Show other artists"}
             </button>
           )}
+          
+          {showAdditional && isAuthenticated && (
+            <label className="select-all-label">
+              <input
+                type="checkbox"
+                checked={selectAllConcert}
+                onChange={handleSelectAllConcert}
+              />
+              Select all artists from this concert
+            </label>
+          )}
         </div>
       </div>
 
@@ -143,7 +173,7 @@ const GroupedConcertDetails = ({
                         <input
                           type="checkbox"
                           checked={isSelected}
-                          onChange={() => onConcertToggle(concert.id)}
+                          onChange={() => onConcertToggle(concert.id, concert)}
                         />
                       </label>
                     )}
@@ -179,7 +209,7 @@ const GroupedConcertDetails = ({
                         <input
                           type="checkbox"
                           checked={isSelected}
-                          onChange={() => onConcertToggle(concert.id)}
+                          onChange={() => onConcertToggle(concert.id, concert)}
                         />
                       </label>
                     )}

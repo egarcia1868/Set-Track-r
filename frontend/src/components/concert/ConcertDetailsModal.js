@@ -19,6 +19,7 @@ const ConcertDetailsModal = ({
   const { userConcerts, isAlreadySaved } = useUserConcerts();
   const [error, setError] = useState(null);
   const [selectedConcertIds, setSelectedConcertIds] = useState(new Set());
+  const [allSelectedConcerts, setAllSelectedConcerts] = useState([]);
   const selectedConcerts = concertList.filter((c) =>
     selectedConcertIds.has(c.id),
   );
@@ -60,14 +61,31 @@ const ConcertDetailsModal = ({
   }, [concertList]);
 
 
-  const handleConcertToggle = (concertId) => {
+  const handleConcertToggle = (concertId, concertObj = null) => {
     setSelectedConcertIds(prev => {
       const updated = new Set(prev);
-      if (updated.has(concertId)) {
+      const isRemoving = updated.has(concertId);
+      
+      if (isRemoving) {
         updated.delete(concertId);
       } else {
         updated.add(concertId);
       }
+      
+      // Update allSelectedConcerts to include additional artists
+      setAllSelectedConcerts(prevAll => {
+        if (isRemoving) {
+          return prevAll.filter(c => c.id !== concertId);
+        } else {
+          // If concertObj provided (additional artist), use it; otherwise find in concertList
+          const concert = concertObj || concertList.find(c => c.id === concertId);
+          if (concert && !prevAll.some(c => c.id === concertId)) {
+            return [...prevAll, concert];
+          }
+        }
+        return prevAll;
+      });
+      
       return updated;
     });
   };
@@ -126,9 +144,14 @@ const ConcertDetailsModal = ({
     const handleKeyDown = async (e) => {
       if (e.key === "Escape") {
         onClose();
-      } else if (e.key === "Enter" && selectedConcerts.length > 0 && isOpen) {
+      } else if (e.key === "Enter" && selectedConcertIds.size > 0 && isOpen) {
         e.preventDefault();
-        const body = { user, concertData: selectedConcerts };
+        // Combine selected concerts from initial search and additional artists
+        const allSelectedConcertData = [
+          ...selectedConcerts,
+          ...allSelectedConcerts.filter(c => !selectedConcerts.some(sc => sc.id === c.id))
+        ];
+        const body = { user, concertData: allSelectedConcertData };
 
         const response = await fetch(`${BASE_URL}/api/concerts/`, {
           method: "POST",
@@ -200,10 +223,16 @@ const ConcertDetailsModal = ({
   );
 
   const handleSubmit = useCallback(async () => {
-    const body = { user, concertData: selectedConcerts };
+    // Combine selected concerts from initial search and additional artists
+    const allSelectedConcertData = [
+      ...selectedConcerts,
+      ...allSelectedConcerts.filter(c => !selectedConcerts.some(sc => sc.id === c.id))
+    ];
+    
+    const body = { user, concertData: allSelectedConcertData };
 
     await saveConcerts(body);
-  }, [user, selectedConcerts, saveConcerts]);
+  }, [user, selectedConcerts, allSelectedConcerts, saveConcerts]);
 
   if (error) {
     return (
@@ -260,11 +289,11 @@ const ConcertDetailsModal = ({
               Next Page
             </button>
           )}
-          {selectedConcerts.length < 1 ? (
+          {selectedConcertIds.size < 1 ? (
             <button disabled>Select shows to add</button>
           ) : (
             <button type="button" onClick={handleSubmit}>
-              Add show{selectedConcerts.length > 1 && "s"} to my list!
+              Add show{selectedConcertIds.size > 1 && "s"} to my list!
             </button>
           )}
         </form>
