@@ -2492,6 +2492,15 @@ main > header h1 {
   margin-bottom: 20px;
 }
 
+.venue-info {
+  text-align: left;
+}
+
+.select-all-container {
+  text-align: right;
+  margin-top: 10px;
+}
+
 .venue-header h3 {
   margin: 0 0 8px 0;
   color: #333;
@@ -2505,13 +2514,22 @@ main > header h1 {
 }
 
 .select-all-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  display: inline-flex;
+  align-items: right;
+  gap: 10px;
   margin-top: 10px;
   font-weight: 500;
   color: #007bff;
   cursor: pointer;
+  white-space: nowrap;
+  font-size: 0.9rem;
+  width: auto;
+  vertical-align: middle;
+}
+
+.select-all-label input[type="checkbox"] {
+  margin: 0;
+  vertical-align: middle;
 }
 
 .artists-list {

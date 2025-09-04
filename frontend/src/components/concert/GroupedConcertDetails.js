@@ -48,19 +48,23 @@ const GroupedConcertDetails = ({
   return (
     <div className="grouped-concert-details">
       <div className="venue-header">
-        <h3><strong>{venue}</strong></h3>
-        <p>{city}, {state}, {country}</p>
-        <p>{formatDate(date)}</p>
+        <div className="venue-info">
+          <h3><strong>{venue}</strong></h3>
+          <p>{city}, {state}, {country}</p>
+          <p>{formatDate(date)}</p>
+        </div>
         
         {isAuthenticated && concerts.length > 1 && (
-          <label className="select-all-label">
-            <input
-              type="checkbox"
-              checked={selectAll}
-              onChange={handleSelectAll}
-            />
-            Select all artists
-          </label>
+          <div className="select-all-container">
+            <label className="select-all-label">
+              <input
+                type="checkbox"
+                checked={selectAll}
+                onChange={handleSelectAll}
+              />
+              Select all artists
+            </label>
+          </div>
         )}
       </div>
 
