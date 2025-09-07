@@ -1901,7 +1901,7 @@ body.modal-open {
 
 .songs-list {
   margin: 16px 0 0 0;
-  padding: 0;
+  padding: 0 0 0 20px;
   columns: 2;
   column-gap: 20px;
   column-fill: balance;
