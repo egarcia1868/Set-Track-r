@@ -1488,7 +1488,10 @@ body,
 }
 
 /* Super specific override to fix the layout issue */
-div.concert-details div.other-artists-dropdown ul.other-artists-list li.other-artist-item {
+div.concert-details
+  div.other-artists-dropdown
+  ul.other-artists-list
+  li.other-artist-item {
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
@@ -1496,7 +1499,7 @@ div.concert-details div.other-artists-dropdown ul.other-artists-list li.other-ar
   width: 100% !important;
   margin: 0 !important;
   padding: 0 !important;
-  
+
   position: static !important;
   left: auto !important;
   right: auto !important;
@@ -1504,7 +1507,11 @@ div.concert-details div.other-artists-dropdown ul.other-artists-list li.other-ar
   float: none !important;
 }
 
-div.concert-details div.other-artists-dropdown ul.other-artists-list li.other-artist-item span.artist-name {
+div.concert-details
+  div.other-artists-dropdown
+  ul.other-artists-list
+  li.other-artist-item
+  span.artist-name {
   flex: 1 !important;
   text-align: left !important;
   margin: 0 !important;
@@ -1512,8 +1519,16 @@ div.concert-details div.other-artists-dropdown ul.other-artists-list li.other-ar
   position: static !important;
 }
 
-div.concert-details div.other-artists-dropdown ul.other-artists-list li.other-artist-item button.add-to-sets-btn,
-div.concert-details div.other-artists-dropdown ul.other-artists-list li.other-artist-item span.already-saved-text {
+div.concert-details
+  div.other-artists-dropdown
+  ul.other-artists-list
+  li.other-artist-item
+  button.add-to-sets-btn,
+div.concert-details
+  div.other-artists-dropdown
+  ul.other-artists-list
+  li.other-artist-item
+  span.already-saved-text {
   flex-shrink: 0 !important;
   margin: 0 !important;
   position: static !important;
@@ -2030,30 +2045,30 @@ body.modal-open {
   .mobile-search-btn-header {
     display: block;
   }
-  
+
   .header-buttons {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .primary-actions {
     flex-direction: row;
     gap: 10px;
     justify-content: center;
   }
-  
+
   .primary-actions button,
   .primary-actions .mobile-search-btn-small {
     width: 120px;
     text-align: center;
   }
-  
+
   .social-actions {
     flex-direction: row;
     gap: 10px;
     justify-content: center;
   }
-  
+
   .social-actions button {
     width: 120px;
     text-align: center;
@@ -2486,7 +2501,7 @@ main > header h1 {
   border-radius: 8px;
   padding: 20px;
   margin: 15px 0;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .venue-header {
@@ -2673,13 +2688,13 @@ main > header h1 {
   .artists-list {
     grid-template-columns: 1fr;
   }
-  
+
   .artist-header {
     flex-direction: row;
     align-items: center;
     gap: 8px;
   }
-  
+
   .artist-actions {
     flex-shrink: 0;
   }

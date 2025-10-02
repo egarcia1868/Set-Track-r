@@ -43,7 +43,7 @@ const ConcertDetails = ({ concert, artistId, onDelete }) => {
 
   const fetchUserConcerts = async () => {
     if (!isAuthenticated) return;
-    
+
     try {
       const token = await getAccessTokenSilently();
       const response = await fetch(`${BASE_URL}/api/concerts/user/saved`, {
@@ -51,7 +51,7 @@ const ConcertDetails = ({ concert, artistId, onDelete }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         setUserConcerts(data);
@@ -62,10 +62,8 @@ const ConcertDetails = ({ concert, artistId, onDelete }) => {
   };
 
   const isAlreadySaved = (setlist) => {
-    return userConcerts.some(artist => 
-      artist.concerts?.some(concert => 
-        concert.concertId === setlist.id
-      )
+    return userConcerts.some((artist) =>
+      artist.concerts?.some((concert) => concert.concertId === setlist.id),
     );
   };
 
@@ -88,9 +86,11 @@ const ConcertDetails = ({ concert, artistId, onDelete }) => {
           user: user,
         }),
       });
-      
+
       if (response.ok) {
-        alert(`Added ${setlistData.artist?.name || "concert"} to your collection!`);
+        alert(
+          `Added ${setlistData.artist?.name || "concert"} to your collection!`,
+        );
         // Refresh user concerts to update the UI
         fetchUserConcerts();
       } else {
@@ -113,9 +113,11 @@ const ConcertDetails = ({ concert, artistId, onDelete }) => {
 
     try {
       setLoadingOtherArtists(true);
-      
-      const response = await fetch(`${BASE_URL}/api/concerts?date=${encodeURIComponent(eventDate)}&venueName=${encodeURIComponent(venueName)}`);
-      
+
+      const response = await fetch(
+        `${BASE_URL}/api/concerts?date=${encodeURIComponent(eventDate)}&venueName=${encodeURIComponent(venueName)}`,
+      );
+
       if (response.ok) {
         const concertData = await response.json();
         const setlists = concertData.setlist || [];
@@ -194,14 +196,13 @@ const ConcertDetails = ({ concert, artistId, onDelete }) => {
           onClick={handleShowOtherArtists}
           disabled={loadingOtherArtists}
         >
-          {loadingOtherArtists 
-            ? "Loading..." 
-            : otherArtistsData 
-              ? "Hide other artists" 
-              : "Show other artists at this show →"
-          }
+          {loadingOtherArtists
+            ? "Loading..."
+            : otherArtistsData
+              ? "Hide other artists"
+              : "Show other artists at this show →"}
         </button>
-        
+
         {otherArtistsData && (
           <div className="other-artists-dropdown">
             {otherArtistsData.length > 0 ? (
@@ -220,7 +221,11 @@ const ConcertDetails = ({ concert, artistId, onDelete }) => {
                         className="add-to-sets-btn"
                         onClick={() => handleAddToMySets(setlist)}
                         disabled={!isAuthenticated}
-                        title={isAuthenticated ? "Add this concert to your collection" : "Login to add concerts"}
+                        title={
+                          isAuthenticated
+                            ? "Add this concert to your collection"
+                            : "Login to add concerts"
+                        }
                       >
                         Add to my sets
                       </button>

@@ -6,7 +6,6 @@ const Navbar = () => {
   const { loginWithRedirect, logout } = useAuth0();
   const { isAuthenticated, user, userProfile } = useAuth();
 
-
   // Get the display name: use database userProfile.name first, then fall back to Auth0 user.name
   const getDisplayName = () => {
     // if (userProfile?.name) {
@@ -15,7 +14,6 @@ const Navbar = () => {
     return userProfile?.name || "User";
   };
 
-
   return (
     <header>
       <nav className="container">
@@ -23,18 +21,17 @@ const Navbar = () => {
           <h1>Set Track'r</h1>
         </Link>
         <div>
-
           {isAuthenticated ? (
             <div className="nav-greeting">
               <p style={{ marginRight: "10px" }}>Hello, {getDisplayName()}</p>
               <button
                 className="auth login"
                 onClick={() =>
-                  logout({ 
-                    logoutParams: { 
+                  logout({
+                    logoutParams: {
                       returnTo: window.location.origin,
-                      federated: true
-                    }
+                      federated: true,
+                    },
                   })
                 }
               >
@@ -42,14 +39,14 @@ const Navbar = () => {
               </button>
             </div>
           ) : (
-            <button 
-              className="auth login" 
+            <button
+              className="auth login"
               onClick={() => {
                 loginWithRedirect({
                   authorizationParams: {
-                    prompt: 'login'
-                  }
-                }).catch(error => {
+                    prompt: "login",
+                  },
+                }).catch((error) => {
                   console.error("Login error:", error);
                 });
               }}

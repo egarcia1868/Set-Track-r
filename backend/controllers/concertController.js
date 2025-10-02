@@ -1,6 +1,9 @@
 import Artist from "../models/ArtistModel.js";
 import User from "../models/UserModel.js";
-import { getConcertFromAPI, getAdditionalArtistsByVenueDate } from "../services/concertService.js";
+import {
+  getConcertFromAPI,
+  getAdditionalArtistsByVenueDate,
+} from "../services/concertService.js";
 import { saveConcertsForUser } from "../services/concertService.js";
 
 export const getConcert = async (req, res) => {
@@ -558,13 +561,20 @@ export const getAdditionalArtists = async (req, res) => {
 
   try {
     if (!venueId || !eventDate) {
-      return res.status(400).json({ error: "venueId and eventDate are required." });
+      return res
+        .status(400)
+        .json({ error: "venueId and eventDate are required." });
     }
 
-    const concertData = await getAdditionalArtistsByVenueDate(venueId, eventDate);
+    const concertData = await getAdditionalArtistsByVenueDate(
+      venueId,
+      eventDate,
+    );
 
     if (!concertData) {
-      return res.status(404).json({ error: "No additional artists found for this venue/date." });
+      return res
+        .status(404)
+        .json({ error: "No additional artists found for this venue/date." });
     }
 
     res.json(concertData);

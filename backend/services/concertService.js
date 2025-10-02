@@ -89,26 +89,26 @@ export const getConcertFromAPI = async (params) => {
         },
       },
     );
-    
+
     const initialData = response.data;
     if (!initialData.setlist || initialData.setlist.length === 0) {
       return initialData;
     }
 
     // Add metadata about potential additional artists without making the API calls
-    const enhancedSetlists = initialData.setlist.map(setlist => ({
+    const enhancedSetlists = initialData.setlist.map((setlist) => ({
       ...setlist,
       _venueMetadata: {
         venueId: setlist.venue.id,
         venueName: setlist.venue.name,
         eventDate: setlist.eventDate,
-        hasMoreArtists: true // We assume there might be more artists
-      }
+        hasMoreArtists: true, // We assume there might be more artists
+      },
     }));
 
     return {
       ...initialData,
-      setlist: enhancedSetlists
+      setlist: enhancedSetlists,
     };
   } catch (error) {
     console.error(
@@ -123,7 +123,7 @@ export const getAdditionalArtistsByVenueDate = async (venueId, eventDate) => {
   try {
     const venueSearchParams = new URLSearchParams({
       venueId: venueId,
-      date: eventDate
+      date: eventDate,
     });
 
     const response = await axios.get(

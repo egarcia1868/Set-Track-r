@@ -11,7 +11,11 @@ import ConcertItemDetailed from "../components/concert/ConcertItemDetailed";
 const PublicProfile = () => {
   const { username } = useParams();
   const { isAuthenticated, user, getAccessTokenSilently } = useAuth();
-  const { isAlreadySaved, addConcertToCollection, removeConcertFromCollection } = useUserConcerts();
+  const {
+    isAlreadySaved,
+    addConcertToCollection,
+    removeConcertFromCollection,
+  } = useUserConcerts();
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -111,10 +115,9 @@ const PublicProfile = () => {
     }
   };
 
-
   const fetchCurrentUserProfile = async () => {
     if (!isAuthenticated) return;
-    
+
     try {
       const token = await getAccessTokenSilently();
       const response = await fetch(`${BASE_URL}/api/users/profile`, {
@@ -122,7 +125,7 @@ const PublicProfile = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         setCurrentUserProfile(data.profile);
@@ -195,57 +198,59 @@ const PublicProfile = () => {
     setFollowLoading(false);
   };
 
-
   const handleShowOtherArtists = async (concert) => {
     const concertKey = concert.concertId;
-    
+
     // If already loaded, toggle dropdown
     if (otherArtistsData[concertKey]) {
-      setOtherArtistsData(prev => ({
+      setOtherArtistsData((prev) => ({
         ...prev,
-        [concertKey]: null
+        [concertKey]: null,
       }));
       return;
     }
 
     try {
-      setLoadingOtherArtists(prev => ({ ...prev, [concertKey]: true }));
-      
-      const venue = typeof concert.venue === "object" ? concert.venue?.name : concert.venue;
+      setLoadingOtherArtists((prev) => ({ ...prev, [concertKey]: true }));
+
+      const venue =
+        typeof concert.venue === "object" ? concert.venue?.name : concert.venue;
       const date = concert.eventDate;
-      
+
       //console.log("Searching for other artists at:", { date, venueName: venue });
-      
-      const response = await fetch(`${BASE_URL}/api/concerts?date=${encodeURIComponent(date)}&venueName=${encodeURIComponent(venue)}`);
-      
+
+      const response = await fetch(
+        `${BASE_URL}/api/concerts?date=${encodeURIComponent(date)}&venueName=${encodeURIComponent(venue)}`,
+      );
+
       if (response.ok) {
         const concertData = await response.json();
         //console.log("Other artists found:", concertData);
-        
+
         // Store the full setlist data (not just artist names)
         const setlists = concertData.setlist || [];
         //console.log("Raw setlist data:", setlists);
         //console.log("Sample setlist structure:", setlists[0]);
-        
-        setOtherArtistsData(prev => ({
+
+        setOtherArtistsData((prev) => ({
           ...prev,
-          [concertKey]: setlists
+          [concertKey]: setlists,
         }));
       } else {
         console.error("Failed to fetch other artists:", response.status);
-        setOtherArtistsData(prev => ({
+        setOtherArtistsData((prev) => ({
           ...prev,
-          [concertKey]: []
+          [concertKey]: [],
         }));
       }
     } catch (error) {
       console.error("Error fetching other artists:", error);
-      setOtherArtistsData(prev => ({
+      setOtherArtistsData((prev) => ({
         ...prev,
-        [concertKey]: []
+        [concertKey]: [],
       }));
     } finally {
-      setLoadingOtherArtists(prev => ({ ...prev, [concertKey]: false }));
+      setLoadingOtherArtists((prev) => ({ ...prev, [concertKey]: false }));
     }
   };
 
@@ -366,7 +371,8 @@ const PublicProfile = () => {
               profileData?.profile?.displayName &&
               user?.sub &&
               currentUserProfile &&
-              currentUserProfile?.displayName !== profileData?.profile?.displayName && (
+              currentUserProfile?.displayName !==
+                profileData?.profile?.displayName && (
                 <button
                   className={`follow-btn ${isFollowing ? "following" : ""}`}
                   onClick={isFollowing ? handleUnfollow : handleFollow}
@@ -521,7 +527,9 @@ const PublicProfile = () => {
                                 handleShowOtherArtists={handleShowOtherArtists}
                                 otherArtistsData={otherArtistsData}
                                 loadingOtherArtists={loadingOtherArtists}
-                                handleRemoveFromMySets={removeConcertFromCollection}
+                                handleRemoveFromMySets={
+                                  removeConcertFromCollection
+                                }
                                 currentArtistName={null}
                               />
                             ))}

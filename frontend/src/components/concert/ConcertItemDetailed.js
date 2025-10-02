@@ -3,15 +3,15 @@ import { useAuth } from "../../context/AuthContext";
 import { useUserConcerts } from "../../context/UserConcertsContext";
 import RemoveConfirmationModal from "../common/RemoveConfirmationModal";
 
-const ConcertItemDetailed = ({ 
-  concert, 
-  expandedSetlists, 
-  toggleSetlist, 
-  handleShowOtherArtists, 
-  otherArtistsData, 
-  loadingOtherArtists, 
+const ConcertItemDetailed = ({
+  concert,
+  expandedSetlists,
+  toggleSetlist,
+  handleShowOtherArtists,
+  otherArtistsData,
+  loadingOtherArtists,
   handleRemoveFromMySets,
-  currentArtistName // New prop to identify the current artist being viewed
+  currentArtistName, // New prop to identify the current artist being viewed
 }) => {
   const { isAuthenticated } = useAuth();
   const { isAlreadySaved, addConcertToCollection } = useUserConcerts();
@@ -21,10 +21,11 @@ const ConcertItemDetailed = ({
   const handleRemoveClick = (setlist) => {
     // Check if this concert belongs to the current artist being viewed
     const concertArtistName = setlist.artist?.name;
-    const shouldShowConfirmation = currentArtistName && 
-      concertArtistName && 
+    const shouldShowConfirmation =
+      currentArtistName &&
+      concertArtistName &&
       concertArtistName.toLowerCase() === currentArtistName.toLowerCase() &&
-      localStorage.getItem('skipRemoveConfirmation') !== 'true';
+      localStorage.getItem("skipRemoveConfirmation") !== "true";
 
     if (shouldShowConfirmation) {
       setPendingRemoval(setlist);
@@ -120,11 +121,9 @@ const ConcertItemDetailed = ({
                   : concert.city
                 : "Unknown Location"}
           </div>
-          <div className="concert-date">
-            {formatDate(concert.eventDate)}
-          </div>
+          <div className="concert-date">{formatDate(concert.eventDate)}</div>
         </div>
-        
+
         <div className="concert-actions">
           <button
             className="other-artists-link"
@@ -132,14 +131,13 @@ const ConcertItemDetailed = ({
             title="View other artists who performed at this show"
             disabled={loadingOtherArtists[concert.concertId]}
           >
-            {loadingOtherArtists[concert.concertId] 
-              ? "Loading..." 
-              : otherArtistsData[concert.concertId] 
-                ? "Hide other artists" 
-                : "Show other artists at this show →"
-            }
+            {loadingOtherArtists[concert.concertId]
+              ? "Loading..."
+              : otherArtistsData[concert.concertId]
+                ? "Hide other artists"
+                : "Show other artists at this show →"}
           </button>
-          
+
           {otherArtistsData[concert.concertId] && (
             <div className="other-artists-dropdown">
               {otherArtistsData[concert.concertId].length > 0 ? (
@@ -149,8 +147,8 @@ const ConcertItemDetailed = ({
                       <span className="artist-name">
                         {setlist.artist?.name || "Unknown Artist"}
                       </span>
-                      {isAuthenticated && (
-                        isAlreadySaved(setlist) ? (
+                      {isAuthenticated &&
+                        (isAlreadySaved(setlist) ? (
                           <button
                             className="remove-from-sets-btn"
                             onClick={() => handleRemoveClick(setlist)}
@@ -166,8 +164,7 @@ const ConcertItemDetailed = ({
                           >
                             Add to my sets
                           </button>
-                        )
-                      )}
+                        ))}
                     </li>
                   ))}
                 </ul>
@@ -188,17 +185,11 @@ const ConcertItemDetailed = ({
             <span className="setlist-text">
               Setlist ({allSongs.length} songs)
             </span>
-            <span className="setlist-arrow">
-              {setlistExpanded ? "▼" : "▲"}
-            </span>
+            <span className="setlist-arrow">{setlistExpanded ? "▼" : "▲"}</span>
           </button>
         )}
 
-        {!hasSetlist && (
-          <div className="no-setlist">
-            Setlist unavailable
-          </div>
-        )}
+        {!hasSetlist && <div className="no-setlist">Setlist unavailable</div>}
       </div>
 
       {hasSetlist && setlistExpanded && (

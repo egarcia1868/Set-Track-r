@@ -152,7 +152,10 @@ const Dashboard = () => {
         ) : filteredArtists.length === 0 ? (
           <h3>No artists found matching "{searchTerm}"</h3>
         ) : (
-          <section className="artists-grid" aria-label="Your artists collection">
+          <section
+            className="artists-grid"
+            aria-label="Your artists collection"
+          >
             {filteredArtists.map((artist) => (
               <ArtistDetails key={artist._id} artist={artist} />
             ))}

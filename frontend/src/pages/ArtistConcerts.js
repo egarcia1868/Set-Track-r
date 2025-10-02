@@ -11,11 +11,11 @@ const ArtistConcerts = () => {
   const location = useLocation();
   const { artistName: urlArtistName } = useParams();
   const { isAuthenticated, getAccessTokenSilently } = useAuth();
-  const { 
-    userConcerts, 
-    isAlreadySaved, 
-    addConcertToCollection, 
-    removeConcertFromCollection 
+  const {
+    userConcerts,
+    isAlreadySaved,
+    addConcertToCollection,
+    removeConcertFromCollection,
   } = useUserConcerts();
 
   const [artist, setArtist] = useState({});
@@ -23,7 +23,9 @@ const ArtistConcerts = () => {
   const [loading, setLoading] = useState(true);
 
   // Get artist name from URL or state
-  const artistName = urlArtistName ? decodeURIComponent(urlArtistName) : artist?.artistName;
+  const artistName = urlArtistName
+    ? decodeURIComponent(urlArtistName)
+    : artist?.artistName;
   const [expandTracks, setExpandTracks] = useState(false);
   const [expandedSetlists, setExpandedSetlists] = useState(new Set());
   const [otherArtistsData, setOtherArtistsData] = useState({});
@@ -33,7 +35,7 @@ const ArtistConcerts = () => {
   useEffect(() => {
     const loadArtistData = async () => {
       setLoading(true);
-      
+
       // If we have artist data from navigation state, use it
       if (location.state?.artist) {
         setArtist(location.state.artist);
@@ -41,7 +43,7 @@ const ArtistConcerts = () => {
         setLoading(false);
         return;
       }
-      
+
       // If we have artistName from URL, fetch the data
       if (urlArtistName && isAuthenticated) {
         try {
@@ -51,12 +53,14 @@ const ArtistConcerts = () => {
               Authorization: `Bearer ${token}`,
             },
           });
-          
+
           if (response.ok) {
             const data = await response.json();
             const decodedArtistName = decodeURIComponent(urlArtistName);
-            const foundArtist = data.find(a => a.artistName === decodedArtistName);
-            
+            const foundArtist = data.find(
+              (a) => a.artistName === decodedArtistName,
+            );
+
             if (foundArtist) {
               setArtist(foundArtist);
               setConcertList(foundArtist.concerts || []);
@@ -66,74 +70,90 @@ const ArtistConcerts = () => {
             }
           }
         } catch (error) {
-          console.error('Error fetching artist data:', error);
+          console.error("Error fetching artist data:", error);
           navigate("/");
         }
       } else if (!urlArtistName) {
         navigate("/");
       }
-      
+
       setLoading(false);
     };
 
     loadArtistData();
-  }, [urlArtistName, location.state, isAuthenticated, getAccessTokenSilently, navigate]);
+  }, [
+    urlArtistName,
+    location.state,
+    isAuthenticated,
+    getAccessTokenSilently,
+    navigate,
+  ]);
 
   const handleRemoveFromMySets = async (setlistData) => {
     const success = await removeConcertFromCollection(setlistData);
-    
+
     // If the removed concert belongs to the current artist, remove it from the display
-    if (success && setlistData.artist?.name && 
-        setlistData.artist.name.toLowerCase() === artistName.toLowerCase()) {
-      setConcertList(prev => prev.filter(concert => 
-        concert.concertId !== setlistData.id && concert.id !== setlistData.id
-      ));
+    if (
+      success &&
+      setlistData.artist?.name &&
+      setlistData.artist.name.toLowerCase() === artistName.toLowerCase()
+    ) {
+      setConcertList((prev) =>
+        prev.filter(
+          (concert) =>
+            concert.concertId !== setlistData.id &&
+            concert.id !== setlistData.id,
+        ),
+      );
     }
   };
 
   const handleShowOtherArtists = async (concert) => {
     const concertKey = concert.concertId;
-    
+
     // If already loaded, toggle dropdown
     if (otherArtistsData[concertKey]) {
-      setOtherArtistsData(prev => ({
+      setOtherArtistsData((prev) => ({
         ...prev,
-        [concertKey]: null
+        [concertKey]: null,
       }));
       return;
     }
 
     try {
-      setLoadingOtherArtists(prev => ({ ...prev, [concertKey]: true }));
-      
-      const venue = typeof concert.venue === "object" ? concert.venue?.name : concert.venue;
+      setLoadingOtherArtists((prev) => ({ ...prev, [concertKey]: true }));
+
+      const venue =
+        typeof concert.venue === "object" ? concert.venue?.name : concert.venue;
       const date = concert.eventDate;
-      
-      const response = await fetch(`${BASE_URL}/api/concerts?date=${encodeURIComponent(date)}&venueName=${encodeURIComponent(venue)}`);
-      
+
+      const response = await fetch(
+        `${BASE_URL}/api/concerts?date=${encodeURIComponent(date)}&venueName=${encodeURIComponent(venue)}`,
+      );
+
       if (response.ok) {
         const concertData = await response.json();
         const setlists = concertData.setlist || [];
-        
-        setOtherArtistsData(prev => ({
+
+        setOtherArtistsData((prev) => ({
           ...prev,
-          [concertKey]: setlists
+          [concertKey]: setlists,
         }));
       } else {
         console.error("Failed to fetch other artists:", response.status);
-        setOtherArtistsData(prev => ({
+        setOtherArtistsData((prev) => ({
           ...prev,
-          [concertKey]: []
+          [concertKey]: [],
         }));
       }
     } catch (error) {
       console.error("Error fetching other artists:", error);
-      setOtherArtistsData(prev => ({
+      setOtherArtistsData((prev) => ({
         ...prev,
-        [concertKey]: []
+        [concertKey]: [],
       }));
     } finally {
-      setLoadingOtherArtists(prev => ({ ...prev, [concertKey]: false }));
+      setLoadingOtherArtists((prev) => ({ ...prev, [concertKey]: false }));
     }
   };
 
@@ -193,13 +213,15 @@ const ArtistConcerts = () => {
 
   if (loading) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '50vh',
-        fontSize: '1.2rem'
-      }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "50vh",
+          fontSize: "1.2rem",
+        }}
+      >
         Loading artist...
       </div>
     );
@@ -220,7 +242,7 @@ const ArtistConcerts = () => {
             style={{ fontSize: ".5rem" }}
             onClick={() => setExpandTracks((prev) => !prev)}
             aria-expanded={expandTracks}
-            aria-label={`${expandTracks ? 'Collapse' : 'Expand'} song statistics`}
+            aria-label={`${expandTracks ? "Collapse" : "Expand"} song statistics`}
           >
             {expandTracks ? "collapse" : "expand"}
           </button>
@@ -233,7 +255,7 @@ const ArtistConcerts = () => {
             className="text-button"
             style={{ fontSize: ".5rem" }}
             onClick={expandOrCollapseAll}
-            aria-label={`${expandedYears.size > 0 ? 'Collapse all' : 'Expand all'} concert years`}
+            aria-label={`${expandedYears.size > 0 ? "Collapse all" : "Expand all"} concert years`}
           >
             {expandedYears.size > 0 ? "collapse all" : "expand all"}
           </button>

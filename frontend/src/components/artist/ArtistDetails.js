@@ -7,7 +7,7 @@ const ArtistDetails = ({ artist }) => {
   const encodedArtistName = encodeURIComponent(artistName);
 
   return (
-    <Link 
+    <Link
       to={`/artist/${encodedArtistName}`}
       state={{ artist }} // Keep state for same-tab navigation
       className="concert-details artist-link"
