@@ -14,6 +14,9 @@ const API_URL =
   process.env.REACT_APP_API_URL || "https://api.setlist.fm/rest/1.0/";
 const API_KEY = process.env.SETLIST_FM_API_KEY;
 
+const LASTFM_API_URL = "http://ws.audioscrobbler.com/2.0/";
+const LASTFM_API_KEY = process.env.LASTFM_API_KEY;
+
 export const saveConcertsForUser = async ({ concertData, user }) => {
   const userId = user.sub;
 
@@ -140,6 +143,29 @@ export const getAdditionalArtistsByVenueDate = async (venueId, eventDate) => {
   } catch (error) {
     console.error(
       "Error fetching additional artists from API:",
+      error.response?.data || error.message,
+    );
+    return null;
+  }
+};
+
+export const getArtistTopAlbums = async (artistName) => {
+  try {
+    const params = new URLSearchParams({
+      method: "artist.gettopalbums",
+      artist: artistName,
+      api_key: LASTFM_API_KEY,
+      format: "json",
+    });
+
+    const response = await axios.get(
+      `${LASTFM_API_URL}?${params.toString()}`,
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error fetching top albums from Last.fm:",
       error.response?.data || error.message,
     );
     return null;
