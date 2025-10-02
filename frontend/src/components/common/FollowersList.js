@@ -18,14 +18,17 @@ const FollowersList = ({ isOpen, onClose }) => {
     setLoading(true);
     try {
       const token = await getAccessTokenSilently();
-      const response = await fetch(`${BASE_URL}/api/concerts/followers`, {
+      const response = await fetch(`${BASE_URL}/api/users/followers`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
+      console.log("Followers response:", response);
+
       if (response.ok) {
         const data = await response.json();
+        console.log("Followers data:", data);
         setFollowers(data.followers);
       }
     } catch (error) {

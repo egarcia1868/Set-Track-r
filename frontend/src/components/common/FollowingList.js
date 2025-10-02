@@ -21,7 +21,7 @@ const FollowingList = ({ isOpen, onClose }) => {
     setLoading(true);
     try {
       const token = await getAccessTokenSilently();
-      const response = await fetch(`${BASE_URL}/api/concerts/following`, {
+      const response = await fetch(`${BASE_URL}/api/users/following`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
