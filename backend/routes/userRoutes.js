@@ -20,22 +20,25 @@ const checkJwt = async (req, res, next) => {
     }
 
     // For encrypted JWE tokens, we need to get the user info from Auth0's userinfo endpoint
-    const parts = token.split('.');
-    if (parts.length === 5) { // JWE format
+    const parts = token.split(".");
+    if (parts.length === 5) {
+      // JWE format
       try {
         // Make request to Auth0 userinfo endpoint to get user details
         const userinfoUrl = `https://${process.env.AUTH0_DOMAIN}/userinfo`;
         const response = await fetch(userinfoUrl, {
           headers: {
-            'Authorization': `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
-        
+
         if (response.ok) {
           const userInfo = await response.json();
           req.auth = { payload: { sub: userInfo.sub } };
         } else {
-          return res.status(401).json({ error: "Invalid token - could not get user info" });
+          return res
+            .status(401)
+            .json({ error: "Invalid token - could not get user info" });
         }
       } catch (e) {
         console.error("Error getting user info:", e);

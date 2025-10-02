@@ -27,14 +27,14 @@ const ConcertDetailsModal = ({
   // Group concerts by venue, city, and date
   const groupedConcerts = useMemo(() => {
     const groups = {};
-    
-    concertList.forEach(concert => {
+
+    concertList.forEach((concert) => {
       // Create a more specific key to ensure proper grouping
       const venueId = concert.venue.id || concert.venue.name;
       const cityName = concert.venue.city.name;
       const eventDate = concert.eventDate;
       const key = `${venueId}-${cityName}-${eventDate}`;
-      
+
       if (!groups[key]) {
         groups[key] = {
           venue: concert.venue.name,
@@ -42,58 +42,58 @@ const ConcertDetailsModal = ({
           state: concert.venue.city.state,
           country: concert.venue.city.country.name,
           date: concert.eventDate,
-          concerts: []
+          concerts: [],
         };
       }
-      
+
       groups[key].concerts.push(concert);
     });
-    
+
     return Object.values(groups);
   }, [concertList]);
 
-
   const handleConcertToggle = (concertId, concertObj = null) => {
-    setSelectedConcertIds(prev => {
+    setSelectedConcertIds((prev) => {
       const updated = new Set(prev);
       const isRemoving = updated.has(concertId);
-      
+
       if (isRemoving) {
         updated.delete(concertId);
       } else {
         updated.add(concertId);
       }
-      
+
       // Update allSelectedConcerts to include additional artists
-      setAllSelectedConcerts(prevAll => {
+      setAllSelectedConcerts((prevAll) => {
         if (isRemoving) {
-          return prevAll.filter(c => c.id !== concertId);
+          return prevAll.filter((c) => c.id !== concertId);
         } else {
           // If concertObj provided (additional artist), use it; otherwise find in concertList
-          const concert = concertObj || concertList.find(c => c.id === concertId);
-          if (concert && !prevAll.some(c => c.id === concertId)) {
+          const concert =
+            concertObj || concertList.find((c) => c.id === concertId);
+          if (concert && !prevAll.some((c) => c.id === concertId)) {
             return [...prevAll, concert];
           }
         }
         return prevAll;
       });
-      
+
       return updated;
     });
   };
 
   const handleSelectAll = (venueGroup, selectAll) => {
-    setSelectedConcertIds(prev => {
+    setSelectedConcertIds((prev) => {
       const updated = new Set(prev);
-      
-      venueGroup.concerts.forEach(concert => {
+
+      venueGroup.concerts.forEach((concert) => {
         if (selectAll && !isAlreadySaved(concert)) {
           updated.add(concert.id);
         } else {
           updated.delete(concert.id);
         }
       });
-      
+
       return updated;
     });
   };
@@ -141,7 +141,9 @@ const ConcertDetailsModal = ({
         // Combine selected concerts from initial search and additional artists
         const allSelectedConcertData = [
           ...selectedConcerts,
-          ...allSelectedConcerts.filter(c => !selectedConcerts.some(sc => sc.id === c.id))
+          ...allSelectedConcerts.filter(
+            (c) => !selectedConcerts.some((sc) => sc.id === c.id),
+          ),
         ];
         const body = { user, concertData: allSelectedConcertData };
 
@@ -218,9 +220,11 @@ const ConcertDetailsModal = ({
     // Combine selected concerts from initial search and additional artists
     const allSelectedConcertData = [
       ...selectedConcerts,
-      ...allSelectedConcerts.filter(c => !selectedConcerts.some(sc => sc.id === c.id))
+      ...allSelectedConcerts.filter(
+        (c) => !selectedConcerts.some((sc) => sc.id === c.id),
+      ),
     ];
-    
+
     const body = { user, concertData: allSelectedConcertData };
 
     await saveConcerts(body);

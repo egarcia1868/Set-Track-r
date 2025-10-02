@@ -19,12 +19,14 @@ A full-stack web application for concert enthusiasts to track their live music e
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - **React** 19.0.0 - UI framework
 - **React Router DOM** 7.2.0 - Client-side routing
 - **Auth0 React** 2.3.0 - Authentication and authorization
 - **CSS3** - Custom styling with responsive design
 
 ### Backend
+
 - **Node.js** - Runtime environment
 - **Express.js** 4.18.1 - Web framework
 - **MongoDB** with **Mongoose** 8.11.0 - Database and ODM
@@ -32,6 +34,7 @@ A full-stack web application for concert enthusiasts to track their live music e
 - **Axios** 1.5.0 - HTTP client for external APIs
 
 ### External APIs
+
 - **Setlist.fm API** - Concert and setlist data
 
 ## 📋 Prerequisites
@@ -44,18 +47,21 @@ A full-stack web application for concert enthusiasts to track their live music e
 ## ⚙️ Installation
 
 ### 1. Clone the repository
+
 ```bash
 git clone https://github.com/egarcia1868/setTrackR.git
 cd setTrackR
 ```
 
 ### 2. Backend Setup
+
 ```bash
 cd backend
 npm install
 ```
 
 Create a `.env` file in the backend directory:
+
 ```env
 MONGO_URI=your_mongodb_connection_string
 PORT=4000
@@ -65,12 +71,14 @@ AUTH0_AUDIENCE=your_auth0_audience_url
 ```
 
 ### 3. Frontend Setup
+
 ```bash
 cd frontend
 npm install
 ```
 
 Create a `.env` file in the frontend directory:
+
 ```env
 REACT_APP_AUTH0_DOMAIN=your_auth0_domain
 REACT_APP_AUTH0_CLIENT_ID=your_auth0_client_id
@@ -82,6 +90,7 @@ REACT_APP_AUTH0_AUDIENCE=your_auth0_audience_url
 ### Development Mode
 
 **Backend** (from the backend directory):
+
 ```bash
 npm run dev  # Uses nodemon for auto-restart
 # or
@@ -89,22 +98,26 @@ npm start    # Standard start
 ```
 
 **Frontend** (from the frontend directory):
+
 ```bash
 npm start
 ```
 
 The application will be available at:
+
 - Frontend: http://localhost:3000
 - Backend: http://localhost:4000
 
 ### Production Mode
 
 **Backend**:
+
 ```bash
 npm run prod
 ```
 
 **Frontend**:
+
 ```bash
 npm run build
 ```
@@ -142,6 +155,7 @@ setTrackR/
 ## 🔐 Authentication
 
 Set Track'r uses Auth0 for secure authentication and authorization. Users can sign up with:
+
 - Google OAuth
 - Email/Password
 - Other Auth0 supported providers
@@ -149,17 +163,20 @@ Set Track'r uses Auth0 for secure authentication and authorization. Users can si
 ## 📊 API Endpoints
 
 ### Concert Routes
+
 - `GET /api/concerts/user/saved` - Get user's saved concerts
 - `POST /api/concerts` - Save a concert
 - `DELETE /api/concerts/:artistId/:concertId` - Delete a concert
 - `GET /api/concerts` - Search concerts via Setlist.fm
 
 ### User Routes
+
 - `GET /api/concerts/profile` - Get current user profile
 - `PUT /api/concerts/profile` - Update user profile
 - `GET /api/concerts/profile/:username` - Get public profile
 
 ### Social Features
+
 - `POST /api/concerts/follow/:displayName` - Follow a user
 - `DELETE /api/concerts/follow/:displayName` - Unfollow a user
 - `GET /api/concerts/following` - Get following list
@@ -168,6 +185,7 @@ Set Track'r uses Auth0 for secure authentication and authorization. Users can si
 ## 🌐 Deployment
 
 The application is deployed using:
+
 - **Frontend**: Render
 - **Backend**: Render
 - **Database**: MongoDB Atlas
@@ -187,6 +205,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👤 Author
 
 **Eric Garcia**
+
 - GitHub: [@egarcia1868](https://github.com/egarcia1868)
 
 ## 🙏 Acknowledgments

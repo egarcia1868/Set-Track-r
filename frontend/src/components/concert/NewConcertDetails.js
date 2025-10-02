@@ -1,6 +1,12 @@
 import { useState } from "react";
 
-const NewConcertDetails = ({ concert, isChecked, onCheckboxChange, isAlreadySaved, isAuthenticated }) => {
+const NewConcertDetails = ({
+  concert,
+  isChecked,
+  onCheckboxChange,
+  isAlreadySaved,
+  isAuthenticated,
+}) => {
   const [showSetList, setShowSetList] = useState(false);
 
   const {
@@ -40,7 +46,7 @@ const NewConcertDetails = ({ concert, isChecked, onCheckboxChange, isAlreadySave
         {cityName}, {state}, {countryName}
       </p>
       <p>{outputDate}</p>
-      <p 
+      <p
         onClick={(e) => {
           e.stopPropagation();
           setShowSetList((prev) => !prev);
@@ -84,7 +90,10 @@ const NewConcertDetails = ({ concert, isChecked, onCheckboxChange, isAlreadySave
             Already in collection
           </span>
         ) : isAuthenticated ? (
-          <label className="checkbox-label" onClick={(e) => e.stopPropagation()}>
+          <label
+            className="checkbox-label"
+            onClick={(e) => e.stopPropagation()}
+          >
             Add to my sets!
             <input
               type="checkbox"

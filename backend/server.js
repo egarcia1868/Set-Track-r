@@ -27,7 +27,7 @@ const corsOptions = {
 // Always allow production URLs and add localhost for development
 corsOptions.origin = [
   "https://set-trackr.onrender.com",
-  "https://set-trackr.netlify.app", 
+  "https://set-trackr.netlify.app",
   "https://settrackr.netlify.app",
   "https://main--settrackr.netlify.app",
   "http://localhost:3000", // Local development

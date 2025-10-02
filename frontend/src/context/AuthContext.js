@@ -1,19 +1,24 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
-import { BASE_URL } from '../utils/config';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
+import { BASE_URL } from "../utils/config";
 
 const AuthContext = createContext();
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
 
 export const AuthProvider = ({ children }) => {
-  const { isAuthenticated, user, getAccessTokenSilently, isLoading: auth0Loading } = useAuth0();
+  const {
+    isAuthenticated,
+    user,
+    getAccessTokenSilently,
+    isLoading: auth0Loading,
+  } = useAuth0();
   const [userProfile, setUserProfile] = useState(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
 
@@ -36,11 +41,11 @@ export const AuthProvider = ({ children }) => {
         const profileData = await response.json();
         setUserProfile(profileData.profile);
       } else {
-        console.error('Failed to fetch user profile:', response.status);
+        console.error("Failed to fetch user profile:", response.status);
         setUserProfile(null);
       }
     } catch (error) {
-      console.error('Error fetching user profile:', error);
+      console.error("Error fetching user profile:", error);
       setUserProfile(null);
     } finally {
       setIsLoadingProfile(false);
