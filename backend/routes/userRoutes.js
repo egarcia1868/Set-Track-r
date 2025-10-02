@@ -70,7 +70,7 @@ router.put("/profile", checkJwt, updateProfile);
 router.post("/follow/:userId", checkJwt, followUser);
 router.delete("/follow/:userId", checkJwt, unfollowUser);
 router.get("/following", checkJwt, getFollowing);
-router.get("/followers", checkJwt, getFollowers);
+router.get("/followers/:displayName?", getFollowers); // Optional auth, optional displayName
 router.get("/follow-status/:userId", checkJwt, getFollowStatus);
 
 // User search

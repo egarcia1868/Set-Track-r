@@ -3,6 +3,7 @@ import User from "../models/UserModel.js";
 import {
   getConcertFromAPI,
   getAdditionalArtistsByVenueDate,
+  getArtistTopAlbums,
 } from "../services/concertService.js";
 import { saveConcertsForUser } from "../services/concertService.js";
 
@@ -435,17 +436,34 @@ export const getFollowing = async (req, res) => {
 
 export const getFollowers = async (req, res) => {
   try {
-    const auth0Id = req.auth?.payload.sub;
-    if (!auth0Id) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
+    const { displayName } = req.params;
+    const decodedDisplayName = decodeURIComponent(displayName);
+    const auth0Id = req.auth?.payload?.sub;
 
-    const user = await User.findOne({ auth0Id }).populate(
-      "followers.userId",
-      "profile.displayName profile.isPublic profile.bio",
-    );
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
+    let user;
+
+    // If authenticated and no displayName provided, get current user's followers
+    if (auth0Id && !displayName) {
+      user = await User.findOne({ auth0Id }).populate(
+        "followers.userId",
+        "profile.displayName profile.isPublic profile.bio",
+      );
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+    } else {
+      // Get followers for a specific public profile
+      user = await User.findOne({
+        "profile.displayName": decodedDisplayName,
+        "profile.isPublic": true,
+      }).populate(
+        "followers.userId",
+        "profile.displayName profile.isPublic profile.bio",
+      );
+
+      if (!user) {
+        return res.status(404).json({ error: "Public profile not found" });
+      }
     }
 
     // Filter to only show public profiles
@@ -461,40 +479,6 @@ export const getFollowers = async (req, res) => {
   } catch (error) {
     console.error("Error fetching followers list:", error);
     res.status(500).json({ error: "Could not fetch followers list" });
-  }
-};
-
-export const getPublicFollowers = async (req, res) => {
-  try {
-    const { displayName } = req.params;
-    const decodedDisplayName = decodeURIComponent(displayName);
-
-    // Find the user by display name
-    const user = await User.findOne({
-      "profile.displayName": decodedDisplayName,
-      "profile.isPublic": true,
-    }).populate(
-      "followers.userId",
-      "profile.displayName profile.isPublic profile.bio",
-    );
-
-    if (!user) {
-      return res.status(404).json({ error: "Public profile not found" });
-    }
-
-    // Filter to only show public profiles
-    const publicFollowers = user.followers
-      .filter((follower) => follower.userId && follower.userId.profile.isPublic)
-      .map((follower) => ({
-        displayName: follower.displayName,
-        bio: follower.userId.profile.bio,
-        followedAt: follower.followedAt,
-      }));
-
-    res.json({ followers: publicFollowers });
-  } catch (error) {
-    console.error("Error fetching public followers list:", error);
-    res.status(500).json({ error: "Could not fetch public followers list" });
   }
 };
 
@@ -580,6 +564,31 @@ export const getAdditionalArtists = async (req, res) => {
     res.json(concertData);
   } catch (error) {
     console.error("Error fetching additional artists:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const getTopAlbums = async (req, res) => {
+  const { artistName } = req.query;
+
+  try {
+    if (!artistName) {
+      return res
+        .status(400)
+        .json({ error: "artistName query parameter is required." });
+    }
+
+    const albumData = await getArtistTopAlbums(artistName);
+
+    if (!albumData) {
+      return res
+        .status(404)
+        .json({ error: "No albums found for this artist." });
+    }
+
+    res.json(albumData);
+  } catch (error) {
+    console.error("Error fetching top albums:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

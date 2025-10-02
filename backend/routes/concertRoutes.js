@@ -6,8 +6,8 @@ import {
   saveConcerts,
   getConcert,
   getPublicProfile,
-  getPublicFollowers,
   getAdditionalArtists,
+  getTopAlbums,
 } from "../controllers/concertController.js";
 
 // Simple middleware to extract user ID from Auth0 token
@@ -70,6 +70,9 @@ router.get("/user/saved", checkJwt, getSavedConcerts);
 // GET a single concert from API
 router.get("/", getConcert);
 
+// GET top albums for an artist from Last.fm
+router.get("/topalbums", getTopAlbums);
+
 // GET additional artists by venue and date
 router.get("/additional/:venueId/:eventDate", getAdditionalArtists);
 
@@ -81,9 +84,6 @@ router.delete("/:artistId/:concertId", checkJwt, deleteConcert);
 
 // GET public profile (no auth required) - this should come last
 router.get("/profile/:username", getPublicProfile);
-
-// GET public followers (no auth required)
-router.get("/profile/:displayName/followers", getPublicFollowers);
 
 // CURRENTLY UNUSED.  WOULD NEED TO BE REWORKED TO WORK WITH NEW CONCERT DATA
 // PLAN IS TO USE THIS FOR EDITING A CONCERT (e.g. GOT TO CONCERT LATE OR LEFT EARLY)
