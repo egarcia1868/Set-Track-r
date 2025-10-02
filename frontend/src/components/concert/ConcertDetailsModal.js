@@ -49,14 +49,6 @@ const ConcertDetailsModal = ({
       groups[key].concerts.push(concert);
     });
     
-    // Add debug logging to see what's being grouped
-    console.log("Grouped concerts:", Object.values(groups).map(group => ({
-      venue: group.venue,
-      date: group.date,
-      artistCount: group.concerts.length,
-      artists: group.concerts.map(c => c.artist.name)
-    })));
-    
     return Object.values(groups);
   }, [concertList]);
 
