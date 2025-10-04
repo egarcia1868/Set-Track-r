@@ -1488,10 +1488,7 @@ body,
 }
 
 /* Super specific override to fix the layout issue */
-div.concert-details
-  div.other-artists-dropdown
-  ul.other-artists-list
-  li.other-artist-item {
+div.concert-details div.other-artists-dropdown ul.other-artists-list li.other-artist-item {
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
@@ -1499,7 +1496,7 @@ div.concert-details
   width: 100% !important;
   margin: 0 !important;
   padding: 0 !important;
-
+  
   position: static !important;
   left: auto !important;
   right: auto !important;
@@ -1507,11 +1504,7 @@ div.concert-details
   float: none !important;
 }
 
-div.concert-details
-  div.other-artists-dropdown
-  ul.other-artists-list
-  li.other-artist-item
-  span.artist-name {
+div.concert-details div.other-artists-dropdown ul.other-artists-list li.other-artist-item span.artist-name {
   flex: 1 !important;
   text-align: left !important;
   margin: 0 !important;
@@ -1519,16 +1512,8 @@ div.concert-details
   position: static !important;
 }
 
-div.concert-details
-  div.other-artists-dropdown
-  ul.other-artists-list
-  li.other-artist-item
-  button.add-to-sets-btn,
-div.concert-details
-  div.other-artists-dropdown
-  ul.other-artists-list
-  li.other-artist-item
-  span.already-saved-text {
+div.concert-details div.other-artists-dropdown ul.other-artists-list li.other-artist-item button.add-to-sets-btn,
+div.concert-details div.other-artists-dropdown ul.other-artists-list li.other-artist-item span.already-saved-text {
   flex-shrink: 0 !important;
   margin: 0 !important;
   position: static !important;
@@ -1763,11 +1748,6 @@ body.modal-open {
   font-style: italic;
 }
 
-.artists-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
 
 .search-container {
   display: flex;
@@ -1801,7 +1781,7 @@ body.modal-open {
 
 .artist-card {
   background: white;
-  padding: 0;
+  padding: 5px 10px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -1919,7 +1899,7 @@ body.modal-open {
 
 .songs-list {
   margin: 16px 0 0 0;
-  padding: 0 0 0 20px;
+  padding: 0;
   columns: 2;
   column-gap: 20px;
   column-fill: balance;
@@ -2045,30 +2025,30 @@ body.modal-open {
   .mobile-search-btn-header {
     display: block;
   }
-
+  
   .header-buttons {
     flex-direction: column;
     align-items: stretch;
   }
-
+  
   .primary-actions {
     flex-direction: row;
     gap: 10px;
     justify-content: center;
   }
-
+  
   .primary-actions button,
   .primary-actions .mobile-search-btn-small {
     width: 120px;
     text-align: center;
   }
-
+  
   .social-actions {
     flex-direction: row;
     gap: 10px;
     justify-content: center;
   }
-
+  
   .social-actions button {
     width: 120px;
     text-align: center;
@@ -2501,50 +2481,13 @@ main > header h1 {
   border-radius: 8px;
   padding: 20px;
   margin: 15px 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .venue-header {
   border-bottom: 2px solid #f0f0f0;
   padding-bottom: 15px;
   margin-bottom: 20px;
-}
-
-.venue-info {
-  text-align: left;
-}
-
-.venue-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 10px;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.load-more-button {
-  background: #28a745;
-  color: white;
-  border: none;
-  padding: 4px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.8rem;
-}
-
-.load-more-button:hover:not(:disabled) {
-  background: #218838;
-}
-
-.load-more-button:disabled {
-  background: #6c757d;
-  cursor: not-allowed;
-}
-
-.additional-artist {
-  border-left-color: #28a745;
-  background: #f0f8f0;
 }
 
 .venue-header h3 {
@@ -2561,7 +2504,7 @@ main > header h1 {
 
 .select-all-label {
   display: inline-flex;
-  align-items: right;
+  align-items: center;
   gap: 10px;
   margin-top: 10px;
   font-weight: 500;
@@ -2578,27 +2521,15 @@ main > header h1 {
   vertical-align: middle;
 }
 
-.select-all-link {
-  background: none;
-  border: none;
-  color: #007bff;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  text-decoration: underline;
-  padding: 0;
-  margin-top: 10px;
-  white-space: nowrap;
-}
-
-.select-all-link:hover {
-  color: #0056b3;
-}
-
-.artists-list {
+.masonry-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6px;
+  grid-auto-rows: 1px;
+  grid-gap: 6px;
+}
+
+.masonry-item {
+  grid-column-end: span 1;
 }
 
 .artist-item {
@@ -2688,41 +2619,14 @@ main > header h1 {
   .artists-list {
     grid-template-columns: 1fr;
   }
-
+  
   .artist-header {
     flex-direction: row;
     align-items: center;
     gap: 8px;
   }
-
+  
   .artist-actions {
     flex-shrink: 0;
-  }
-
-  .venue-actions {
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .select-all-label {
-    justify-content: center;
-    white-space: normal;
-    text-align: center;
-    max-width: 100%;
-    word-wrap: break-word;
-  }
-
-  .select-all-label input[type="checkbox"] {
-    transform: scale(0.8);
-    margin-right: 5px;
-  }
-
-  .select-all-link {
-    white-space: normal;
-    text-align: center;
-    max-width: 100%;
-    word-wrap: break-word;
-    font-size: 0.8rem;
   }
 }

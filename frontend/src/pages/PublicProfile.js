@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useUserConcerts } from "../context/UserConcertsContext";
@@ -32,6 +32,7 @@ const PublicProfile = () => {
   const [currentUserProfile, setCurrentUserProfile] = useState(null);
   const [otherArtistsData, setOtherArtistsData] = useState({});
   const [loadingOtherArtists, setLoadingOtherArtists] = useState({});
+  const gridRef = useRef(null);
 
   useEffect(() => {
     fetchPublicProfile();
@@ -92,6 +93,37 @@ const PublicProfile = () => {
     profileData?.concerts?.filter((artist) =>
       artist.artistName.toLowerCase().includes(searchTerm.toLowerCase()),
     ) || [];
+
+  const resizeMasonryItem = useCallback((item) => {
+    if (!item) return;
+    const grid = gridRef.current;
+    if (!grid) return;
+
+    const rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-row-gap'));
+    const rowHeight = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-auto-rows'));
+    const rowSpan = Math.ceil((item.querySelector('.artist-card-content').getBoundingClientRect().height + rowGap) / (rowHeight + rowGap));
+    item.style.gridRowEnd = `span ${rowSpan}`;
+  }, []);
+
+  const resizeAllMasonryItems = useCallback(() => {
+    if (!gridRef.current) return;
+    const allItems = gridRef.current.querySelectorAll('.masonry-item');
+    allItems.forEach(item => resizeMasonryItem(item));
+  }, [resizeMasonryItem]);
+
+  useEffect(() => {
+    resizeAllMasonryItems();
+    window.addEventListener('resize', resizeAllMasonryItems);
+    return () => window.removeEventListener('resize', resizeAllMasonryItems);
+  }, [resizeAllMasonryItems]);
+
+  useEffect(() => {
+    setTimeout(() => resizeAllMasonryItems(), 100);
+  }, [expandedArtists, resizeAllMasonryItems]);
+
+  useEffect(() => {
+    setTimeout(() => resizeAllMasonryItems(), 100);
+  }, [filteredArtists, profileData]);
 
   const fetchPublicProfile = async () => {
     try {
@@ -465,7 +497,7 @@ const PublicProfile = () => {
             No artists found matching "{searchTerm}"
           </p>
         ) : (
-          <div className="artists-list">
+          <div className="artists-list masonry-grid" ref={gridRef}>
             {filteredArtists
               .sort((a, b) => {
                 // Helper function to get sort name (ignoring "The" prefix)
@@ -482,11 +514,16 @@ const PublicProfile = () => {
               .map((artist) => {
                 const isExpanded = expandedArtists.has(artist.artistId);
                 return (
-                  <div key={artist.artistId} className="artist-card">
-                    <div
-                      className="artist-header"
-                      onClick={() => toggleArtist(artist.artistId)}
-                    >
+                  <div
+                    key={artist.artistId}
+                    className="masonry-item"
+                    data-artist-id={artist.artistId}
+                  >
+                    <div className="artist-card artist-card-content">
+                      <div
+                        className="artist-header"
+                        onClick={() => toggleArtist(artist.artistId)}
+                      >
                       <h3 className="artist-name">{artist.artistName}</h3>
                       <div className="artist-summary">
                         <span className="concert-count">
@@ -536,6 +573,7 @@ const PublicProfile = () => {
                         </div>
                       </>
                     )}
+                    </div>
                   </div>
                 );
               })}
