@@ -1029,9 +1029,12 @@ body,
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  margin: 15px auto;
-  display: block;
   transition: background-color 0.3s ease;
+}
+
+.artist-details-header .see-all-songs-btn {
+  margin: 0 !important;
+  display: inline-block !important;
 }
 
 .see-all-songs-btn:hover {
@@ -1801,10 +1804,35 @@ body.modal-open {
 
 .artist-card {
   background: white;
-  padding: 0;
+  padding: 12px 16px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.artist-card:hover {
+  background: #f0f0f0;
+}
+
+.artists-sidebar .artist-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.artists-sidebar .artist-name {
+  margin: 0;
+  color: #333;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.artist-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
 .artist-header {
@@ -1817,19 +1845,6 @@ body.modal-open {
 
 .artist-header:hover {
   background-color: #f8f9fa;
-}
-
-.artist-name {
-  margin: 0 5px 0 0;
-
-  color: #333;
-  font-size: 1.3rem;
-}
-
-.artist-summary {
-  display: flex;
-  align-items: center;
-  gap: 15px;
 }
 
 .concert-count {
@@ -2595,10 +2610,68 @@ main > header h1 {
   color: #0056b3;
 }
 
-.artists-list {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
+.artists-layout {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.artists-sidebar {
+  flex: 0 0 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.artist-details-panel {
+  flex: 1;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-height: 400px;
+}
+
+.artist-details-header {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+  padding: 10px 0;
+}
+
+.header-content-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.artist-details-title {
+  margin: 0;
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.no-selection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  color: #999;
+  font-style: italic;
+}
+
+.artist-card.expanded {
+  background: #007bff;
+  color: white;
+}
+
+.artist-card.expanded .concert-count,
+.artist-card.expanded .expand-icon {
+  color: white;
 }
 
 .artist-item {
@@ -2685,8 +2758,18 @@ main > header h1 {
 }
 
 @media (max-width: 768px) {
-  .artists-list {
-    grid-template-columns: 1fr;
+  .artists-layout {
+    flex-direction: column;
+  }
+
+  .artists-sidebar {
+    flex: 1;
+    max-width: 100%;
+    max-height: none;
+  }
+
+  .artist-details-panel {
+    width: 100%;
   }
 
   .artist-header {

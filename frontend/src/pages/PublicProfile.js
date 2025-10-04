@@ -465,26 +465,27 @@ const PublicProfile = () => {
             No artists found matching "{searchTerm}"
           </p>
         ) : (
-          <div className="artists-list">
-            {filteredArtists
-              .sort((a, b) => {
-                // Helper function to get sort name (ignoring "The" prefix)
-                const getSortName = (artistName) => {
-                  if (artistName.toLowerCase().startsWith("the ")) {
-                    return artistName.substring(4); // Remove "The " prefix
-                  }
-                  return artistName;
-                };
-                return getSortName(a.artistName).localeCompare(
-                  getSortName(b.artistName),
-                );
-              })
-              .map((artist) => {
-                const isExpanded = expandedArtists.has(artist.artistId);
-                return (
-                  <div key={artist.artistId} className="artist-card">
+          <div className="artists-layout">
+            <div className="artists-sidebar">
+              {filteredArtists
+                .sort((a, b) => {
+                  // Helper function to get sort name (ignoring "The" prefix)
+                  const getSortName = (artistName) => {
+                    if (artistName.toLowerCase().startsWith("the ")) {
+                      return artistName.substring(4); // Remove "The " prefix
+                    }
+                    return artistName;
+                  };
+                  return getSortName(a.artistName).localeCompare(
+                    getSortName(b.artistName),
+                  );
+                })
+                .map((artist) => {
+                  const isExpanded = expandedArtists.has(artist.artistId);
+                  return (
                     <div
-                      className="artist-header"
+                      key={artist.artistId}
+                      className={`artist-card ${isExpanded ? "expanded" : ""}`}
                       onClick={() => toggleArtist(artist.artistId)}
                     >
                       <h3 className="artist-name">{artist.artistName}</h3>
@@ -494,12 +495,21 @@ const PublicProfile = () => {
                           {artist.concerts.length !== 1 ? "s" : ""}
                         </span>
                         <span className="expand-icon">
-                          {isExpanded ? "▼" : "▲"}
+                          {isExpanded ? "◀" : "▶"}
                         </span>
                       </div>
                     </div>
-                    {isExpanded && (
-                      <>
+                  );
+                })}
+            </div>
+            <div className="artist-details-panel">
+              {filteredArtists
+                .filter((artist) => expandedArtists.has(artist.artistId))
+                .map((artist) => (
+                  <div key={artist.artistId} className="artist-details-content">
+                    <div className="artist-details-header">
+                      <div className="header-content-wrapper">
+                        <span className="artist-details-title">{artist.artistName}</span>
                         {artist.concerts.length > 1 && (
                           <button
                             className="see-all-songs-btn"
@@ -512,33 +522,38 @@ const PublicProfile = () => {
                             See all songs
                           </button>
                         )}
-                        <div className="concerts-list">
-                          {artist.concerts
-                            .sort(
-                              (a, b) =>
-                                new Date(b.eventDate) - new Date(a.eventDate),
-                            )
-                            .map((concert) => (
-                              <ConcertItemDetailed
-                                key={concert.concertId}
-                                concert={concert}
-                                expandedSetlists={expandedSetlists}
-                                toggleSetlist={toggleSetlist}
-                                handleShowOtherArtists={handleShowOtherArtists}
-                                otherArtistsData={otherArtistsData}
-                                loadingOtherArtists={loadingOtherArtists}
-                                handleRemoveFromMySets={
-                                  removeConcertFromCollection
-                                }
-                                currentArtistName={null}
-                              />
-                            ))}
-                        </div>
-                      </>
-                    )}
+                      </div>
+                    </div>
+                    <div className="concerts-list">
+                      {artist.concerts
+                        .sort(
+                          (a, b) =>
+                            new Date(b.eventDate) - new Date(a.eventDate),
+                        )
+                        .map((concert) => (
+                          <ConcertItemDetailed
+                            key={concert.concertId}
+                            concert={concert}
+                            expandedSetlists={expandedSetlists}
+                            toggleSetlist={toggleSetlist}
+                            handleShowOtherArtists={handleShowOtherArtists}
+                            otherArtistsData={otherArtistsData}
+                            loadingOtherArtists={loadingOtherArtists}
+                            handleRemoveFromMySets={removeConcertFromCollection}
+                            currentArtistName={null}
+                          />
+                        ))}
+                    </div>
                   </div>
-                );
-              })}
+                ))}
+              {filteredArtists.filter((artist) =>
+                expandedArtists.has(artist.artistId),
+              ).length === 0 && (
+                <div className="no-selection">
+                  <p>Select an artist to view their concerts</p>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
