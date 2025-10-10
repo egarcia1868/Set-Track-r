@@ -483,21 +483,58 @@ const PublicProfile = () => {
                 .map((artist) => {
                   const isExpanded = expandedArtists.has(artist.artistId);
                   return (
-                    <div
-                      key={artist.artistId}
-                      className={`artist-card ${isExpanded ? "expanded" : ""}`}
-                      onClick={() => toggleArtist(artist.artistId)}
-                    >
-                      <h3 className="artist-name">{artist.artistName}</h3>
-                      <div className="artist-summary">
-                        <span className="concert-count">
-                          {artist.concerts.length} concert
-                          {artist.concerts.length !== 1 ? "s" : ""}
-                        </span>
-                        <span className="expand-icon">
-                          {isExpanded ? "◀" : "▶"}
-                        </span>
+                    <div key={artist.artistId}>
+                      <div
+                        className={`artist-card ${isExpanded ? "expanded" : ""}`}
+                        onClick={() => toggleArtist(artist.artistId)}
+                      >
+                        <h3 className="artist-name">{artist.artistName}</h3>
+                        <div className="artist-summary">
+                          <span className="concert-count">
+                            {artist.concerts.length} concert
+                            {artist.concerts.length !== 1 ? "s" : ""}
+                          </span>
+                          <span className="expand-icon">
+                            {isExpanded ? "▼" : "▶"}
+                          </span>
+                        </div>
                       </div>
+                      {isExpanded && (
+                        <div className="mobile-concerts-container">
+                          {artist.concerts.length > 1 && (
+                            <button
+                              className="see-all-songs-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedArtist(artist);
+                                setShowAllSongsModal(true);
+                              }}
+                            >
+                              See all songs
+                            </button>
+                          )}
+                          <div className="concerts-list">
+                            {artist.concerts
+                              .sort(
+                                (a, b) =>
+                                  new Date(b.eventDate) - new Date(a.eventDate),
+                              )
+                              .map((concert) => (
+                                <ConcertItemDetailed
+                                  key={concert.concertId}
+                                  concert={concert}
+                                  expandedSetlists={expandedSetlists}
+                                  toggleSetlist={toggleSetlist}
+                                  handleShowOtherArtists={handleShowOtherArtists}
+                                  otherArtistsData={otherArtistsData}
+                                  loadingOtherArtists={loadingOtherArtists}
+                                  handleRemoveFromMySets={removeConcertFromCollection}
+                                  currentArtistName={null}
+                                />
+                              ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })}

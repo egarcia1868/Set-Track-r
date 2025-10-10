@@ -2625,12 +2625,15 @@ main > header h1 {
   overflow-y: auto;
 }
 
+.mobile-concerts-container {
+  display: none;
+}
+
 .artist-details-panel {
   flex: 1;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  min-height: 400px;
 }
 
 .artist-details-header {
@@ -2659,7 +2662,6 @@ main > header h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 400px;
   color: #999;
   font-style: italic;
 }
@@ -2759,17 +2761,35 @@ main > header h1 {
 
 @media (max-width: 768px) {
   .artists-layout {
-    flex-direction: column;
+    display: block;
   }
 
   .artists-sidebar {
-    flex: 1;
     max-width: 100%;
     max-height: none;
   }
 
   .artist-details-panel {
-    width: 100%;
+    display: none;
+  }
+
+  .artists-sidebar .artist-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .mobile-concerts-container {
+    display: block;
+    margin-top: 15px;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+  }
+
+  .mobile-concerts-container .see-all-songs-btn {
+    display: block;
+    margin: 0 auto 15px auto;
   }
 
   .artist-header {
