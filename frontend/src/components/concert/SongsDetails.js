@@ -3,20 +3,36 @@ import { useState } from "react";
 const SongsDetails = ({ concerts }) => {
   const [sortBy, setSortBy] = useState("count"); // Default sorting by count
   const [ascending, setAscending] = useState(false); // Default descending order for count
+  const [expandedSong, setExpandedSong] = useState(null);
 
   function countSongOccurrences(concerts) {
-    const songCount = {};
+    const songOccurrences = {};
 
     concerts.forEach((concert) => {
       concert.sets.forEach((set) => {
         set.song.forEach((song) => {
           const songName = song.name;
-          songCount[songName] = (songCount[songName] || 0) + 1;
+          if (!songOccurrences[songName]) {
+            songOccurrences[songName] = {
+              count: 0,
+              concerts: []
+            };
+          }
+          songOccurrences[songName].count++;
+          songOccurrences[songName].concerts.push({
+            venue: typeof concert.venue === 'object' ? concert.venue.name : concert.venue,
+            city: typeof concert.venue === 'object' ? concert.venue.city?.name : '',
+            date: concert.eventDate
+          });
         });
       });
     });
 
-    return Object.entries(songCount).map(([name, count]) => ({ name, count }));
+    return Object.entries(songOccurrences).map(([name, data]) => ({
+      name,
+      count: data.count,
+      concerts: data.concerts
+    }));
   }
 
   function sortSongs(songs) {
@@ -70,10 +86,33 @@ const SongsDetails = ({ concerts }) => {
       </thead>
       <tbody>
         {sortedSongs.map((song) => (
-          <tr key={`table-row-${song.name}`}>
-            <td>{song.name}</td>
-            <td>{song.count}</td>
-          </tr>
+          <>
+            <tr
+              key={`table-row-${song.name}`}
+              onClick={() => setExpandedSong(expandedSong === song.name ? null : song.name)}
+              style={{ cursor: 'pointer' }}
+              className={expandedSong === song.name ? 'song-row-expanded' : ''}
+            >
+              <td>
+                {song.name} {expandedSong === song.name ? '▼' : '▶'}
+              </td>
+              <td>{song.count}</td>
+            </tr>
+            {expandedSong === song.name && (
+              <tr key={`details-${song.name}`}>
+                <td colSpan="2" className="song-details-cell">
+                  <div className="song-concert-list">
+                    {song.concerts.map((concert, idx) => (
+                      <div key={idx} className="song-concert-item">
+                        <strong>{concert.date}</strong> - {concert.venue}
+                        {concert.city && `, ${concert.city}`}
+                      </div>
+                    ))}
+                  </div>
+                </td>
+              </tr>
+            )}
+          </>
         ))}
       </tbody>
     </table>

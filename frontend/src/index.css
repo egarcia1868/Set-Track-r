@@ -2676,6 +2676,28 @@ main > header h1 {
   color: white;
 }
 
+.song-row-expanded {
+  background-color: #f0f8ff;
+}
+
+.song-details-cell {
+  background-color: #fafafa;
+  padding: 15px !important;
+}
+
+.song-concert-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.song-concert-item {
+  padding: 8px;
+  background: white;
+  border-left: 3px solid var(--primary);
+  border-radius: 4px;
+}
+
 .artist-item {
   background: #f8f9fa;
   border-radius: 4px;
