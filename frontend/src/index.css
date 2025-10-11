@@ -2563,10 +2563,22 @@ button.text-button:focus {
   }
 }
 
-/* Hide carousel on mobile */
+/* Show all three carousel rows on mobile with 3x speed */
 @media (max-width: 768px) {
   .artist-carousel-background {
-    display: none;
+    display: flex;
+  }
+
+  .artist-carousel-track {
+    animation: scrollCarousel 20s linear infinite;
+  }
+
+  .artist-carousel-track-second {
+    animation: scrollCarouselReverse 20s linear infinite;
+  }
+
+  .artist-carousel-track-third {
+    animation: scrollCarousel 20s linear infinite;
   }
 }
 
