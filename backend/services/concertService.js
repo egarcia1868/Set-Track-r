@@ -15,7 +15,7 @@ const SETLIST_FM_API_URL =
 const API_KEY = process.env.SETLIST_FM_API_KEY;
 
 const LASTFM_API_URL = "http://ws.audioscrobbler.com/2.0/";
-const LASTFM_API_KEY = process.env.LASTFM_API_KEY;
+const LASTFM_API_KEY = process.env.LAST_FM_API_KEY;
 
 export const saveConcertsForUser = async ({ concertData, user }) => {
   const userId = user.sub;
@@ -43,6 +43,8 @@ export const saveConcertsForUser = async ({ concertData, user }) => {
 
     let artistDoc = await Artist.findOne({ artistId });
 
+    const isNewArtist = !artistDoc;
+
     if (!artistDoc) {
       artistDoc = new Artist({ artistName, artistId, concerts: [] });
     }
@@ -53,6 +55,39 @@ export const saveConcertsForUser = async ({ concertData, user }) => {
 
     if (!existingConcert) {
       artistDoc.concerts.push({ concertId, eventDate, venue, sets, url });
+    }
+
+    // Fetch and save top album image for new artists
+    if (isNewArtist) {
+      try {
+        const topAlbumsData = await getArtistTopAlbums(artistName);
+        if (topAlbumsData && topAlbumsData.topalbums && topAlbumsData.topalbums.album) {
+          const albums = topAlbumsData.topalbums.album;
+
+          // Find the album with the highest playcount
+          let topAlbum = null;
+          let maxPlaycount = 0;
+
+          for (const album of albums) {
+            const playcount = parseInt(album.playcount || 0);
+            if (playcount > maxPlaycount) {
+              maxPlaycount = playcount;
+              topAlbum = album;
+            }
+          }
+
+          // Extract the extralarge image URL
+          if (topAlbum && topAlbum.image && Array.isArray(topAlbum.image)) {
+            const extralargeImage = topAlbum.image.find(img => img.size === 'extralarge');
+            if (extralargeImage && extralargeImage['#text'] && extralargeImage['#text'].trim() !== '') {
+              artistDoc.topAlbumImage = extralargeImage['#text'];
+            }
+          }
+        }
+      } catch (error) {
+        console.error(`Error fetching top album image for ${artistName}:`, error);
+        // Continue without the image if there's an error
+      }
     }
 
     await artistDoc.save();

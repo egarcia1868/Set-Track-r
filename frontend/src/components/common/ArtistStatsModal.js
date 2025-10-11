@@ -44,7 +44,14 @@ const ArtistStatsModal = ({ isOpen, onClose, concerts }) => {
       count: artist.concerts.length,
       id: artist.artistId,
     }))
-    .sort((a, b) => b.count - a.count);
+    .sort((a, b) => {
+      // First sort by count (descending)
+      if (a.count !== b.count) {
+        return b.count - a.count;
+      }
+      // Then sort alphabetically by name
+      return a.name.localeCompare(b.name);
+    });
 
   const totalConcerts = artistData.reduce(
     (sum, artist) => sum + artist.count,
