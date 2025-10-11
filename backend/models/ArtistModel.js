@@ -18,6 +18,10 @@ const artistSchema = new Schema(
       required: true,
       default: [],
     },
+    topAlbumImage: {
+      type: String,
+      required: false,
+    },
   },
   { timestamps: true },
 );
