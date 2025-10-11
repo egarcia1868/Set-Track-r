@@ -8,57 +8,42 @@ import { getArtistTopAlbums } from "../services/concertService.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config({ path: path.resolve(__dirname, "../.env") });
+// Load .env from backend directory
+dotenv.config({ path: path.join(__dirname, "..", ".env") });
 
 const MONGO_URI = process.env.MONGO_URI;
-
-// Delay function to avoid rate limiting
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const DELAY_MS = 250; // Rate limiting delay between API calls
 
 async function backfillTopAlbumImages() {
   try {
-    // Connect to MongoDB
     console.log("Connecting to MongoDB...");
     await mongoose.connect(MONGO_URI);
-    console.log("Connected to MongoDB successfully\n");
+    console.log("Connected to MongoDB successfully");
 
-    // Find all artists without topAlbumImage
-    const artistsWithoutImage = await Artist.find({
-      $or: [
-        { topAlbumImage: { $exists: false } },
-        { topAlbumImage: null },
-        { topAlbumImage: "" },
-      ],
+    // Find all artists that don't have a topAlbumImage
+    const artistsWithoutImages = await Artist.find({
+      $or: [{ topAlbumImage: { $exists: false } }, { topAlbumImage: null }],
     });
 
-    console.log(`Found ${artistsWithoutImage.length} artists without top album images\n`);
-
-    if (artistsWithoutImage.length === 0) {
-      console.log("No artists to process. Exiting.");
-      await mongoose.connection.close();
-      return;
-    }
+    console.log(
+      `Found ${artistsWithoutImages.length} artists without top album images`,
+    );
 
     let successCount = 0;
-    let errorCount = 0;
-    let noImageCount = 0;
+    let failureCount = 0;
+    let skippedCount = 0;
 
-    // Process each artist
-    for (let i = 0; i < artistsWithoutImage.length; i++) {
-      const artist = artistsWithoutImage[i];
-      const progress = `[${i + 1}/${artistsWithoutImage.length}]`;
+    for (let i = 0; i < artistsWithoutImages.length; i++) {
+      const artist = artistsWithoutImages[i];
+      console.log(
+        `\n[${i + 1}/${artistsWithoutImages.length}] Processing: ${artist.artistName}`,
+      );
 
       try {
-        console.log(`${progress} Processing: ${artist.artistName}`);
-
-        // Call Last.fm API
+        // Fetch top albums from Last.fm
         const topAlbumsData = await getArtistTopAlbums(artist.artistName);
 
-        if (
-          topAlbumsData &&
-          topAlbumsData.topalbums &&
-          topAlbumsData.topalbums.album
-        ) {
+        if (topAlbumsData && topAlbumsData.topalbums && topAlbumsData.topalbums.album) {
           const albums = topAlbumsData.topalbums.album;
 
           // Find the album with the highest playcount
@@ -76,7 +61,7 @@ async function backfillTopAlbumImages() {
           // Extract the extralarge image URL
           if (topAlbum && topAlbum.image && Array.isArray(topAlbum.image)) {
             const extralargeImage = topAlbum.image.find(
-              (img) => img.size === "extralarge"
+              (img) => img.size === "extralarge",
             );
             if (
               extralargeImage &&
@@ -85,58 +70,44 @@ async function backfillTopAlbumImages() {
             ) {
               artist.topAlbumImage = extralargeImage["#text"];
               await artist.save();
-              console.log(`${progress} ✓ Saved image for ${artist.artistName}`);
+              console.log(`  ✓ Saved image for ${artist.artistName}`);
               successCount++;
             } else {
-              console.log(
-                `${progress} ⚠ No extralarge image found for ${artist.artistName}`
-              );
-              noImageCount++;
+              console.log(`  ⊘ No extralarge image found for ${artist.artistName}`);
+              skippedCount++;
             }
           } else {
-            console.log(`${progress} ⚠ No albums found for ${artist.artistName}`);
-            noImageCount++;
+            console.log(`  ⊘ No albums found for ${artist.artistName}`);
+            skippedCount++;
           }
         } else {
-          console.log(
-            `${progress} ⚠ No album data returned for ${artist.artistName}`
-          );
-          noImageCount++;
+          console.log(`  ⊘ No album data returned for ${artist.artistName}`);
+          skippedCount++;
         }
-
-        // Add a small delay to avoid rate limiting (Last.fm allows ~5 requests per second)
-        await delay(250);
       } catch (error) {
-        console.error(
-          `${progress} ✗ Error processing ${artist.artistName}:`,
-          error.message
-        );
-        errorCount++;
+        console.error(`  ✗ Error processing ${artist.artistName}:`, error.message);
+        failureCount++;
+      }
 
-        // Add a longer delay after an error
-        await delay(1000);
+      // Rate limiting delay
+      if (i < artistsWithoutImages.length - 1) {
+        await new Promise((resolve) => setTimeout(resolve, DELAY_MS));
       }
     }
 
-    // Summary
-    console.log("\n" + "=".repeat(50));
-    console.log("BACKFILL COMPLETE");
-    console.log("=".repeat(50));
-    console.log(`Total artists processed: ${artistsWithoutImage.length}`);
+    console.log("\n=== Backfill Summary ===");
+    console.log(`Total artists processed: ${artistsWithoutImages.length}`);
     console.log(`Successfully updated: ${successCount}`);
-    console.log(`No image available: ${noImageCount}`);
-    console.log(`Errors: ${errorCount}`);
-    console.log("=".repeat(50) + "\n");
-
-    // Close database connection
-    await mongoose.connection.close();
-    console.log("Database connection closed");
+    console.log(`Skipped (no image): ${skippedCount}`);
+    console.log(`Failed: ${failureCount}`);
+    console.log("========================\n");
   } catch (error) {
-    console.error("Fatal error:", error);
-    await mongoose.connection.close();
-    process.exit(1);
+    console.error("Fatal error during backfill:", error);
+  } finally {
+    await mongoose.disconnect();
+    console.log("Disconnected from MongoDB");
+    process.exit(0);
   }
 }
 
-// Run the script
 backfillTopAlbumImages();

@@ -172,6 +172,7 @@ export const getPublicProfile = async (req, res) => {
       return {
         artistName: artist.artistName,
         artistId: artist.artistId,
+        topAlbumImage: artist.topAlbumImage,
         concerts: artist.concerts.filter((concert) =>
           userConcertIds.includes(concert.concertId),
         ),

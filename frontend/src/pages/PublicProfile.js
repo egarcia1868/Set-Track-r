@@ -7,6 +7,7 @@ import ArtistStatsModal from "../components/common/ArtistStatsModal";
 import AllSongsModal from "../components/common/AllSongsModal";
 import PublicFollowersList from "../components/common/PublicFollowersList";
 import ConcertItemDetailed from "../components/concert/ConcertItemDetailed";
+import ArtistImageCarousel from "../components/common/ArtistImageCarousel";
 
 const PublicProfile = () => {
   const { username } = useParams();
@@ -363,6 +364,7 @@ const PublicProfile = () => {
 
   return (
     <div className="public-profile">
+      <ArtistImageCarousel concerts={profileData?.concerts || []} />
       <div className="profile-header">
         <div className="profile-header-top">
           <h1>{profileData.profile.displayName}</h1>
