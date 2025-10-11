@@ -2497,6 +2497,77 @@ button.text-button:focus {
   outline-offset: 2px;
 }
 
+/* Artist Image Carousel Background */
+.artist-carousel-background {
+  position: fixed;
+  top: 100px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 100px);
+  overflow: hidden;
+  z-index: -1;
+  opacity: 0.05;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.artist-carousel-track {
+  display: flex;
+  gap: 20px;
+  animation: scrollCarousel 60s linear infinite;
+  will-change: transform;
+}
+
+.artist-carousel-track-second {
+  animation: scrollCarouselReverse 60s linear infinite;
+}
+
+.artist-carousel-track-third {
+  animation: scrollCarousel 60s linear infinite;
+}
+
+.artist-carousel-item {
+  flex-shrink: 0;
+  width: 260px;
+  height: 260px;
+  position: relative;
+}
+
+.artist-carousel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes scrollCarousel {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.33%);
+  }
+}
+
+@keyframes scrollCarouselReverse {
+  0% {
+    transform: translateX(-33.33%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Hide carousel on mobile */
+@media (max-width: 768px) {
+  .artist-carousel-background {
+    display: none;
+  }
+}
+
 /* Fix artist page header styling */
 main > header {
   background: transparent;
