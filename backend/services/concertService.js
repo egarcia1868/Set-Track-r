@@ -10,8 +10,8 @@ const __dirname = path.dirname(__filename);
 
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
-const API_URL =
-  process.env.REACT_APP_API_URL || "https://api.setlist.fm/rest/1.0/";
+const SETLIST_FM_API_URL =
+  process.env.SETLIST_FM_API_URL || "https://api.setlist.fm/rest/1.0/";
 const API_KEY = process.env.SETLIST_FM_API_KEY;
 
 const LASTFM_API_URL = "http://ws.audioscrobbler.com/2.0/";
@@ -84,7 +84,7 @@ export const getConcertFromAPI = async (params) => {
   try {
     // Get the initial search results
     const response = await axios.get(
-      `${API_URL}search/setlists/?${queryString}`,
+      `${SETLIST_FM_API_URL}search/setlists/?${queryString}`,
       {
         headers: {
           "x-api-key": API_KEY,
@@ -130,7 +130,7 @@ export const getAdditionalArtistsByVenueDate = async (venueId, eventDate) => {
     });
 
     const response = await axios.get(
-      `${API_URL}search/setlists/?${venueSearchParams.toString()}`,
+      `${SETLIST_FM_API_URL}search/setlists/?${venueSearchParams.toString()}`,
       {
         headers: {
           "x-api-key": API_KEY,
