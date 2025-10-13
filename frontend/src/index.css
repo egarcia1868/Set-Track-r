@@ -1170,6 +1170,7 @@ body,
   padding: 8px 0;
   border-bottom: 1px solid #e9ecef;
   font-size: 14px;
+  gap: 10px;
 }
 
 .performance-item:last-child {
@@ -1180,18 +1181,50 @@ body,
   font-weight: 500;
   color: var(--primary);
   min-width: 100px;
+  flex-shrink: 0;
 }
 
 .performance-venue {
   font-weight: 500;
   flex: 1;
   margin: 0 15px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .performance-location {
   color: #666;
   font-size: 13px;
   text-align: right;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Mobile performance items - stack vertically */
+@media (max-width: 768px) {
+  .performance-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 12px 0;
+  }
+
+  .performance-date {
+    min-width: auto;
+  }
+
+  .performance-venue {
+    margin: 0;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .performance-location {
+    text-align: left;
+  }
 }
 
 .no-songs {
