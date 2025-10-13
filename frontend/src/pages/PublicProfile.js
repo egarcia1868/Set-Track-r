@@ -416,7 +416,7 @@ const PublicProfile = () => {
               <span className="stat-number">
                 {profileData.stats.totalConcerts}
               </span>
-              <span className="stat-label">Concerts</span>
+              <span className="stat-label">Performances</span>
             </div>
             <div className="stat">
               <span className="stat-number">
