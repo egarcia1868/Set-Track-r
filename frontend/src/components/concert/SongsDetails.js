@@ -15,14 +15,18 @@ const SongsDetails = ({ concerts }) => {
           if (!songOccurrences[songName]) {
             songOccurrences[songName] = {
               count: 0,
-              concerts: []
+              concerts: [],
             };
           }
           songOccurrences[songName].count++;
           songOccurrences[songName].concerts.push({
-            venue: typeof concert.venue === 'object' ? concert.venue.name : concert.venue,
-            city: typeof concert.venue === 'object' ? concert.venue.city?.name : '',
-            date: concert.eventDate
+            venue:
+              typeof concert.venue === "object"
+                ? concert.venue.name
+                : concert.venue,
+            city:
+              typeof concert.venue === "object" ? concert.venue.city?.name : "",
+            date: concert.eventDate,
           });
         });
       });
@@ -31,7 +35,7 @@ const SongsDetails = ({ concerts }) => {
     return Object.entries(songOccurrences).map(([name, data]) => ({
       name,
       count: data.count,
-      concerts: data.concerts
+      concerts: data.concerts,
     }));
   }
 
@@ -89,12 +93,14 @@ const SongsDetails = ({ concerts }) => {
           <>
             <tr
               key={`table-row-${song.name}`}
-              onClick={() => setExpandedSong(expandedSong === song.name ? null : song.name)}
-              style={{ cursor: 'pointer' }}
-              className={expandedSong === song.name ? 'song-row-expanded' : ''}
+              onClick={() =>
+                setExpandedSong(expandedSong === song.name ? null : song.name)
+              }
+              style={{ cursor: "pointer" }}
+              className={expandedSong === song.name ? "song-row-expanded" : ""}
             >
               <td>
-                {song.name} {expandedSong === song.name ? '▼' : '▶'}
+                {song.name} {expandedSong === song.name ? "▼" : "▶"}
               </td>
               <td>{song.count}</td>
             </tr>

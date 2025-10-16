@@ -25,15 +25,30 @@ const ArtistImageCarousel = ({ concerts }) => {
   const thirdRowImages = images.slice(16);
 
   // Duplicate for seamless loop
-  const firstRowDuplicated = [...firstRowImages, ...firstRowImages, ...firstRowImages];
-  const secondRowDuplicated = [...secondRowImages, ...secondRowImages, ...secondRowImages];
-  const thirdRowDuplicated = [...thirdRowImages, ...thirdRowImages, ...thirdRowImages];
+  const firstRowDuplicated = [
+    ...firstRowImages,
+    ...firstRowImages,
+    ...firstRowImages,
+  ];
+  const secondRowDuplicated = [
+    ...secondRowImages,
+    ...secondRowImages,
+    ...secondRowImages,
+  ];
+  const thirdRowDuplicated = [
+    ...thirdRowImages,
+    ...thirdRowImages,
+    ...thirdRowImages,
+  ];
 
   return (
     <div className="artist-carousel-background">
       <div className="artist-carousel-track">
         {firstRowDuplicated.map((image, index) => (
-          <div key={`row1-${image.name}-${index}`} className="artist-carousel-item">
+          <div
+            key={`row1-${image.name}-${index}`}
+            className="artist-carousel-item"
+          >
             <img
               src={image.url}
               alt={image.name}
@@ -46,7 +61,10 @@ const ArtistImageCarousel = ({ concerts }) => {
       {secondRowImages.length > 0 && (
         <div className="artist-carousel-track artist-carousel-track-second">
           {secondRowDuplicated.map((image, index) => (
-            <div key={`row2-${image.name}-${index}`} className="artist-carousel-item">
+            <div
+              key={`row2-${image.name}-${index}`}
+              className="artist-carousel-item"
+            >
               <img
                 src={image.url}
                 alt={image.name}
@@ -60,7 +78,10 @@ const ArtistImageCarousel = ({ concerts }) => {
       {thirdRowImages.length > 0 && (
         <div className="artist-carousel-track artist-carousel-track-third">
           {thirdRowDuplicated.map((image, index) => (
-            <div key={`row3-${image.name}-${index}`} className="artist-carousel-item">
+            <div
+              key={`row3-${image.name}-${index}`}
+              className="artist-carousel-item"
+            >
               <img
                 src={image.url}
                 alt={image.name}

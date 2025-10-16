@@ -61,7 +61,11 @@ export const saveConcertsForUser = async ({ concertData, user }) => {
     if (isNewArtist) {
       try {
         const topAlbumsData = await getArtistTopAlbums(artistName);
-        if (topAlbumsData && topAlbumsData.topalbums && topAlbumsData.topalbums.album) {
+        if (
+          topAlbumsData &&
+          topAlbumsData.topalbums &&
+          topAlbumsData.topalbums.album
+        ) {
           const albums = topAlbumsData.topalbums.album;
 
           // Find the album with the highest playcount
@@ -78,14 +82,23 @@ export const saveConcertsForUser = async ({ concertData, user }) => {
 
           // Extract the extralarge image URL
           if (topAlbum && topAlbum.image && Array.isArray(topAlbum.image)) {
-            const extralargeImage = topAlbum.image.find(img => img.size === 'extralarge');
-            if (extralargeImage && extralargeImage['#text'] && extralargeImage['#text'].trim() !== '') {
-              artistDoc.topAlbumImage = extralargeImage['#text'];
+            const extralargeImage = topAlbum.image.find(
+              (img) => img.size === "extralarge",
+            );
+            if (
+              extralargeImage &&
+              extralargeImage["#text"] &&
+              extralargeImage["#text"].trim() !== ""
+            ) {
+              artistDoc.topAlbumImage = extralargeImage["#text"];
             }
           }
         }
       } catch (error) {
-        console.error(`Error fetching top album image for ${artistName}:`, error);
+        console.error(
+          `Error fetching top album image for ${artistName}:`,
+          error,
+        );
         // Continue without the image if there's an error
       }
     }
@@ -193,9 +206,7 @@ export const getArtistTopAlbums = async (artistName) => {
       format: "json",
     });
 
-    const response = await axios.get(
-      `${LASTFM_API_URL}?${params.toString()}`,
-    );
+    const response = await axios.get(`${LASTFM_API_URL}?${params.toString()}`);
 
     return response.data;
   } catch (error) {
