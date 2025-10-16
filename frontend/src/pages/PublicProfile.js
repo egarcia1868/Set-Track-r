@@ -527,10 +527,14 @@ const PublicProfile = () => {
                                   concert={concert}
                                   expandedSetlists={expandedSetlists}
                                   toggleSetlist={toggleSetlist}
-                                  handleShowOtherArtists={handleShowOtherArtists}
+                                  handleShowOtherArtists={
+                                    handleShowOtherArtists
+                                  }
                                   otherArtistsData={otherArtistsData}
                                   loadingOtherArtists={loadingOtherArtists}
-                                  handleRemoveFromMySets={removeConcertFromCollection}
+                                  handleRemoveFromMySets={
+                                    removeConcertFromCollection
+                                  }
                                   currentArtistName={null}
                                 />
                               ))}
@@ -548,7 +552,9 @@ const PublicProfile = () => {
                   <div key={artist.artistId} className="artist-details-content">
                     <div className="artist-details-header">
                       <div className="header-content-wrapper">
-                        <span className="artist-details-title">{artist.artistName}</span>
+                        <span className="artist-details-title">
+                          {artist.artistName}
+                        </span>
                         {artist.concerts.length > 1 && (
                           <button
                             className="see-all-songs-btn"

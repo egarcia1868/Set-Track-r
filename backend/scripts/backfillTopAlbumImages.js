@@ -43,7 +43,11 @@ async function backfillTopAlbumImages() {
         // Fetch top albums from Last.fm
         const topAlbumsData = await getArtistTopAlbums(artist.artistName);
 
-        if (topAlbumsData && topAlbumsData.topalbums && topAlbumsData.topalbums.album) {
+        if (
+          topAlbumsData &&
+          topAlbumsData.topalbums &&
+          topAlbumsData.topalbums.album
+        ) {
           const albums = topAlbumsData.topalbums.album;
 
           // Find the album with the highest playcount
@@ -73,7 +77,9 @@ async function backfillTopAlbumImages() {
               console.log(`  ✓ Saved image for ${artist.artistName}`);
               successCount++;
             } else {
-              console.log(`  ⊘ No extralarge image found for ${artist.artistName}`);
+              console.log(
+                `  ⊘ No extralarge image found for ${artist.artistName}`,
+              );
               skippedCount++;
             }
           } else {
@@ -85,7 +91,10 @@ async function backfillTopAlbumImages() {
           skippedCount++;
         }
       } catch (error) {
-        console.error(`  ✗ Error processing ${artist.artistName}:`, error.message);
+        console.error(
+          `  ✗ Error processing ${artist.artistName}:`,
+          error.message,
+        );
         failureCount++;
       }
 

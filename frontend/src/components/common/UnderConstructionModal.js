@@ -66,13 +66,7 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
         Improvement/s currently being worked:
       </h4>
       <ul>
-        <li>Find reliable api for artist images to display</li>
-        <li>
-          make sure on deployed site, "Other artists" on Artist page are
-          providing the add to/remove from my sets buttons correctly. -- seemes
-          to be working correctly. If experienced again, leave more detailed
-          notes to find issue.
-        </li>
+
       </ul>
       <h4 style={{ marginLeft: "1.5rem" }}>
         Planned upcoming improvements/bug fixes:
