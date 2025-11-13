@@ -66,16 +66,18 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
         Improvement/s currently being worked:
       </h4>
       <ul>
-
+        <li>ability to search users</li>
       </ul>
       <h4 style={{ marginLeft: "1.5rem" }}>
         Planned upcoming improvements/bug fixes:
       </h4>
       <ul>
-        <li>
+      <li>find users that have seen a specific artist or were at the same show.</li>
+      <li>chat between users</li>
+        {/* <li>
           add ability to remove specific songs from "seen" set (for accurate
           tracking if arrived late/left early)
-        </li>
+        </li> */}
       </ul>
       <form method="dialog" id="modal-actions">
         <button style={{ marginBottom: "2rem" }}>Close</button>
