@@ -67,11 +67,11 @@ router.get("/profile", checkJwt, getUserProfile);
 router.put("/profile", checkJwt, updateProfile);
 
 // Following/followers routes
-router.post("/follow/:userId", checkJwt, followUser);
-router.delete("/follow/:userId", checkJwt, unfollowUser);
+router.post("/follow/:displayName", checkJwt, followUser);
+router.delete("/follow/:displayName", checkJwt, unfollowUser);
 router.get("/following", checkJwt, getFollowing);
-router.get("/followers/:displayName?", getFollowers); // Optional auth, optional displayName
-router.get("/follow-status/:userId", checkJwt, getFollowStatus);
+router.get("/followers/:displayName?", checkJwt, getFollowers); // Requires auth
+router.get("/follow-status/:displayName", checkJwt, getFollowStatus);
 
 // User search
 router.get("/search", searchUsers);
