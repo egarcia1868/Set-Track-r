@@ -24,11 +24,8 @@ const FollowersList = ({ isOpen, onClose }) => {
         },
       });
 
-      console.log("Followers response:", response);
-
       if (response.ok) {
         const data = await response.json();
-        console.log("Followers data:", data);
         setFollowers(data.followers);
       }
     } catch (error) {

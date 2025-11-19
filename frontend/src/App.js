@@ -4,6 +4,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import ArtistConcerts from "./pages/ArtistConcerts";
 import Dashboard from "./pages/Dashboard";
 import PublicProfile from "./pages/PublicProfile";
+import Chat from "./pages/Chat";
 import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
 import PrivateRoute from "./components/common/PrivateRoute";
@@ -48,6 +49,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <ArtistConcerts />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/chat"
+              element={
+                <PrivateRoute>
+                  <Chat />
                 </PrivateRoute>
               }
             />

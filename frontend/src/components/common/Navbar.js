@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useAuth } from "../../context/AuthContext";
+import { useChat } from "../../context/ChatContext";
 
 const Navbar = () => {
   const { loginWithRedirect, logout } = useAuth0();
-  const { isAuthenticated, user, userProfile } = useAuth();
+  const { isAuthenticated, userProfile } = useAuth();
+  const { unreadCount } = useChat();
 
   // Get the display name: use database userProfile.name first, then fall back to Auth0 user.name
   const getDisplayName = () => {
@@ -24,6 +26,12 @@ const Navbar = () => {
           {isAuthenticated ? (
             <div className="nav-greeting">
               <p style={{ marginRight: "10px" }}>Hello, {getDisplayName()}</p>
+              <Link to="/chat" className="chat-link">
+                Messages
+                {unreadCount > 0 && (
+                  <span className="unread-badge-nav">{unreadCount}</span>
+                )}
+              </Link>
               <button
                 className="auth login"
                 onClick={() =>

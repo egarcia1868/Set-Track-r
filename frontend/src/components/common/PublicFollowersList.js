@@ -13,10 +13,14 @@ const PublicFollowersList = ({ isOpen, onClose, displayName }) => {
   }, [isOpen, displayName]);
 
   const fetchFollowers = async () => {
+    if (!displayName) {
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await fetch(
-        `${BASE_URL}/api/concerts/profile/${encodeURIComponent(displayName)}/followers`,
+        `${BASE_URL}/api/users/followers/${encodeURIComponent(displayName)}`,
       );
 
       if (response.ok) {

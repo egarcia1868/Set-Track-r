@@ -6,6 +6,7 @@ import App from "./App";
 import { ConcertsContextProvider } from "./context/ConcertsContext";
 import { AuthProvider } from "./context/AuthContext";
 import { UserConcertsProvider } from "./context/UserConcertsContext";
+import { ChatProvider } from "./context/ChatContext";
 
 const domain = process.env.REACT_APP_AUTH0_DOMAIN;
 const clientId = process.env.REACT_APP_AUTH0_CLIENT_ID;
@@ -28,7 +29,9 @@ root.render(
       <AuthProvider>
         <UserConcertsProvider>
           <ConcertsContextProvider>
-            <App />
+            <ChatProvider>
+              <App />
+            </ChatProvider>
           </ConcertsContextProvider>
         </UserConcertsProvider>
       </AuthProvider>

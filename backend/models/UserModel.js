@@ -39,6 +39,12 @@ const userSchema = new Schema({
       followedAt: { type: Date, default: Date.now },
     },
   ],
+  blockedUsers: [
+    {
+      userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+      blockedAt: { type: Date, default: Date.now },
+    },
+  ],
 });
 
 // Create a sparse unique index on displayName to ensure uniqueness while allowing empty values
