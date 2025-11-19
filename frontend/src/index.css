@@ -770,7 +770,7 @@ body,
 }
 
 .profile-header h1 {
-  margin: 0 0 10px 0;
+  margin: 0;
   color: #333;
   font-size: 2.5rem;
 }
@@ -808,11 +808,36 @@ body,
   cursor: not-allowed;
 }
 
+/* Message Button */
+.message-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-size: 32px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.message-btn:hover {
+  transform: scale(1.15);
+}
+
+.message-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
 /* Profile Actions Container */
 .profile-actions {
   display: flex;
   gap: 10px;
   align-items: center;
+  justify-content: center;
+  margin-top: 10px;
 }
 
 /* Following List Modal */

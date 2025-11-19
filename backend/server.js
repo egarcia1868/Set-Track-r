@@ -19,7 +19,7 @@ import conversationRoutes from "./routes/conversationRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import blockRoutes from "./routes/blockRoutes.js";
 import cookieParser from "cookie-parser";
-import { auth } from "express-oauth2-jwt-bearer";
+import { checkJwt } from "./middleware/auth.js";
 
 const app = express();
 const httpServer = createServer(app);
@@ -58,20 +58,14 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
-// JWT authentication middleware
-const jwtCheck = auth({
-  audience: process.env.AUTH0_AUDIENCE,
-  issuerBaseURL: `https://${process.env.AUTH0_DOMAIN}`,
-});
-
 // Public routes
 app.use("/api/concerts", concertRoutes);
 app.use("/api/users", userRoutes);
 
 // Protected chat routes (require authentication)
-app.use("/api/conversations", jwtCheck, conversationRoutes);
-app.use("/api/messages", jwtCheck, messageRoutes);
-app.use("/api/blocks", jwtCheck, blockRoutes);
+app.use("/api/conversations", checkJwt, conversationRoutes);
+app.use("/api/messages", checkJwt, messageRoutes);
+app.use("/api/blocks", checkJwt, blockRoutes);
 
 // Add a simple test route for backend
 app.get("/", (req, res) => {
@@ -160,3 +154,5 @@ mongoose
     process.exit(1);
   });
 // trigger restart - updated
+
+ 

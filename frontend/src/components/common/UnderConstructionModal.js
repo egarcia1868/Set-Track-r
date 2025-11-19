@@ -67,11 +67,13 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
       </h4>
       <ul>
         <li>ability to search users</li>
+        <li>add ability to block users from chatting</li>
       </ul>
       <h4 style={{ marginLeft: "1.5rem" }}>
         Planned upcoming improvements/bug fixes:
       </h4>
       <ul>
+      <li>add ability to block users from viewing your profile page.  (will require a follower approval or changing to a "friend" system)</li>
       <li>find users that have seen a specific artist or were at the same show.</li>
       <li>chat between users</li>
         {/* <li>

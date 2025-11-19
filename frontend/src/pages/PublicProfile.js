@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useUserConcerts } from "../context/UserConcertsContext";
+import { useChat } from "../context/ChatContext";
 import { BASE_URL } from "../utils/config";
 import ArtistStatsModal from "../components/common/ArtistStatsModal";
 import AllSongsModal from "../components/common/AllSongsModal";
@@ -11,7 +12,9 @@ import ArtistImageCarousel from "../components/common/ArtistImageCarousel";
 
 const PublicProfile = () => {
   const { username } = useParams();
+  const navigate = useNavigate();
   const { isAuthenticated, user, getAccessTokenSilently } = useAuth();
+  const { startConversation } = useChat();
   const {
     isAlreadySaved,
     addConcertToCollection,
@@ -33,6 +36,7 @@ const PublicProfile = () => {
   const [currentUserProfile, setCurrentUserProfile] = useState(null);
   const [otherArtistsData, setOtherArtistsData] = useState({});
   const [loadingOtherArtists, setLoadingOtherArtists] = useState({});
+  const [messageLoading, setMessageLoading] = useState(false);
 
   useEffect(() => {
     fetchPublicProfile();
@@ -292,6 +296,29 @@ const PublicProfile = () => {
     setFollowLoading(false);
   };
 
+  const handleMessage = async () => {
+    console.log("handleMessage clicked");
+    console.log("profileData:", profileData);
+    console.log("userId:", profileData?.profile?.userId);
+
+    if (!profileData?.profile?.userId) {
+      console.error("No userId found in profileData");
+      return;
+    }
+
+    setMessageLoading(true);
+    try {
+      console.log("Starting conversation with userId:", profileData.profile.userId);
+      await startConversation(profileData.profile.userId);
+      console.log("Conversation started, navigating to chat...");
+      navigate("/chat");
+    } catch (error) {
+      console.error("Error starting conversation:", error);
+    } finally {
+      setMessageLoading(false);
+    }
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return "Date unknown";
 
@@ -368,32 +395,47 @@ const PublicProfile = () => {
       <div className="profile-header">
         <div className="profile-header-top">
           <h1>{profileData.profile.displayName}</h1>
-          <div className="profile-actions">
-            {isAuthenticated &&
-              profileData?.profile?.displayName &&
-              user?.sub &&
-              currentUserProfile &&
-              currentUserProfile?.displayName !==
-                profileData?.profile?.displayName && (
-                <button
-                  className={`follow-btn ${isFollowing ? "following" : ""}`}
-                  onClick={isFollowing ? handleUnfollow : handleFollow}
-                  disabled={followLoading}
-                >
-                  {followLoading
-                    ? "Loading..."
-                    : isFollowing
-                      ? "Following"
-                      : "Follow"}
-                </button>
-              )}
-            <button
-              className="followers-btn"
-              onClick={() => setShowFollowersList(true)}
-            >
-              Followers
-            </button>
-          </div>
+          {isAuthenticated &&
+            profileData?.profile?.displayName &&
+            user?.sub &&
+            currentUserProfile &&
+            currentUserProfile?.displayName !==
+              profileData?.profile?.displayName && (
+              <button
+                className="message-btn"
+                onClick={handleMessage}
+                disabled={messageLoading}
+                title="Send message"
+              >
+                {messageLoading ? "..." : "💬"}
+              </button>
+            )}
+        </div>
+        <div className="profile-actions">
+          {isAuthenticated &&
+            profileData?.profile?.displayName &&
+            user?.sub &&
+            currentUserProfile &&
+            currentUserProfile?.displayName !==
+              profileData?.profile?.displayName && (
+              <button
+                className={`follow-btn ${isFollowing ? "following" : ""}`}
+                onClick={isFollowing ? handleUnfollow : handleFollow}
+                disabled={followLoading}
+              >
+                {followLoading
+                  ? "Loading..."
+                  : isFollowing
+                    ? "Following"
+                    : "Follow"}
+              </button>
+            )}
+          <button
+            className="followers-btn"
+            onClick={() => setShowFollowersList(true)}
+          >
+            Followers
+          </button>
         </div>
         {profileData.profile.bio && (
           <div className="profile-bio-container">

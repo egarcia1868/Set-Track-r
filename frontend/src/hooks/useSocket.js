@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { io } from "socket.io-client";
 import { BASE_URL } from "../utils/config";
 import { useAuth } from "../context/AuthContext";
@@ -52,34 +52,34 @@ export const useSocket = () => {
   /**
    * Join a conversation room
    */
-  const joinConversation = (conversationId) => {
+  const joinConversation = useCallback((conversationId) => {
     if (socketRef.current && conversationId) {
       socketRef.current.emit("conversation:join", conversationId);
     }
-  };
+  }, []);
 
   /**
    * Leave a conversation room
    */
-  const leaveConversation = (conversationId) => {
+  const leaveConversation = useCallback((conversationId) => {
     if (socketRef.current && conversationId) {
       socketRef.current.emit("conversation:leave", conversationId);
     }
-  };
+  }, []);
 
   /**
    * Send a message via socket (for real-time broadcasting)
    */
-  const sendMessage = (conversationId, message) => {
+  const sendMessage = useCallback((conversationId, message) => {
     if (socketRef.current && conversationId && message) {
       socketRef.current.emit("message:send", { conversationId, message });
     }
-  };
+  }, []);
 
   /**
    * Listen for new messages
    */
-  const onNewMessage = (callback) => {
+  const onNewMessage = useCallback((callback) => {
     if (socketRef.current) {
       socketRef.current.on("message:new", callback);
 
@@ -88,12 +88,12 @@ export const useSocket = () => {
         socketRef.current.off("message:new", callback);
       };
     }
-  };
+  }, []);
 
   /**
    * Emit typing indicator
    */
-  const emitTyping = (conversationId, isTyping) => {
+  const emitTyping = useCallback((conversationId, isTyping) => {
     if (socketRef.current && conversationId && userProfile) {
       if (isTyping) {
         socketRef.current.emit("typing:start", {
@@ -108,12 +108,12 @@ export const useSocket = () => {
         });
       }
     }
-  };
+  }, [userProfile]);
 
   /**
    * Listen for typing indicators
    */
-  const onTypingUpdate = (callback) => {
+  const onTypingUpdate = useCallback((callback) => {
     if (socketRef.current) {
       socketRef.current.on("typing:update", callback);
 
@@ -122,7 +122,7 @@ export const useSocket = () => {
         socketRef.current.off("typing:update", callback);
       };
     }
-  };
+  }, []);
 
   return {
     socket: socketRef.current,

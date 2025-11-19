@@ -21,10 +21,17 @@ export const getConversations = async (req, res) => {
       .lean();
 
     // Add unread count for current user
-    const conversationsWithUnread = conversations.map((conv) => ({
-      ...conv,
-      unreadCount: conv.unreadCount?.get(currentUser._id.toString()) || 0,
-    }));
+    const conversationsWithUnread = conversations.map((conv) => {
+      // Handle both Map and plain object formats
+      const unreadMap = conv.unreadCount instanceof Map
+        ? conv.unreadCount
+        : new Map(Object.entries(conv.unreadCount || {}));
+
+      return {
+        ...conv,
+        unreadCount: unreadMap.get(currentUser._id.toString()) || 0,
+      };
+    });
 
     res.json(conversationsWithUnread);
   } catch (error) {

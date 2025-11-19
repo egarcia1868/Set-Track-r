@@ -6,7 +6,13 @@ import MessageInput from "./MessageInput";
 import "./Chat.css";
 
 export default function ChatWindow() {
-  const { activeConversation, messages, fetchMessages, markAsRead } = useChat();
+  const {
+    activeConversation,
+    messages,
+    fetchMessages,
+    markAsRead,
+    addIncomingMessage,
+  } = useChat();
   const { userProfile } = useAuth();
   const { joinConversation, leaveConversation, onNewMessage, onTypingUpdate } =
     useSocket();
@@ -46,17 +52,15 @@ export default function ChatWindow() {
   // Listen for real-time messages
   useEffect(() => {
     const cleanup = onNewMessage((newMessage) => {
-      // Message will be added via ChatContext's sendMessage
-      // But we could also handle incoming messages from other users here
+      // Add incoming message from other users directly to local state
       console.log("New message received:", newMessage);
-      // Optionally fetch messages again to update
-      if (activeConversation) {
-        fetchMessages(activeConversation._id);
+      if (activeConversation && newMessage.conversationId) {
+        addIncomingMessage(newMessage.conversationId, newMessage);
       }
     });
 
     return cleanup;
-  }, [onNewMessage, activeConversation, fetchMessages]);
+  }, [onNewMessage, activeConversation, addIncomingMessage]);
 
   // Listen for typing indicators
   useEffect(() => {

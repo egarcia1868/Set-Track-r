@@ -211,26 +211,25 @@ export const ChatProvider = ({ children }) => {
           getAccessTokenSilently,
         );
 
-        // Update local unread count
+        // Update local unread count and get the previous unread count
+        let previousUnread = 0;
         setConversations((prev) =>
           prev.map((conv) => {
             if (conv._id === conversationId) {
+              previousUnread = conv.unreadCount || 0;
               return { ...conv, unreadCount: 0 };
             }
             return conv;
           }),
         );
 
-        // Recalculate total unread
-        setUnreadCount((prev) => {
-          const conv = conversations.find((c) => c._id === conversationId);
-          return Math.max(0, prev - (conv?.unreadCount || 0));
-        });
+        // Recalculate total unread by subtracting the previous unread count
+        setUnreadCount((prev) => Math.max(0, prev - previousUnread));
       } catch (err) {
         console.error("Error marking messages as read:", err);
       }
     },
-    [getAccessTokenSilently, conversations],
+    [getAccessTokenSilently],
   );
 
   /**
@@ -256,6 +255,33 @@ export const ChatProvider = ({ children }) => {
     },
     [getAccessTokenSilently],
   );
+
+  /**
+   * Add an incoming message from Socket.io to local state
+   */
+  const addIncomingMessage = useCallback((conversationId, message) => {
+    setMessages((prev) => ({
+      ...prev,
+      [conversationId]: [...(prev[conversationId] || []), message],
+    }));
+
+    // Update conversation's last message
+    setConversations((prev) =>
+      prev.map((conv) => {
+        if (conv._id === conversationId) {
+          return {
+            ...conv,
+            lastMessage: {
+              text: message.text,
+              sender: message.sender,
+              sentAt: message.createdAt,
+            },
+          };
+        }
+        return conv;
+      }),
+    );
+  }, []);
 
   // ==================== REAL-TIME POLLING ====================
 
@@ -291,6 +317,7 @@ export const ChatProvider = ({ children }) => {
     sendMessage,
     markAsRead,
     removeMessage,
+    addIncomingMessage,
 
     // Utility
     refreshChat,
