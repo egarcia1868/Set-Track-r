@@ -136,8 +136,9 @@ io.on("connection", (socket) => {
   });
 });
 
-// Make io accessible to routes (for emitting events from REST endpoints)
+// Make io and connectedUsers accessible to routes (for emitting events from REST endpoints)
 app.set("io", io);
+app.set("connectedUsers", connectedUsers);
 
 //connect to db
 mongoose

@@ -1,17 +1,16 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { createContext, useContext, useEffect, useRef, useState, useCallback } from "react";
 import { io } from "socket.io-client";
 import { BASE_URL } from "../utils/config";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "./AuthContext";
 
-/**
- * Custom hook for Socket.io real-time messaging
- * Handles connection, disconnection, and event listeners
- */
-export const useSocket = () => {
+const SocketContext = createContext();
+
+export const SocketProvider = ({ children }) => {
   const socketRef = useRef(null);
   const { userProfile } = useAuth();
   const [isConnected, setIsConnected] = useState(false);
 
+  // Initialize socket connection once
   useEffect(() => {
     if (!userProfile?._id) return;
 
@@ -99,7 +98,7 @@ export const useSocket = () => {
         socketRef.current.emit("typing:start", {
           conversationId,
           userId: userProfile._id,
-          displayName: userProfile.profile?.displayName || "User",
+          displayName: userProfile.displayName || userProfile.profile?.displayName || "User",
         });
       } else {
         socketRef.current.emit("typing:stop", {
@@ -124,7 +123,7 @@ export const useSocket = () => {
     }
   }, []);
 
-  return {
+  const value = {
     socket: socketRef.current,
     isConnected,
     joinConversation,
@@ -134,4 +133,14 @@ export const useSocket = () => {
     emitTyping,
     onTypingUpdate,
   };
+
+  return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>;
+};
+
+export const useSocket = () => {
+  const context = useContext(SocketContext);
+  if (!context) {
+    throw new Error("useSocket must be used within a SocketProvider");
+  }
+  return context;
 };

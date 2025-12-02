@@ -1,11 +1,20 @@
-import { createContext, useContext, useState, useCallback } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
 import { useAuth } from "./AuthContext";
+import { useSocket } from "./SocketContext";
 import * as chatApi from "../utils/chatApi";
 
 const ChatContext = createContext();
 
 export const ChatProvider = ({ children }) => {
-  const { getAccessTokenSilently } = useAuth();
+  const { getAccessTokenSilently, isAuthenticated, userProfile } = useAuth();
+  const { onNewMessage, isConnected: isSocketConnected } = useSocket();
 
   // State
   const [conversations, setConversations] = useState([]);
@@ -14,6 +23,7 @@ export const ChatProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [unreadCount, setUnreadCount] = useState(0);
+  const hasFetchedRef = useRef(false);
 
   // ==================== CONVERSATIONS ====================
 
@@ -260,10 +270,23 @@ export const ChatProvider = ({ children }) => {
    * Add an incoming message from Socket.io to local state
    */
   const addIncomingMessage = useCallback((conversationId, message) => {
-    setMessages((prev) => ({
-      ...prev,
-      [conversationId]: [...(prev[conversationId] || []), message],
-    }));
+    setMessages((prev) => {
+      const existingMessages = prev[conversationId] || [];
+
+      // Check if message already exists (prevent duplicates)
+      const messageExists = existingMessages.some(
+        (msg) => msg._id === message._id,
+      );
+
+      if (messageExists) {
+        return prev; // Don't add duplicate
+      }
+
+      return {
+        ...prev,
+        [conversationId]: [...existingMessages, message],
+      };
+    });
 
     // Update conversation's last message
     setConversations((prev) =>
@@ -294,6 +317,67 @@ export const ChatProvider = ({ children }) => {
       await fetchMessages(activeConversation._id);
     }
   }, [fetchConversations, fetchMessages, activeConversation]);
+
+  // ==================== INITIALIZATION ====================
+
+  /**
+   * Fetch conversations once when authenticated to populate unread count
+   * Uses ref to prevent re-fetching on every render
+   */
+  useEffect(() => {
+    if (isAuthenticated && !hasFetchedRef.current) {
+      hasFetchedRef.current = true;
+      fetchConversations();
+    }
+  }, [isAuthenticated, fetchConversations]);
+
+  /**
+   * Listen for incoming messages globally and update unread count
+   */
+  useEffect(() => {
+    if (!isAuthenticated || !userProfile || !isSocketConnected) {
+      return;
+    }
+
+    const cleanup = onNewMessage((newMessage) => {
+      if (!newMessage.conversationId) return;
+
+      // Check if this message is from the current user
+      const isOwnMessage = String(newMessage.sender?._id) === String(userProfile._id);
+
+      // SKIP OWN MESSAGES - they're already added by the REST API when we send them
+      if (isOwnMessage) return;
+
+      // This is a message from another user - add it to local state
+      addIncomingMessage(newMessage.conversationId, newMessage);
+
+      // Check if the message is for a conversation that's NOT currently active
+      const isForInactiveConversation =
+        !activeConversation ||
+        String(newMessage.conversationId) !== String(activeConversation._id);
+
+      // Increment unread count if message is for an inactive conversation
+      if (isForInactiveConversation) {
+        // Increment the conversation's unread count
+        setConversations((prev) =>
+          prev.map((conv) => {
+            if (String(conv._id) === String(newMessage.conversationId)) {
+              return {
+                ...conv,
+                unreadCount: (conv.unreadCount || 0) + 1,
+              };
+            }
+            return conv;
+          })
+        );
+
+        // Increment total unread count
+        setUnreadCount((prev) => prev + 1);
+      }
+    });
+
+    return cleanup;
+  }, [onNewMessage, addIncomingMessage, activeConversation, isAuthenticated, userProfile, isSocketConnected]);
 
   // ==================== CONTEXT VALUE ====================
 

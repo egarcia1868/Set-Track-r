@@ -102,6 +102,34 @@ export const sendMessage = async (req, res) => {
     // Populate sender info before returning
     await newMessage.populate("sender", "profile.displayName");
 
+    // Emit socket event to notify all participants
+    const io = req.app.get("io");
+    if (io) {
+      const messageData = {
+        ...newMessage.toObject(),
+        conversationId: conversationId.toString(),
+      };
+
+      // Emit to conversation room (for users with chat open)
+      io.to(conversationId.toString()).emit("message:new", messageData);
+
+      // Also emit directly to each participant's personal socket (for global notifications)
+      const connectedUsers = req.app.get("connectedUsers");
+      if (connectedUsers) {
+        conversation.participants.forEach((participant) => {
+          // Don't send to the sender
+          if (!participant.userId.equals(currentUser._id)) {
+            const recipientSocketId = connectedUsers.get(
+              participant.userId.toString()
+            );
+            if (recipientSocketId) {
+              io.to(recipientSocketId).emit("message:new", messageData);
+            }
+          }
+        });
+      }
+    }
+
     res.status(201).json(newMessage);
   } catch (error) {
     console.error("Error sending message:", error);

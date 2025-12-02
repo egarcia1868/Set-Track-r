@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+} from "react";
 import { useAuth } from "./AuthContext";
 import { BASE_URL } from "../utils/config";
 
@@ -19,20 +26,22 @@ export const UserConcertsProvider = ({ children }) => {
   const [userConcerts, setUserConcerts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [cacheTimestamp, setCacheTimestamp] = useState(null);
+  const hasFetchedRef = useRef(false);
 
-  // Cache duration: 5 minutes
-  const CACHE_DURATION = 5 * 60 * 1000;
+  // Cache duration: 10 minutes
+  const CACHE_DURATION = 10 * 60 * 1000;
 
-  const clearCache = () => {
+  const clearCache = useCallback(() => {
     setCacheTimestamp(null);
-  };
+    hasFetchedRef.current = false;
+  }, []);
 
-  const isCacheValid = () => {
+  const isCacheValid = useCallback(() => {
     if (!cacheTimestamp) return false;
     return Date.now() - cacheTimestamp < CACHE_DURATION;
-  };
+  }, [cacheTimestamp, CACHE_DURATION]);
 
-  const fetchUserConcerts = async (forceRefresh = false) => {
+  const fetchUserConcerts = useCallback(async (forceRefresh = false) => {
     if (!isAuthenticated) {
       setUserConcerts([]);
       clearCache();
@@ -41,9 +50,11 @@ export const UserConcertsProvider = ({ children }) => {
 
     // Use cache if valid and not forcing refresh
     if (!forceRefresh && isCacheValid() && userConcerts.length > 0) {
+      console.log("✅ Using CACHED concerts - no API call");
       return;
     }
 
+    console.log("🔄 Fetching concerts from API...");
     setIsLoading(true);
     try {
       const token = await getAccessTokenSilently();
@@ -69,7 +80,7 @@ export const UserConcertsProvider = ({ children }) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [isAuthenticated, isCacheValid, userConcerts.length, getAccessTokenSilently, clearCache]);
 
   const isAlreadySaved = (setlist) => {
     return userConcerts.some((artist) =>
@@ -163,13 +174,14 @@ export const UserConcertsProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !hasFetchedRef.current) {
+      hasFetchedRef.current = true;
       fetchUserConcerts();
-    } else {
+    } else if (!isAuthenticated) {
       setUserConcerts([]);
       clearCache(); // Clear cache on logout
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, fetchUserConcerts, clearCache]);
 
   const value = {
     userConcerts,

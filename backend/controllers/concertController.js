@@ -216,11 +216,14 @@ export const getUserProfile = async (req, res) => {
 
 
     res.json({
-      profile: user.profile || {
-        displayName: "",
-        name: "",
-        bio: "",
-        isPublic: false,
+      profile: {
+        ...(user.profile || {
+          displayName: "",
+          name: "",
+          bio: "",
+          isPublic: false,
+        }),
+        _id: user._id, // Include user ID for chat functionality
       },
     });
   } catch (error) {
