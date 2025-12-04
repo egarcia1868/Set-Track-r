@@ -14,6 +14,17 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     if (!userProfile?._id) return;
 
+    // Prevent duplicate socket creation - if socket already exists and is connected, reuse it
+    if (socketRef.current && socketRef.current.connected) {
+      return;
+    }
+
+    // If socket exists but is disconnected, disconnect it properly first
+    if (socketRef.current) {
+      socketRef.current.disconnect();
+      socketRef.current = null;
+    }
+
     // Initialize socket connection
     const socket = io(BASE_URL, {
       transports: ["websocket", "polling"],
@@ -24,14 +35,12 @@ export const SocketProvider = ({ children }) => {
 
     // Connection events
     socket.on("connect", () => {
-      console.log("Socket connected:", socket.id);
       setIsConnected(true);
       // Register user with their ID
       socket.emit("user:join", userProfile._id);
     });
 
     socket.on("disconnect", () => {
-      console.log("Socket disconnected");
       setIsConnected(false);
     });
 
@@ -44,6 +53,7 @@ export const SocketProvider = ({ children }) => {
     return () => {
       if (socket) {
         socket.disconnect();
+        socketRef.current = null;
       }
     };
   }, [userProfile]);
@@ -94,11 +104,13 @@ export const SocketProvider = ({ children }) => {
    */
   const emitTyping = useCallback((conversationId, isTyping) => {
     if (socketRef.current && conversationId && userProfile) {
+      const displayName = userProfile.displayName || userProfile.profile?.displayName || userProfile.name || "User";
+
       if (isTyping) {
         socketRef.current.emit("typing:start", {
           conversationId,
           userId: userProfile._id,
-          displayName: userProfile.displayName || userProfile.profile?.displayName || "User",
+          displayName,
         });
       } else {
         socketRef.current.emit("typing:stop", {
