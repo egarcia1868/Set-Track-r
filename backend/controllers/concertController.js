@@ -183,6 +183,7 @@ export const getPublicProfile = async (req, res) => {
       profile: {
         displayName: user.profile.displayName || "Music Fan",
         bio: user.profile.bio,
+        userId: user._id, // Include userId for messaging
       },
       concerts: concertData,
       stats: {
@@ -206,17 +207,23 @@ export const getUserProfile = async (req, res) => {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    const user = await User.findOne({ auth0Id });
+    let user = await User.findOne({ auth0Id });
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      // Auto-create user record if it doesn't exist
+      user = new User({ auth0Id, artistsSeenLive: [] });
+      await user.save();
     }
 
+
     res.json({
-      profile: user.profile || {
-        displayName: "",
-        name: "",
-        bio: "",
-        isPublic: false,
+      profile: {
+        ...(user.profile || {
+          displayName: "",
+          name: "",
+          bio: "",
+          isPublic: false,
+        }),
+        _id: user._id, // Include user ID for chat functionality
       },
     });
   } catch (error) {

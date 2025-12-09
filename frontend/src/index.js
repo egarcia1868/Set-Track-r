@@ -6,6 +6,7 @@ import App from "./App";
 import { ConcertsContextProvider } from "./context/ConcertsContext";
 import { AuthProvider } from "./context/AuthContext";
 import { UserConcertsProvider } from "./context/UserConcertsContext";
+import { SocketProvider } from "./context/SocketContext";
 import { ChatProvider } from "./context/ChatContext";
 
 const domain = process.env.REACT_APP_AUTH0_DOMAIN;
@@ -27,13 +28,15 @@ root.render(
       scope="openid profile email"
     >
       <AuthProvider>
-        <UserConcertsProvider>
-          <ConcertsContextProvider>
-            <ChatProvider>
-              <App />
-            </ChatProvider>
-          </ConcertsContextProvider>
-        </UserConcertsProvider>
+        <SocketProvider>
+          <UserConcertsProvider>
+            <ConcertsContextProvider>
+              <ChatProvider>
+                <App />
+              </ChatProvider>
+            </ConcertsContextProvider>
+          </UserConcertsProvider>
+        </SocketProvider>
       </AuthProvider>
     </Auth0Provider>
   </React.StrictMode>,

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useChat } from "../../context/ChatContext";
-import { useSocket } from "../../hooks/useSocket";
+import { useSocket } from "../../context/SocketContext";
 import "./Chat.css";
 
 export default function MessageInput({ conversationId }) {

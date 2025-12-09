@@ -1,18 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 import { useChat } from "../../context/ChatContext";
 import { useAuth } from "../../context/AuthContext";
-import { useSocket } from "../../hooks/useSocket";
+import { useSocket } from "../../context/SocketContext";
 import MessageInput from "./MessageInput";
 import "./Chat.css";
 
 export default function ChatWindow() {
-  const { activeConversation, messages, fetchMessages, markAsRead } = useChat();
+  const {
+    activeConversation,
+    messages,
+    fetchMessages,
+    markAsRead,
+  } = useChat();
   const { userProfile } = useAuth();
-  const { joinConversation, leaveConversation, onNewMessage, onTypingUpdate } =
+  const { joinConversation, leaveConversation, onTypingUpdate, isConnected: isSocketConnected } =
     useSocket();
   const messagesEndRef = useRef(null);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const [typingUser, setTypingUser] = useState(null);
+  const typingTimeoutRef = useRef(null);
 
   // Fetch messages when conversation changes
   useEffect(() => {
@@ -43,40 +49,43 @@ export default function ChatWindow() {
     leaveConversation,
   ]);
 
-  // Listen for real-time messages
-  useEffect(() => {
-    const cleanup = onNewMessage((newMessage) => {
-      // Message will be added via ChatContext's sendMessage
-      // But we could also handle incoming messages from other users here
-      console.log("New message received:", newMessage);
-      // Optionally fetch messages again to update
-      if (activeConversation) {
-        fetchMessages(activeConversation._id);
-      }
-    });
-
-    return cleanup;
-  }, [onNewMessage, activeConversation, fetchMessages]);
+  // Note: Message listening is now handled globally in ChatContext
+  // We don't need to listen here anymore to avoid duplicates
 
   // Listen for typing indicators
   useEffect(() => {
+    if (!isSocketConnected) {
+      return;
+    }
+
     const cleanup = onTypingUpdate((data) => {
+      // Don't show typing indicator for yourself
+      if (String(data.userId) === String(userProfile?._id)) {
+        return;
+      }
+
+      // Clear any existing timeout
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+
       if (data.isTyping) {
         setTypingUser(data.displayName);
-        // Clear typing indicator after 3 seconds
-        setTimeout(() => setTypingUser(null), 3000);
       } else {
-        setTypingUser(null);
+        // Add a 1 second delay before clearing to make it more visible
+        typingTimeoutRef.current = setTimeout(() => {
+          setTypingUser(null);
+        }, 1000);
       }
     });
 
     return cleanup;
-  }, [onTypingUpdate]);
+  }, [onTypingUpdate, userProfile, isSocketConnected]);
 
-  // Scroll to bottom when messages change
+  // Scroll to bottom when messages change or typing indicator appears
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, activeConversation]);
+  }, [messages, activeConversation, typingUser]);
 
   if (!activeConversation) {
     return (
@@ -91,7 +100,7 @@ export default function ChatWindow() {
 
   const conversationMessages = messages[activeConversation._id] || [];
   const otherParticipant = activeConversation.participants.find(
-    (p) => p.userId !== userProfile?._id,
+    (p) => String(p.userId) !== String(userProfile?._id),
   );
 
   const formatMessageTime = (timestamp) => {

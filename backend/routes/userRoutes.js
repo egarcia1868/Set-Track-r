@@ -11,51 +11,81 @@ import {
   searchUsers,
 } from "../controllers/concertController.js";
 
+// Cache for Auth0 userinfo responses to avoid rate limiting
+const userInfoCache = new Map();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 // Simple middleware to extract user ID from Auth0 token
 const checkJwt = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.replace("Bearer ", "");
     if (!token) {
+      console.log("❌ No token provided");
       return res.status(401).json({ error: "Authorization token required" });
     }
 
-    // For encrypted JWE tokens, we need to get the user info from Auth0's userinfo endpoint
-    const parts = token.split(".");
-    if (parts.length === 5) {
-      // JWE format
-      try {
-        // Make request to Auth0 userinfo endpoint to get user details
-        const userinfoUrl = `https://${process.env.AUTH0_DOMAIN}/userinfo`;
-        const response = await fetch(userinfoUrl, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+    // Try to decode the token locally first (works for both JWT and some JWE formats)
+    const decoded = jwt.decode(token);
 
-        if (response.ok) {
-          const userInfo = await response.json();
-          req.auth = { payload: { sub: userInfo.sub } };
-        } else {
-          return res
-            .status(401)
-            .json({ error: "Invalid token - could not get user info" });
-        }
-      } catch (e) {
-        console.error("Error getting user info:", e);
-        return res.status(401).json({ error: "Invalid token format" });
-      }
+    if (decoded && decoded.sub) {
+      // Successfully decoded locally
+      console.log(`✅ Decoded token locally for: ${decoded.sub}`);
+      req.auth = { payload: { sub: decoded.sub } };
     } else {
-      // Try regular JWT decode
-      const decoded = jwt.decode(token);
-      if (decoded && decoded.sub) {
-        req.auth = { payload: { sub: decoded.sub } };
+      // Token couldn't be decoded locally, check cache first
+      const cached = userInfoCache.get(token);
+      if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+        console.log(`✅ Using cached user info for: ${cached.sub}`);
+        req.auth = { payload: { sub: cached.sub } };
       } else {
-        return res.status(401).json({ error: "Invalid token format" });
+        // Last resort: fetch from Auth0 (for encrypted JWE tokens)
+        try {
+          const userinfoUrl = `https://${process.env.AUTH0_DOMAIN}/userinfo`;
+          console.log(`🔍 Fetching user info from Auth0 (token couldn't be decoded locally)`);
+          const response = await fetch(userinfoUrl, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          console.log(`🔍 Auth0 userinfo response status: ${response.status}`);
+          if (response.ok) {
+            const userInfo = await response.json();
+            console.log(`✅ Got user info from Auth0 for: ${userInfo.sub}`);
+
+            // Cache the result by token
+            userInfoCache.set(token, {
+              sub: userInfo.sub,
+              timestamp: Date.now(),
+            });
+
+            // Clean up old cache entries periodically
+            if (userInfoCache.size > 100) {
+              const now = Date.now();
+              for (const [key, value] of userInfoCache.entries()) {
+                if (now - value.timestamp >= CACHE_TTL) {
+                  userInfoCache.delete(key);
+                }
+              }
+            }
+
+            req.auth = { payload: { sub: userInfo.sub } };
+          } else {
+            const errorText = await response.text();
+            console.error(`❌ Auth0 rejected token: ${response.status} - ${errorText}`);
+            return res
+              .status(401)
+              .json({ error: "Invalid token - could not get user info" });
+          }
+        } catch (e) {
+          console.error("❌ Error getting user info:", e);
+          return res.status(401).json({ error: "Invalid token format" });
+        }
       }
     }
     next();
   } catch (error) {
-    console.error("Token processing error:", error);
+    console.error("❌ Token processing error:", error);
     return res.status(401).json({ error: "Invalid token" });
   }
 };

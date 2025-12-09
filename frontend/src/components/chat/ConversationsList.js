@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { useChat } from "../../context/ChatContext";
+import { useAuth } from "../../context/AuthContext";
 import "./Chat.css";
 
-export default function ConversationsList({ onSelectConversation }) {
+export default function ConversationsList() {
   const {
     conversations,
     activeConversation,
@@ -10,6 +11,7 @@ export default function ConversationsList({ onSelectConversation }) {
     selectConversation,
     loading,
   } = useChat();
+  const { userProfile } = useAuth();
 
   useEffect(() => {
     fetchConversations();
@@ -17,9 +19,6 @@ export default function ConversationsList({ onSelectConversation }) {
 
   const handleSelectConversation = (conversation) => {
     selectConversation(conversation);
-    if (onSelectConversation) {
-      onSelectConversation(conversation);
-    }
   };
 
   const formatTimestamp = (timestamp) => {
@@ -66,9 +65,11 @@ export default function ConversationsList({ onSelectConversation }) {
       <div className="conversations-container">
         {conversations.map((conversation) => {
           // Find the other participant (not current user)
+          // Convert both to strings for comparison
           const otherParticipant = conversation.participants.find(
-            (p) => p.userId !== conversation.currentUserId,
+            (p) => String(p.userId) !== String(userProfile?._id),
           );
+
           const isActive =
             activeConversation && activeConversation._id === conversation._id;
           const hasUnread = (conversation.unreadCount || 0) > 0;
