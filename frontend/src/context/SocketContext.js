@@ -136,7 +136,6 @@ export const SocketProvider = ({ children }) => {
   }, []);
 
   const value = {
-    socket: socketRef.current,
     isConnected,
     joinConversation,
     leaveConversation,

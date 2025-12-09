@@ -13,7 +13,7 @@ export default function ChatWindow() {
     markAsRead,
   } = useChat();
   const { userProfile } = useAuth();
-  const { joinConversation, leaveConversation, onNewMessage, onTypingUpdate, isConnected: isSocketConnected } =
+  const { joinConversation, leaveConversation, onTypingUpdate, isConnected: isSocketConnected } =
     useSocket();
   const messagesEndRef = useRef(null);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
@@ -82,10 +82,10 @@ export default function ChatWindow() {
     return cleanup;
   }, [onTypingUpdate, userProfile, isSocketConnected]);
 
-  // Scroll to bottom when messages change
+  // Scroll to bottom when messages change or typing indicator appears
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, activeConversation]);
+  }, [messages, activeConversation, typingUser]);
 
   if (!activeConversation) {
     return (

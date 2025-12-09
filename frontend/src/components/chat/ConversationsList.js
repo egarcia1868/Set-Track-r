@@ -3,7 +3,7 @@ import { useChat } from "../../context/ChatContext";
 import { useAuth } from "../../context/AuthContext";
 import "./Chat.css";
 
-export default function ConversationsList({ onSelectConversation }) {
+export default function ConversationsList() {
   const {
     conversations,
     activeConversation,
@@ -19,9 +19,6 @@ export default function ConversationsList({ onSelectConversation }) {
 
   const handleSelectConversation = (conversation) => {
     selectConversation(conversation);
-    if (onSelectConversation) {
-      onSelectConversation(conversation);
-    }
   };
 
   const formatTimestamp = (timestamp) => {
