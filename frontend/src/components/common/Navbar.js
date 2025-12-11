@@ -26,7 +26,10 @@ const Navbar = () => {
           {isAuthenticated ? (
             <div className="nav-greeting">
               <p style={{ marginRight: "10px" }}>Hello, {getDisplayName()}</p>
-              <Link to="/chat" className="chat-link">
+              <Link to="/search-users" className="nav-link">
+                Search Users
+              </Link>
+              <Link to="/chat" className="nav-link">
                 Messages
                 {unreadCount > 0 && (
                   <span className="unread-badge-nav">{unreadCount}</span>

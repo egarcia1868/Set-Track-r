@@ -1,0 +1,637 @@
+/* Base Dialog Styles */
+dialog {
+  width: 80%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+#modal {
+  width: 50%;
+  border: none;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  animation: fade-slide-in-from-top 0.3s ease-in-out;
+}
+
+#modal::backdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+#modal h2 {
+  font-size: 1.5rem;
+  color: #1aac83;
+  text-transform: uppercase;
+  margin: 0;
+  text-align: center;
+}
+
+#modal form {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+#modal form button {
+  background: transparent;
+  border: none;
+  border-radius: 5px;
+  color: #201e1a;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+#modal form button:hover {
+  color: #453719;
+}
+
+#modal form button:last-of-type {
+  background: black;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+#modal form button:last-of-type:hover {
+  background: #382e1b;
+}
+
+#modal form button.pagination-btn {
+  background: black;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+#modal form button.pagination-btn:hover {
+  background: #382e1b;
+}
+
+/* Remove Confirmation Modal */
+.confirmation-modal {
+  background: white;
+  border-radius: 8px;
+  padding: 0;
+  max-width: 450px;
+  width: 95%;
+  min-width: 350px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.confirmation-modal .modal-header {
+  background: #f8f9fa;
+  padding: 15px 20px;
+  border-bottom: 1px solid #dee2e6;
+  border-radius: 8px 8px 0 0;
+}
+
+.confirmation-modal .modal-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #495057;
+}
+
+.confirmation-modal .modal-content {
+  padding: 20px;
+}
+
+.confirmation-modal .modal-content p {
+  margin: 0 0 15px 0;
+  color: #6c757d;
+  line-height: 1.4;
+}
+
+.confirmation-modal .checkbox-container {
+  display: flex;
+  align-items: center;
+}
+
+.confirmation-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: #6c757d;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.confirmation-checkbox-label input[type="checkbox"] {
+  margin: 0;
+  padding: 0;
+}
+
+.confirmation-modal .modal-actions {
+  padding: 15px 20px;
+  border-top: 1px solid #dee2e6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8f9fa;
+  border-radius: 0 0 8px 8px;
+  gap: 15px;
+}
+
+.confirmation-modal .action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.confirmation-modal .cancel-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.confirmation-modal .cancel-btn:hover {
+  background: #5a6268;
+}
+
+.confirmation-modal .confirm-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.confirmation-modal .confirm-btn:hover {
+  background: #c82333;
+}
+
+/* Modal Overlay Base */
+.modal-overlay {
+  color: var(--primary);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-overlay .modal {
+  background: white;
+  padding: 0;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-overlay .modal-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  text-align: center;
+}
+
+.modal-overlay .modal-header h2 {
+  margin: 0;
+  color: var(--primary);
+}
+
+.modal-overlay .close-btn:hover {
+  color: #333;
+}
+
+.modal-overlay .message {
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  max-height: 0;
+  overflow: hidden;
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: all 0.3s ease-in-out;
+  opacity: 0;
+}
+
+.modal-overlay .message.show {
+  max-height: 100px;
+  transform: scaleY(1);
+  opacity: 1;
+}
+
+.modal-overlay .message.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.modal-overlay .message.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.modal-overlay .modal-actions {
+  display: flex;
+  gap: 50px;
+  justify-content: flex-end;
+}
+
+.modal-overlay .btn-primary,
+.modal-overlay .btn-secondary {
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  border: none;
+}
+
+.modal-overlay .btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.modal-overlay .btn-primary:hover {
+  background: #158f6b;
+}
+
+.modal-overlay .btn-primary:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.modal-overlay .btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.modal-overlay .btn-secondary:hover {
+  background: #545b62;
+}
+
+/* Following List Modal */
+.following-list-modal {
+  width: 90vw;
+  max-width: 500px;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.following-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  min-height: 0;
+}
+
+.no-following {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  margin: 40px 0;
+}
+
+.following-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.following-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.following-item:hover {
+  background: #f8f9fa;
+  border-color: #007bff;
+  transform: translateY(-1px);
+}
+
+.following-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.following-name {
+  margin: 0;
+  color: #333;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.following-bio {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.following-date {
+  color: #999;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  margin-left: 10px;
+}
+
+.following-section h3 {
+  margin: 20px 0 15px 0;
+  font-size: 1.2rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+  text-align: center;
+}
+
+.following-section {
+  margin-bottom: 15px;
+}
+
+.following-search-container {
+  margin-top: 10px;
+}
+
+.following-search {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  background-color: #f8f9fa;
+  box-sizing: border-box;
+}
+
+.following-search:focus {
+  outline: none;
+  border-color: #28a745;
+  background-color: #fff;
+  box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.25);
+}
+
+/* All Songs Modal */
+.all-songs-modal {
+  width: 90vw;
+  max-width: 600px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.all-songs-modal .modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #eee;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.all-songs-modal .modal-close:hover {
+  color: #333;
+}
+
+.all-songs-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  min-height: 0;
+}
+
+.songs-summary {
+  text-align: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.songs-summary p {
+  margin: 0;
+  color: #eee;
+  font-size: 14px;
+}
+
+.songs-list-container {
+  flex: 1;
+  min-height: 0;
+}
+
+.all-songs-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.song-count-item {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.song-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.song-header:hover {
+  background-color: #f8f9fa;
+  margin: 0 -10px;
+  padding: 12px 10px;
+  border-radius: 4px;
+}
+
+.song-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.song-count-item:last-child {
+  border-bottom: none;
+}
+
+.song-name {
+  flex: 1;
+  font-weight: 500;
+  color: var(--primary);
+}
+
+.play-count {
+  background: var(--primary);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  min-width: 60px;
+  text-align: center;
+}
+
+.expand-icon {
+  color: #999;
+  font-size: 12px;
+  transition: transform 0.2s ease;
+}
+
+.performance-list {
+  background-color: #f8f9fa;
+  margin: 10px 0 0 0;
+  border-radius: 6px;
+  padding: 15px;
+}
+
+.performance-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 14px;
+  gap: 10px;
+}
+
+.performance-item:last-child {
+  border-bottom: none;
+}
+
+.performance-date {
+  font-weight: 500;
+  color: var(--primary);
+  min-width: 100px;
+  flex-shrink: 0;
+}
+
+.performance-venue {
+  font-weight: 500;
+  flex: 1;
+  margin: 0 15px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.performance-location {
+  color: #666;
+  font-size: 13px;
+  text-align: right;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.no-songs {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  margin: 40px 0;
+}
+
+/* Artist Stats Modal */
+.artist-stats-modal {
+  width: 85vw;
+  height: 85vh;
+  max-width: none;
+  max-height: none;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.artist-stats-modal .chart-container {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.artist-stats-modal .modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #eee;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* Responsive Modals */
+@media (max-width: 768px) {
+  .modal-overlay .modal {
+    margin: 20px;
+    width: calc(100% - 40px);
+  }
+
+  .performance-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 12px 0;
+  }
+
+  .performance-date {
+    min-width: auto;
+  }
+
+  .performance-venue {
+    margin: 0;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .performance-location {
+    text-align: left;
+  }
+
+  .artist-stats-modal {
+    width: 95vw;
+    height: 85vh;
+  }
+}

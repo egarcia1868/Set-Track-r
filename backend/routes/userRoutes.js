@@ -9,6 +9,7 @@ import {
   getFollowers,
   getFollowStatus,
   searchUsers,
+  getFeaturedUsers,
 } from "../controllers/concertController.js";
 
 // Cache for Auth0 userinfo responses to avoid rate limiting
@@ -104,6 +105,7 @@ router.get("/followers/:displayName?", checkJwt, getFollowers); // Requires auth
 router.get("/follow-status/:displayName", checkJwt, getFollowStatus);
 
 // User search
-router.get("/search", searchUsers);
+router.get("/search", checkJwt, searchUsers);
+router.get("/featured", checkJwt, getFeaturedUsers);
 
 export default router;

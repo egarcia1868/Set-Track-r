@@ -6,11 +6,11 @@ const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(true);
 
   return (
-    // <div className="home">
-    //   <UnderConstructionModal
-    //     onClose={() => setIsModalOpen(false)}
-    //     isOpen={isModalOpen}
-    //   />
+    <div className="home">
+      <UnderConstructionModal
+        onClose={() => setIsModalOpen(false)}
+        isOpen={isModalOpen}
+      />
     <div>
       <p className="alert">
         <strong>Note:</strong> This site may enter a brief sleep mode when
@@ -29,7 +29,7 @@ const Home = () => {
         demo@gmail.com & Demo!234)
       </p>
     </div>
-    // </div>
+    </div>
   );
 };
 

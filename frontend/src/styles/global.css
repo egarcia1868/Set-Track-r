@@ -1,0 +1,217 @@
+/* Google font */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;800&family=VT323&display=swap");
+
+/* CSS Variables */
+:root {
+  --primary: #1aac83;
+  --error: #e7195a;
+}
+
+/* Global Layout */
+body {
+  background: #f1f1f1;
+  margin: 0;
+  font-family: "Poppins";
+}
+
+/* Make sure html, body, and #root fill the full viewport height */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+/* Make your main app container a flex column */
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Make the "pages" div grow to fill available space */
+.pages {
+  flex: 1;
+  max-width: 1400px;
+  padding: 20px;
+}
+
+/* General h1 styling to prevent browser warnings */
+h1 {
+  font-size: 2rem;
+  margin: 1rem 0;
+  font-weight: 600;
+}
+
+/* Header */
+header {
+  background: #fff;
+}
+
+header .container {
+  max-width: 1400px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+header .nav-greeting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+header a {
+  color: #333;
+  text-decoration: none;
+}
+
+.nav-link {
+  position: relative;
+  padding: 8px 16px;
+  background: var(--primary);
+  color: #fff !important;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background 0.2s;
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  background: #158f6d;
+}
+
+.unread-badge-nav {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--error);
+  color: #fff;
+  border-radius: 12px;
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  min-width: 18px;
+  text-align: center;
+}
+
+/* Footer */
+.footer {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  height: 0.6rem;
+  line-height: 0.6rem;
+  z-index: 100;
+  font-size: 0.6rem;
+}
+
+/* Global Form Elements */
+label,
+input {
+  display: block;
+}
+
+input {
+  padding: 10px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+form button {
+  background: var(--primary);
+  border: 0;
+  color: #fff;
+  padding: 10px;
+  font-family: "Poppins";
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button.auth {
+  border: 0;
+  padding: 10px;
+  font-family: "Poppins";
+  border-radius: 4px;
+  cursor: pointer;
+  min-width: 70px;
+}
+
+button.login {
+  color: #fff;
+  background: var(--primary);
+}
+
+button:disabled {
+  background-color: gray !important;
+}
+
+div.error {
+  padding: 10px;
+  background: #ffefef;
+  border: 1px solid var(--error);
+  color: var(--error);
+  border-radius: 4px;
+  margin: 20px 0;
+}
+
+input.error {
+  border: 1px solid var(--error);
+}
+
+/* Utility Classes */
+.alert {
+  color: #e50f04;
+}
+
+.subtitle {
+  color: slategray;
+}
+
+/* Semantic button styling for inline text buttons */
+button.text-button {
+  background: none;
+  border: none;
+  color: #1a0dab;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
+  padding: 0;
+  margin: 0;
+}
+
+button.text-button:hover {
+  color: #0056b3;
+}
+
+button.text-button:focus {
+  outline: 2px solid #0056b3;
+  outline-offset: 2px;
+}
+
+/* Responsive Layout */
+@media (min-width: 1400px) {
+  .container {
+    margin: 0 auto;
+    min-width: 1400px;
+  }
+
+  .pages {
+    margin: 0 auto;
+    min-width: 1400px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  dialog {
+    min-width: 80%;
+    padding: 0 10px;
+  }
+}
