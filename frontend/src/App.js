@@ -5,6 +5,7 @@ import ArtistConcerts from "./pages/ArtistConcerts";
 import Dashboard from "./pages/Dashboard";
 import PublicProfile from "./pages/PublicProfile";
 import Chat from "./pages/Chat";
+import SearchUsers from "./pages/SearchUsers";
 import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
 import PrivateRoute from "./components/common/PrivateRoute";
@@ -57,6 +58,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <Chat />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/search-users"
+              element={
+                <PrivateRoute>
+                  <SearchUsers />
                 </PrivateRoute>
               }
             />

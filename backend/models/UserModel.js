@@ -45,6 +45,10 @@ const userSchema = new Schema({
       blockedAt: { type: Date, default: Date.now },
     },
   ],
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 // Create a sparse unique index on displayName to ensure uniqueness while allowing empty values

@@ -66,6 +66,8 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
         Improvement/s currently being worked:
       </h4>
       <ul>
+        <li>list conversations by most recent.</li>
+        <li>add ability to search for user conversations.</li>
         <li>ability to search users</li>
         <li>add ability to block users from chatting</li>
       </ul>
@@ -75,7 +77,6 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
       <ul>
       <li>add ability to block users from viewing your profile page.  (will require a follower approval or changing to a "friend" system)</li>
       <li>find users that have seen a specific artist or were at the same show.</li>
-      <li>chat between users</li>
         {/* <li>
           add ability to remove specific songs from "seen" set (for accurate
           tracking if arrived late/left early)

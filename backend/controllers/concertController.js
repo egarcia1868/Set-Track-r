@@ -531,7 +531,6 @@ export const searchUsers = async (req, res) => {
     const users = await User.find({
       "profile.isPublic": true,
       "profile.displayName": { $regex: q.trim(), $options: "i" },
-      auth0Id: { $ne: auth0Id }, // Exclude current user
     })
       .select("profile.displayName profile.bio")
       .limit(20);
@@ -545,6 +544,62 @@ export const searchUsers = async (req, res) => {
   } catch (error) {
     console.error("Error searching users:", error);
     res.status(500).json({ error: "Could not search users" });
+  }
+};
+
+export const getFeaturedUsers = async (req, res) => {
+  try {
+    const auth0Id = req.auth?.payload.sub;
+    if (!auth0Id) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    // Find Strilly Bings first
+    const strillyBings = await User.findOne({
+      "profile.displayName": "Strilly Bings",
+      "profile.isPublic": true,
+    }).select("profile.displayName profile.bio concerts");
+
+    // Get top 9 users by concert count (excluding Strilly Bings)
+    const topUsers = await User.aggregate([
+      {
+        $match: {
+          "profile.isPublic": true,
+          "profile.displayName": { $ne: "Strilly Bings" },
+        },
+      },
+      {
+        $project: {
+          displayName: "$profile.displayName",
+          bio: "$profile.bio",
+          concertCount: { $size: { $ifNull: ["$concerts", []] } },
+        },
+      },
+      { $sort: { concertCount: -1 } },
+      { $limit: 9 },
+    ]);
+
+    // Combine results - Strilly Bings first, then top users
+    const results = [];
+
+    if (strillyBings) {
+      results.push({
+        displayName: strillyBings.profile.displayName,
+        bio: strillyBings.profile.bio,
+      });
+    }
+
+    topUsers.forEach((user) => {
+      results.push({
+        displayName: user.displayName,
+        bio: user.bio,
+      });
+    });
+
+    res.json({ users: results });
+  } catch (error) {
+    console.error("Error getting featured users:", error);
+    res.status(500).json({ error: "Could not get featured users" });
   }
 };
 
