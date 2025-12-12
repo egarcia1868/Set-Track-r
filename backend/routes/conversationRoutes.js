@@ -4,6 +4,7 @@ import {
   createOrGetConversation,
   getConversationById,
   deleteConversation,
+  archiveConversation,
 } from "../controllers/conversationController.js";
 import { checkBlocked } from "../middleware/checkBlocked.js";
 
@@ -14,6 +15,9 @@ router.get("/", getConversations);
 
 // Create or get existing conversation with another user
 router.post("/", checkBlocked, createOrGetConversation);
+
+// Archive a conversation (must come before /:conversationId)
+router.put("/:conversationId/archive", archiveConversation);
 
 // Get specific conversation by ID
 router.get("/:conversationId", getConversationById);

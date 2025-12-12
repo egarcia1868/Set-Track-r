@@ -88,6 +88,45 @@ export const ChatProvider = ({ children }) => {
   );
 
   /**
+   * Archive a conversation (hide it from the list)
+   */
+  const archiveConversation = useCallback(
+    async (conversationId) => {
+      try {
+        console.log("ChatContext: Archiving conversation", conversationId);
+        setError(null);
+        await chatApi.archiveConversation(conversationId, getAccessTokenSilently);
+        console.log("ChatContext: API call successful");
+
+        // Remove from local state
+        setConversations((prev) => {
+          console.log("ChatContext: Removing from conversations list");
+          return prev.filter((c) => c._id !== conversationId);
+        });
+
+        // Clear active conversation if it was archived
+        if (activeConversation?._id === conversationId) {
+          console.log("ChatContext: Clearing active conversation");
+          setActiveConversation(null);
+        }
+
+        // Clear messages for this conversation
+        setMessages((prev) => {
+          const updated = { ...prev };
+          delete updated[conversationId];
+          return updated;
+        });
+        console.log("ChatContext: Archive complete");
+      } catch (err) {
+        setError(err.message);
+        console.error("Error archiving conversation:", err);
+        throw err;
+      }
+    },
+    [getAccessTokenSilently, activeConversation],
+  );
+
+  /**
    * Delete a conversation
    */
   const removeConversation = useCallback(
@@ -289,8 +328,17 @@ export const ChatProvider = ({ children }) => {
     });
 
     // Update conversation's last message
-    setConversations((prev) =>
-      prev.map((conv) => {
+    setConversations((prev) => {
+      const conversationExists = prev.some((conv) => conv._id === conversationId);
+
+      // If conversation doesn't exist in local state (was archived),
+      // we need to refetch to get the unarchived conversation
+      if (!conversationExists) {
+        fetchConversations();
+        return prev;
+      }
+
+      return prev.map((conv) => {
         if (conv._id === conversationId) {
           return {
             ...conv,
@@ -302,9 +350,9 @@ export const ChatProvider = ({ children }) => {
           };
         }
         return conv;
-      }),
-    );
-  }, []);
+      });
+    });
+  }, [fetchConversations]);
 
   // ==================== REAL-TIME POLLING ====================
 
@@ -393,6 +441,7 @@ export const ChatProvider = ({ children }) => {
     // Conversation methods
     fetchConversations,
     startConversation,
+    archiveConversation,
     removeConversation,
     selectConversation,
 

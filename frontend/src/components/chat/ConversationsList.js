@@ -9,6 +9,7 @@ export default function ConversationsList() {
     activeConversation,
     fetchConversations,
     selectConversation,
+    archiveConversation,
     loading,
   } = useChat();
   const { userProfile } = useAuth();
@@ -19,6 +20,17 @@ export default function ConversationsList() {
 
   const handleSelectConversation = (conversation) => {
     selectConversation(conversation);
+  };
+
+  const handleArchiveConversation = async (e, conversationId) => {
+    e.stopPropagation(); // Prevent conversation selection
+    console.log("Archiving conversation:", conversationId);
+    try {
+      await archiveConversation(conversationId);
+      console.log("Successfully archived conversation");
+    } catch (error) {
+      console.error("Failed to archive conversation:", error);
+    }
   };
 
   const formatTimestamp = (timestamp) => {
@@ -103,6 +115,13 @@ export default function ConversationsList() {
                   )}
                 </div>
               </div>
+              <button
+                className="conversation-close-btn"
+                onClick={(e) => handleArchiveConversation(e, conversation._id)}
+                title="Archive conversation"
+              >
+                ×
+              </button>
             </div>
           );
         })}

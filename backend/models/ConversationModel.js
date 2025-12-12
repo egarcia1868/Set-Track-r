@@ -31,6 +31,12 @@ const conversationSchema = new Schema(
       of: Number,
       default: {},
     },
+    // Track which users have archived this conversation
+    archivedBy: {
+      type: Map,
+      of: Boolean,
+      default: {},
+    },
   },
   { timestamps: true },
 );

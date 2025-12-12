@@ -85,6 +85,35 @@ export const getConversationById = async (
 };
 
 /**
+ * Archive a conversation (hide it without deleting)
+ * @param {string} conversationId - Conversation ID to archive
+ * @param {Function} getAccessTokenSilently - Auth0 token getter
+ * @returns {Promise<Object>} Success message
+ */
+export const archiveConversation = async (
+  conversationId,
+  getAccessTokenSilently,
+) => {
+  const token = await getAccessTokenSilently();
+  const response = await fetch(
+    `${BASE_URL}/api/conversations/${conversationId}/archive`,
+    {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to archive conversation");
+  }
+
+  return response.json();
+};
+
+/**
  * Delete a conversation
  * @param {string} conversationId - Conversation ID to delete
  * @param {Function} getAccessTokenSilently - Auth0 token getter
