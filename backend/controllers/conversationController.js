@@ -20,18 +20,28 @@ export const getConversations = async (req, res) => {
       .sort({ "lastMessage.sentAt": -1 }) // Most recent first
       .lean();
 
-    // Add unread count for current user
-    const conversationsWithUnread = conversations.map((conv) => {
-      // Handle both Map and plain object formats
-      const unreadMap = conv.unreadCount instanceof Map
-        ? conv.unreadCount
-        : new Map(Object.entries(conv.unreadCount || {}));
+    // Filter out archived conversations and add unread count for current user
+    const conversationsWithUnread = conversations
+      .filter((conv) => {
+        // Handle both Map and plain object formats for archivedBy
+        const archivedByMap = conv.archivedBy instanceof Map
+          ? conv.archivedBy
+          : new Map(Object.entries(conv.archivedBy || {}));
 
-      return {
-        ...conv,
-        unreadCount: unreadMap.get(currentUser._id.toString()) || 0,
-      };
-    });
+        // Only include conversations not archived by this user
+        return !archivedByMap.get(currentUser._id.toString());
+      })
+      .map((conv) => {
+        // Handle both Map and plain object formats for unreadCount
+        const unreadMap = conv.unreadCount instanceof Map
+          ? conv.unreadCount
+          : new Map(Object.entries(conv.unreadCount || {}));
+
+        return {
+          ...conv,
+          unreadCount: unreadMap.get(currentUser._id.toString()) || 0,
+        };
+      });
 
     res.json(conversationsWithUnread);
   } catch (error) {
@@ -64,6 +74,23 @@ export const createOrGetConversation = async (req, res) => {
     ]);
 
     if (existingConversation) {
+      // Unarchive the conversation for both users if it was archived
+      let wasUpdated = false;
+
+      if (existingConversation.archivedBy.get(currentUser._id.toString())) {
+        existingConversation.archivedBy.set(currentUser._id.toString(), false);
+        wasUpdated = true;
+      }
+
+      if (existingConversation.archivedBy.get(otherUser._id.toString())) {
+        existingConversation.archivedBy.set(otherUser._id.toString(), false);
+        wasUpdated = true;
+      }
+
+      if (wasUpdated) {
+        await existingConversation.save();
+      }
+
       return res.json(existingConversation);
     }
 
@@ -160,5 +187,41 @@ export const deleteConversation = async (req, res) => {
   } catch (error) {
     console.error("Error deleting conversation:", error);
     res.status(500).json({ message: "Server error deleting conversation" });
+  }
+};
+
+/**
+ * Archive a conversation (hide it from the list without deleting it)
+ * PUT /api/conversations/:conversationId/archive
+ */
+export const archiveConversation = async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+
+    const currentUser = await User.findOne({ auth0Id: req.auth.payload.sub });
+    if (!currentUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const conversation = await Conversation.findById(conversationId);
+    if (!conversation) {
+      return res.status(404).json({ message: "Conversation not found" });
+    }
+
+    // Verify user is a participant
+    if (!conversation.hasParticipant(currentUser._id)) {
+      return res
+        .status(403)
+        .json({ message: "You are not part of this conversation" });
+    }
+
+    // Mark conversation as archived for this user
+    conversation.archivedBy.set(currentUser._id.toString(), true);
+    await conversation.save();
+
+    res.json({ message: "Conversation archived successfully" });
+  } catch (error) {
+    console.error("Error archiving conversation:", error);
+    res.status(500).json({ message: "Server error archiving conversation" });
   }
 };

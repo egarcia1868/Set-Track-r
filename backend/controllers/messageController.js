@@ -97,6 +97,18 @@ export const sendMessage = async (req, res) => {
     });
     conversation.unreadCount = unreadMap;
 
+    // Unarchive conversation for all recipients who have it archived
+    const archivedByMap = conversation.archivedBy || new Map();
+    conversation.participants.forEach((participant) => {
+      if (!participant.userId.equals(currentUser._id)) {
+        // If this participant has archived the conversation, unarchive it
+        if (archivedByMap.get(participant.userId.toString())) {
+          archivedByMap.set(participant.userId.toString(), false);
+        }
+      }
+    });
+    conversation.archivedBy = archivedByMap;
+
     await conversation.save();
 
     // Populate sender info before returning
