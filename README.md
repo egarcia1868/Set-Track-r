@@ -18,8 +18,9 @@ A full-stack web application for concert enthusiasts to track their live music e
 
 ## 🚀 Live Demo
 
-- **Frontend**: [https://set-trackr.onrender.com](https://set-trackr.onrender.com)
-- **Backend API**: [https://set-trackr-backend.onrender.com](https://set-trackr-backend.onrender.com)
+<!-- - **Frontend**:  -->
+[https://set-trackr.onrender.com](https://set-trackr.onrender.com)
+<!-- - **Backend API**: [https://set-trackr-backend.onrender.com](https://set-trackr-backend.onrender.com) -->
 
 ## 🛠️ Tech Stack
 
