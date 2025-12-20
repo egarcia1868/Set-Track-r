@@ -62,21 +62,19 @@ const UnderConstructionModal = ({ isOpen, onClose }) => {
       <h1 style={{ paddingTop: "2rem", textAlign: "center" }}>
         Site Currently Under Construction
       </h1>
-      <h4 style={{ marginLeft: "1.5rem" }}>
+      {/* <h4 style={{ marginLeft: "1.5rem" }}>
         Improvement/s currently being worked:
       </h4>
       <ul>
-        <li>list conversations by most recent.</li>
-        <li>add ability to search for user conversations.</li>
-        <li>ability to search users</li>
-        <li>add ability to block users from chatting</li>
-      </ul>
+      </ul> */}
       <h4 style={{ marginLeft: "1.5rem" }}>
         Planned upcoming improvements/bug fixes:
       </h4>
       <ul>
+      <li>add ability to search for user conversations.</li>
       <li>add ability to block users from viewing your profile page.  (will require a follower approval or changing to a "friend" system)</li>
       <li>find users that have seen a specific artist or were at the same show.</li>
+      <li>add ability to block users from chatting</li>
         {/* <li>
           add ability to remove specific songs from "seen" set (for accurate
           tracking if arrived late/left early)
