@@ -6,6 +6,11 @@ A full-stack web application for concert enthusiasts to track their live music e
 
 - **Concert Tracking**: Search and save concerts you've attended with complete setlists
 - **Statistics & Analytics**: View detailed charts of your concert history and favorite songs
+- **Real-time Messaging**: Chat with other users in real-time with WebSocket integration
+  - Direct messaging between users
+  - Live typing indicators
+  - Unread message notifications
+  - Conversation archiving
 - **Social Features**: Follow other users and discover what concerts they've attended
 - **Artist Insights**: See how many times you've seen each artist and which songs
 - **Public Profiles**: Share your concert history with customizable privacy settings
@@ -23,6 +28,7 @@ A full-stack web application for concert enthusiasts to track their live music e
 - **React** 19.0.0 - UI framework
 - **React Router DOM** 7.2.0 - Client-side routing
 - **Auth0 React** 2.3.0 - Authentication and authorization
+- **Socket.io-client** - Real-time WebSocket communication
 - **CSS3** - Custom styling with responsive design
 
 ### Backend
@@ -30,6 +36,7 @@ A full-stack web application for concert enthusiasts to track their live music e
 - **Node.js** - Runtime environment
 - **Express.js** 4.18.1 - Web framework
 - **MongoDB** with **Mongoose** 8.11.0 - Database and ODM
+- **Socket.io** - WebSocket server for real-time messaging
 - **Auth0** - JWT authentication
 - **Axios** 1.5.0 - HTTP client for external APIs
 
@@ -130,6 +137,7 @@ npm run build
 4. **View Statistics**: Check your dashboard for concert analytics and charts
 5. **Profile Management**: Customize your profile and privacy settings
 6. **Social Features**: Follow other users and view public profiles
+7. **Messaging**: Chat with other users in real-time through the messaging system
 
 ## 🏗️ Project Structure
 
@@ -138,17 +146,20 @@ setTrackR/
 ├── frontend/                 # React frontend
 │   ├── src/
 │   │   ├── components/       # React components
+│   │   │   ├── chat/        # Chat & messaging components
+│   │   │   ├── common/      # Shared components
+│   │   │   └── ...
 │   │   ├── pages/           # Page components
-│   │   ├── hooks/           # Custom hooks
-│   │   ├── context/         # React context
+│   │   ├── hooks/           # Custom hooks (useConcertsContext, etc.)
+│   │   ├── context/         # React context (Auth, Chat, Socket, etc.)
 │   │   └── utils/           # Utility functions
 │   └── public/              # Static files
 ├── backend/                 # Node.js backend
 │   ├── controllers/         # Route controllers
-│   ├── models/             # Mongoose models
+│   ├── models/             # Mongoose models (User, Concert, Message, etc.)
 │   ├── routes/             # API routes
 │   ├── services/           # Business logic
-│   └── server.js           # Express server
+│   └── server.js           # Express & Socket.io server
 └── README.md
 ```
 
@@ -182,6 +193,17 @@ Set Track'r uses Auth0 for secure authentication and authorization. Users can si
 - `GET /api/concerts/following` - Get following list
 - `GET /api/concerts/followers` - Get followers list
 
+### Messaging Routes
+
+- `GET /api/conversations` - Get all user conversations
+- `POST /api/conversations` - Start a new conversation
+- `GET /api/conversations/:conversationId/messages` - Get messages for a conversation
+- `POST /api/conversations/:conversationId/messages` - Send a message
+- `DELETE /api/conversations/:conversationId` - Delete a conversation
+- `PUT /api/conversations/:conversationId/archive` - Archive a conversation
+- `PUT /api/conversations/:conversationId/read` - Mark conversation as read
+- `DELETE /api/messages/:messageId` - Delete a message
+
 ## 🌐 Deployment
 
 The application is deployed using:
@@ -200,7 +222,9 @@ The application is deployed using:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Copyright (c) 2025 Eric Garcia. All Rights Reserved.
+
+This code is made available for portfolio and hiring review purposes only. See the [LICENSE](LICENSE) file for details.
 
 ## 👤 Author
 
