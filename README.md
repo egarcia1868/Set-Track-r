@@ -33,8 +33,8 @@ A full-stack web application for concert enthusiasts to track their live music e
 - **Public Profiles**: Share your concert history with customizable privacy settings
 - **Responsive Design**: Optimized for both desktop and mobile devices
 
-![Main Dashboard](demos/screenshots/Dashboard.png)
-<!-- ADD SCREENSHOT OF MOBILE RESPONSIVE VIEW HERE -->
+![Mobile Dashboard](demos/screenshots/MobileDashboard.png)
+![Mobile Menu](demos/screenshots/MobileMenu.png)
 
 ## 🚀 Live Demo
 
@@ -159,9 +159,6 @@ npm run build
 5. **Profile Management**: Customize your profile and privacy settings
 6. **Social Features**: Follow other users and view public profiles
 7. **Messaging**: Chat with other users in real-time through the messaging system
-
-![Main Dashboard](screenshots/Dashboard.png)
-<!-- ADD GIF OR SCREENSHOT SHOWING USER WORKFLOW HERE -->
 
 ## 🏗️ Project Structure
 
