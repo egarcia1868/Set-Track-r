@@ -96,12 +96,13 @@ const ConcertItemDetailed = ({
   const setlistExpanded = expandedSetlists.has(concert.concertId);
   const hasSetlist = concert.sets && concert.sets.length > 0;
 
-  // Flatten all songs from all sets into a single array
-  const allSongs = hasSetlist
-    ? concert.sets.flatMap((set) =>
-        set.song ? set.song.map((song) => song.name) : [],
-      )
-    : [];
+
+  console.log('concert.sets: ', concert);
+
+  // Count total songs across all sets
+  const totalSongs = hasSetlist
+    ? concert.sets.reduce((count, set) => count + (set.song?.length || 0), 0)
+    : 0;
 
   return (
     <div className="concert-item-detailed">
@@ -183,7 +184,7 @@ const ConcertItemDetailed = ({
             onClick={() => toggleSetlist(concert.concertId)}
           >
             <span className="setlist-text">
-              Setlist ({allSongs.length} songs)
+              Setlist ({totalSongs} songs)
             </span>
             <span className="setlist-arrow">{setlistExpanded ? "▼" : "▲"}</span>
           </button>
@@ -194,13 +195,22 @@ const ConcertItemDetailed = ({
 
       {hasSetlist && setlistExpanded && (
         <div className="setlist-content">
-          <ol className="songs-list">
-            {allSongs.map((song, index) => (
-              <li key={index} className="song-item">
-                {song}
-              </li>
-            ))}
-          </ol>
+          {concert.sets.map((set, setIndex) => (
+            <div key={setIndex} className="set-section">
+              {set.encore ? (
+                <h4 className="set-name">Encore {set.encore}:</h4>
+              ) : set.name ? (
+                <h4 className="set-name">{set.name}</h4>
+              ) : null}
+              <ol className="songs-list">
+                {set.song && set.song.map((song, songIndex) => (
+                  <li key={songIndex} className="song-item">
+                    {song.name}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          ))}
         </div>
       )}
 
