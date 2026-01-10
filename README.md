@@ -2,24 +2,45 @@
 
 A full-stack web application for concert enthusiasts to track their live music experiences. Record setlists, discover patterns in your concert history, and connect with other music fans.
 
+![Main Dashboard](screenshots/Dashboard.png)
+
 ## 🌟 Features
 
 - **Concert Tracking**: Search and save concerts you've attended with complete setlists
+
+![Search Form](screenshots/SearchForm.png)
+![Search Results](screenshots/SearchResults.png)
+
 - **Statistics & Analytics**: View detailed charts of your concert history and favorite songs
+
+![Concert History](screenshots/ConcertHistory.mp4)
+
 - **Real-time Messaging**: Chat with other users in real-time with WebSocket integration
   - Direct messaging between users
   - Live typing indicators
   - Unread message notifications
   - Conversation archiving
+
+![Real-time Messaging](screenshots/Messaging.mp4)
+
 - **Social Features**: Follow other users and discover what concerts they've attended
-- **Artist Insights**: See how many times you've seen each artist and which songs
+- **Artist Insights**: See how many times other users have seen each artist and which songs
+
+![Public Profile Page](screenshots/ProfilePage.png)
+![Profile Concert Info](screenshots/ConcertInfo.png)
+![Profile List of All Bands](screenshots/AllConcertsPieChart.png)
+<!-- ADD SCREENSHOT OF ARTIST INSIGHTS/PROFILE PAGE HERE -->
+
 - **Public Profiles**: Share your concert history with customizable privacy settings
 - **Responsive Design**: Optimized for both desktop and mobile devices
+
+![Main Dashboard](screenshots/Dashboard.png)
+<!-- ADD SCREENSHOT OF MOBILE RESPONSIVE VIEW HERE -->
 
 ## 🚀 Live Demo
 
 <!-- - **Frontend**:  -->
-[https://set-trackr.onrender.com](https://set-trackr.onrender.com) (please allow a minute to wake from hibernation)
+[https://set-trackr.onrender.com](https://set-trackr.onrender.com) 
 <!-- - **Backend API**: [https://set-trackr-backend.onrender.com](https://set-trackr-backend.onrender.com) -->
 
 ## 🛠️ Tech Stack
@@ -139,6 +160,9 @@ npm run build
 5. **Profile Management**: Customize your profile and privacy settings
 6. **Social Features**: Follow other users and view public profiles
 7. **Messaging**: Chat with other users in real-time through the messaging system
+
+![Main Dashboard](screenshots/Dashboard.png)
+<!-- ADD GIF OR SCREENSHOT SHOWING USER WORKFLOW HERE -->
 
 ## 🏗️ Project Structure
 
