@@ -13,7 +13,7 @@ A full-stack web application for concert enthusiasts to track their live music e
 
 - **Statistics & Analytics**: View detailed charts of your concert history and favorite songs
 
-![Concert History](screenshots/ConcertHistory.mp4)
+<video src="screenshots/ConcertHistory.mp4" controls width="600"></video>
 
 - **Real-time Messaging**: Chat with other users in real-time with WebSocket integration
   - Direct messaging between users
@@ -21,7 +21,7 @@ A full-stack web application for concert enthusiasts to track their live music e
   - Unread message notifications
   - Conversation archiving
 
-![Real-time Messaging](screenshots/Messaging.mp4)
+<video src="screenshots/Messaging.mp4" controls width="600"></video>
 
 - **Social Features**: Follow other users and discover what concerts they've attended
 - **Artist Insights**: See how many times other users have seen each artist and which songs
