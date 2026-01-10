@@ -2,18 +2,18 @@
 
 A full-stack web application for concert enthusiasts to track their live music experiences. Record setlists, discover patterns in your concert history, and connect with other music fans.
 
-![Main Dashboard](screenshots/Dashboard.png)
+![Main Dashboard](demos/screenshots/Dashboard.png)
 
 ## 🌟 Features
 
 - **Concert Tracking**: Search and save concerts you've attended with complete setlists
 
-![Search Form](screenshots/SearchForm.png)
-![Search Results](screenshots/SearchResults.png)
+![Search Form](demos/screenshots/SearchForm.png)
+![Search Results](demos/screenshots/SearchResults.png)
 
 - **Statistics & Analytics**: View detailed charts of your concert history and favorite songs
 
-<video src="screenshots/ConcertHistory.mp4" controls width="600"></video>
+![Concert History](demos/videos/ConcertHistory.gif)
 
 - **Real-time Messaging**: Chat with other users in real-time with WebSocket integration
   - Direct messaging between users
@@ -21,20 +21,19 @@ A full-stack web application for concert enthusiasts to track their live music e
   - Unread message notifications
   - Conversation archiving
 
-<video src="screenshots/Messaging.mp4" controls width="600"></video>
+![Real-time Messaging](demos/videos/Messaging.gif)
 
 - **Social Features**: Follow other users and discover what concerts they've attended
 - **Artist Insights**: See how many times other users have seen each artist and which songs
 
-![Public Profile Page](screenshots/ProfilePage.png)
-![Profile Concert Info](screenshots/ConcertInfo.png)
-![Profile List of All Bands](screenshots/AllConcertsPieChart.png)
-<!-- ADD SCREENSHOT OF ARTIST INSIGHTS/PROFILE PAGE HERE -->
+![Public Profile Page](demos/screenshots/ProfilePage.png)
+![Profile Concert Info](demos/screenshots/ConcertInfo.png)
+![Profile List of All Bands](demos/screenshots/AllConcertsPieChart.png)
 
 - **Public Profiles**: Share your concert history with customizable privacy settings
 - **Responsive Design**: Optimized for both desktop and mobile devices
 
-![Main Dashboard](screenshots/Dashboard.png)
+![Main Dashboard](demos/screenshots/Dashboard.png)
 <!-- ADD SCREENSHOT OF MOBILE RESPONSIVE VIEW HERE -->
 
 ## 🚀 Live Demo
