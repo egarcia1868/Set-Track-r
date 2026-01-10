@@ -108,12 +108,18 @@ const SongsDetails = ({ concerts }) => {
               <tr key={`details-${song.name}`}>
                 <td colSpan="2" className="song-details-cell">
                   <div className="song-concert-list">
-                    {song.concerts.map((concert, idx) => (
-                      <div key={idx} className="song-concert-item">
-                        <strong>{concert.date}</strong> - {concert.venue}
-                        {concert.city && `, ${concert.city}`}
-                      </div>
-                    ))}
+                    {[...song.concerts]
+                      .sort(
+                        (a, b) =>
+                          new Date(...b.date.split("-").reverse()) -
+                          new Date(...a.date.split("-").reverse())
+                      )
+                      .map((concert, idx) => (
+                        <div key={idx} className="song-concert-item">
+                          <strong>{concert.date}</strong> - {concert.venue}
+                          {concert.city && `, ${concert.city}`}
+                        </div>
+                      ))}
                   </div>
                 </td>
               </tr>
