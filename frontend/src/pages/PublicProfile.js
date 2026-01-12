@@ -51,13 +51,15 @@ const PublicProfile = () => {
 
   const toggleArtist = (artistId) => {
     setExpandedArtists((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(artistId)) {
-        newSet.delete(artistId);
+      const newSet = new Set();
+      if (prev.has(artistId)) {
+        // Clicking same artist collapses it
+        return newSet;
       } else {
+        // Clicking different artist shows only that one
         newSet.add(artistId);
+        return newSet;
       }
-      return newSet;
     });
   };
 

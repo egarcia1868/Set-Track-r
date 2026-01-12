@@ -96,6 +96,8 @@ const ConcertItemDetailed = ({
   const setlistExpanded = expandedSetlists.has(concert.concertId);
   const hasSetlist = concert.sets && concert.sets.length > 0;
 
+  console.log('concert.sets: ', concert);
+
   // Count total songs across all sets
   const totalSongs = hasSetlist
     ? concert.sets.reduce((count, set) => count + (set.song?.length || 0), 0)
@@ -195,9 +197,15 @@ const ConcertItemDetailed = ({
           {concert.sets.map((set, setIndex) => (
             <div key={setIndex} className="set-section">
               {set.encore ? (
-                <h4 className="set-name">Encore {set.encore}:</h4>
+                <h4 className="set-name">
+                  Encore {set.encore}:
+                  <span className="song-count">({set.song?.length || 0} songs)</span>
+                </h4>
               ) : set.name ? (
-                <h4 className="set-name">{set.name}</h4>
+                <h4 className="set-name">
+                  {set.name}
+                  <span className="song-count">({set.song?.length || 0} songs)</span>
+                </h4>
               ) : null}
               <ol className="songs-list">
                 {set.song && set.song.map((song, songIndex) => (
