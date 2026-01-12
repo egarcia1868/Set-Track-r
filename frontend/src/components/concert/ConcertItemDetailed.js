@@ -96,9 +96,6 @@ const ConcertItemDetailed = ({
   const setlistExpanded = expandedSetlists.has(concert.concertId);
   const hasSetlist = concert.sets && concert.sets.length > 0;
 
-
-  console.log('concert.sets: ', concert);
-
   // Count total songs across all sets
   const totalSongs = hasSetlist
     ? concert.sets.reduce((count, set) => count + (set.song?.length || 0), 0)

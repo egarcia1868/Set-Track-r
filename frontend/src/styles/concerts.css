@@ -533,6 +533,12 @@ div.concert-details
   border: 1px solid #e9ecef;
   overflow: hidden;
   margin-bottom: 10px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.concert-item-detailed:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(26, 172, 131, 0.15);
 }
 
 .concert-main-info {
