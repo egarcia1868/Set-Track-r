@@ -505,11 +505,15 @@ const PublicProfile = () => {
         )}
 
         {profileData.concerts.length === 0 ? (
-          <p className="no-concerts">No concerts recorded yet.</p>
+          <div className="no-concerts">
+            <p>🎵 No concerts yet</p>
+            <p>{profileData.name || "This user"} hasn't added any shows to their collection</p>
+          </div>
         ) : filteredArtists.length === 0 ? (
-          <p className="no-concerts">
-            No artists found matching "{searchTerm}"
-          </p>
+          <div className="no-concerts">
+            <p>No matches for "{searchTerm}"</p>
+            <p>{profileData.name || "This user"} hasn't seen them yet!</p>
+          </div>
         ) : (
           <div className="artists-layout">
             <div className="artists-sidebar">
