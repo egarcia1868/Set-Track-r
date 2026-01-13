@@ -16,8 +16,8 @@ const PublicProfile = () => {
   const { isAuthenticated, user, getAccessTokenSilently } = useAuth();
   const { startConversation } = useChat();
   const {
-    isAlreadySaved,
-    addConcertToCollection,
+    // isAlreadySaved,
+    // addConcertToCollection,
     removeConcertFromCollection,
   } = useUserConcerts();
   const [profileData, setProfileData] = useState(null);
@@ -186,9 +186,7 @@ const PublicProfile = () => {
         },
       );
 
-      //console.log("Follow response status:", response.status);
       if (response.ok) {
-        //console.log("Follow successful, setting isFollowing to true");
         setIsFollowing(true);
       } else {
         try {
@@ -232,12 +230,9 @@ const PublicProfile = () => {
 
       if (response.ok) {
         const concertData = await response.json();
-        //console.log("Other artists found:", concertData);
 
         // Store the full setlist data (not just artist names)
         const setlists = concertData.setlist || [];
-        //console.log("Raw setlist data:", setlists);
-        //console.log("Sample setlist structure:", setlists[0]);
 
         setOtherArtistsData((prev) => ({
           ...prev,
@@ -264,11 +259,9 @@ const PublicProfile = () => {
   const handleUnfollow = async () => {
     if (!profileData?.profile?.displayName) return;
 
-    //console.log("Starting unfollow for:", profileData.profile.displayName);
     setFollowLoading(true);
     try {
       const token = await getAccessTokenSilently();
-      //console.log("Got token, making unfollow request...");
       const response = await fetch(
         `${BASE_URL}/api/users/follow/${encodeURIComponent(profileData.profile.displayName)}`,
         {
@@ -279,9 +272,7 @@ const PublicProfile = () => {
         },
       );
 
-      //console.log("Unfollow response status:", response.status);
       if (response.ok) {
-        //console.log("Unfollow successful, setting isFollowing to false");
         setIsFollowing(false);
       } else {
         try {
@@ -294,7 +285,6 @@ const PublicProfile = () => {
     } catch (error) {
       console.error("Error unfollowing user:", error);
     }
-    //console.log("Setting followLoading to false");
     setFollowLoading(false);
   };
 
@@ -319,50 +309,6 @@ const PublicProfile = () => {
     } finally {
       setMessageLoading(false);
     }
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return "Date unknown";
-
-    // Handle different date formats
-    let date;
-
-    if (dateString.includes("-")) {
-      // Handle formats like "DD-MM-YYYY" or "YYYY-MM-DD"
-      const parts = dateString.split("-");
-      if (parts.length === 3) {
-        if (parts[0].length === 4) {
-          // YYYY-MM-DD format - use UTC to avoid timezone offset
-          const [year, month, day] = parts;
-          date = new Date(
-            Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day)),
-          );
-        } else {
-          // DD-MM-YYYY format (common in some APIs)
-          const [day, month, year] = parts;
-          date = new Date(
-            Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day)),
-          );
-        }
-      } else {
-        date = new Date(dateString + "T00:00:00Z");
-      }
-    } else {
-      date = new Date(dateString + "T00:00:00Z");
-    }
-
-    // Check if date is valid
-    if (isNaN(date.getTime())) {
-      console.warn("Invalid date string:", dateString);
-      return "Date unknown";
-    }
-
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      timeZone: "UTC",
-    });
   };
 
   if (loading) {
