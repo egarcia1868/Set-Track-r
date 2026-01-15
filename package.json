@@ -23,8 +23,10 @@
     "pretty": "npx prettier --write .",
     "start": "set NODE_ENV=production && node backend/server.js",
     "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "test": "npm test --prefix backend && npm test --prefix frontend",
+    "test:backend": "npm test --prefix backend",
+    "test:frontend": "npm test --prefix frontend",
+    "test:coverage": "npm run test:coverage --prefix backend && npm run test:coverage --prefix frontend",
     "dev": "set NODE_ENV=development && nodemon backend/server.js"
   }
 }

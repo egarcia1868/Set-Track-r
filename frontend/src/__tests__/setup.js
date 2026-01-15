@@ -24,3 +24,28 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: jest.fn(),
   })),
 });
+
+// Mock HTMLDialogElement for dialog.showModal() support
+if (typeof HTMLDialogElement === 'undefined') {
+  global.HTMLDialogElement = class HTMLDialogElement extends HTMLElement {
+    constructor() {
+      super();
+      this.open = false;
+    }
+    showModal() {
+      this.open = true;
+    }
+    close() {
+      this.open = false;
+    }
+  };
+}
+
+// Add showModal and close to HTMLElement prototype for jsdom
+HTMLElement.prototype.showModal = function () {
+  this.open = true;
+};
+
+HTMLElement.prototype.close = function () {
+  this.open = false;
+};
