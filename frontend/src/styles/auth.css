@@ -17,15 +17,57 @@
 
 /* Homepage Layout */
 .home {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  gap: 100px;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.home-content h1 {
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.home-content p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+/* Roadmap Section */
+.roadmap-section {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  /* background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); */
+  /* border-radius: 8px; */
+  /* border-left: 4px solid #17a2b8; */
+}
+
+.roadmap-section h3 {
+  margin: 0 0 1rem 0;
+  color: #17a2b8;
+  font-size: 1.2rem;
+}
+
+.roadmap-section ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.roadmap-section li {
+  margin-bottom: 0.5rem;
+  color: #495057;
+}
+
+.roadmap-section li:last-child {
+  margin-bottom: 0;
 }
 
 /* Responsive Design for Home */
 @media (max-width: 768px) {
   .home {
-    display: block;
-    gap: 0;
+    padding: 15px;
+  }
+
+  .roadmap-section {
+    padding: 1rem;
   }
 }
