@@ -12,6 +12,7 @@ const Home = () => {
         <div className="roadmap-section">
           <h3>Coming Soon</h3>
           <ul>
+            <li>Edit how album covers are shown in background of profile page when user has small number of artists.</li>
             <li>Search for users who have seen a specific artist or attended the same show</li>
             <li>Search conversations by keyword</li>
             <li>Block users from viewing your profile</li>
