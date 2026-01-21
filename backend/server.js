@@ -26,34 +26,32 @@ const httpServer = createServer(app);
 const PORT = process.env.PORT || 4000;
 const nodeEnv = process.env.NODE_ENV;
 
+// Define allowed origins - only include localhost in development
+const productionOrigins = [
+  "https://set-trackr.onrender.com",
+  "https://set-trackr.netlify.app",
+  "https://settrackr.netlify.app",
+  "https://main--settrackr.netlify.app",
+];
+const allowedOrigins =
+  nodeEnv === "development"
+    ? [...productionOrigins, "http://localhost:3000"]
+    : productionOrigins;
+
 // Socket.io setup with CORS
 const io = new Server(httpServer, {
   cors: {
-    origin: [
-      "https://set-trackr.onrender.com",
-      "https://set-trackr.netlify.app",
-      "https://settrackr.netlify.app",
-      "https://main--settrackr.netlify.app",
-      "http://localhost:3000",
-    ],
+    origin: allowedOrigins,
     methods: ["GET", "POST"],
     credentials: true,
   },
 });
 
 const corsOptions = {
+  origin: allowedOrigins,
   methods: ["GET", "POST", "PUT", "DELETE", "UPDATE"],
   credentials: true,
 };
-
-// Always allow production URLs and add localhost for development
-corsOptions.origin = [
-  "https://set-trackr.onrender.com",
-  "https://set-trackr.netlify.app",
-  "https://settrackr.netlify.app",
-  "https://main--settrackr.netlify.app",
-  "http://localhost:3000", // Local development
-];
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
