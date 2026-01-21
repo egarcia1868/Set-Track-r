@@ -7,6 +7,11 @@ import {
 } from "../services/concertService.js";
 import { saveConcertsForUser } from "../services/concertService.js";
 
+// Escape special regex characters to prevent ReDoS and injection attacks
+const escapeRegex = (string) => {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+};
+
 export const getConcert = async (req, res) => {
   const params = req.query;
 
@@ -528,9 +533,11 @@ export const searchUsers = async (req, res) => {
     }
 
     // Search for users with public profiles that match the query
+    // Escape regex special characters to prevent ReDoS/injection attacks
+    const sanitizedQuery = escapeRegex(q.trim());
     const users = await User.find({
       "profile.isPublic": true,
-      "profile.displayName": { $regex: q.trim(), $options: "i" },
+      "profile.displayName": { $regex: sanitizedQuery, $options: "i" },
     })
       .select("profile.displayName profile.bio")
       .limit(20);
