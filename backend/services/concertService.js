@@ -14,7 +14,7 @@ const SETLIST_FM_API_URL =
   process.env.SETLIST_FM_API_URL || "https://api.setlist.fm/rest/1.0/";
 const API_KEY = process.env.SETLIST_FM_API_KEY;
 
-const LASTFM_API_URL = "http://ws.audioscrobbler.com/2.0/";
+const LASTFM_API_URL = "https://ws.audioscrobbler.com/2.0/";
 const LASTFM_API_KEY = process.env.LAST_FM_API_KEY;
 
 export const saveConcertsForUser = async ({ concertData, user }) => {
