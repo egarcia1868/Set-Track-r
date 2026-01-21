@@ -1,15 +1,29 @@
+import { jest } from '@jest/globals';
 import request from 'supertest';
 import express from 'express';
-import messageRoutes from '../../routes/messageRoutes.js';
-import User from '../../models/UserModel.js';
-import Message from '../../models/MessageModel.js';
-import Conversation from '../../models/ConversationModel.js';
 import '../setup.js';
+
+// Mock auth middleware before importing routes
+jest.unstable_mockModule('../../middleware/auth.js', () => ({
+  checkJwt: (req, res, next) => {
+    // Default mock sets auth for test-user-123
+    if (!req.auth) {
+      req.auth = { payload: { sub: 'test-user-123' } };
+    }
+    next();
+  },
+}));
+
+// Import routes after mocking
+const { default: messageRoutes } = await import('../../routes/messageRoutes.js');
+const { default: User } = await import('../../models/UserModel.js');
+const { default: Message } = await import('../../models/MessageModel.js');
+const { default: Conversation } = await import('../../models/ConversationModel.js');
 
 const app = express();
 app.use(express.json());
 
-// Mock auth middleware
+// Mock auth middleware for overriding user in specific tests
 const mockAuth = (userId = 'test-user-123') => (req, res, next) => {
   req.auth = { payload: { sub: userId } };
   next();

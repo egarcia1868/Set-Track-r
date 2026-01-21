@@ -1,6 +1,14 @@
-import jwt from 'jsonwebtoken';
-import { checkJwt } from '../../middleware/auth.js';
+import { jest } from '@jest/globals';
 import '../setup.js';
+
+// Mock express-oauth2-jwt-bearer before importing auth middleware
+const mockJwtVerifier = jest.fn();
+jest.unstable_mockModule('express-oauth2-jwt-bearer', () => ({
+  auth: () => mockJwtVerifier,
+}));
+
+// Import after mocking
+const { checkJwt } = await import('../../middleware/auth.js');
 
 describe('Auth Middleware - checkJwt', () => {
   let mockReq;
@@ -30,10 +38,13 @@ describe('Auth Middleware - checkJwt', () => {
     };
 
     let nextCalled = false;
-    mockNext = () => {
+    mockNext = jest.fn(() => {
       nextCalled = true;
-    };
+    });
     mockNext.wasCalled = () => nextCalled;
+
+    // Reset mocks
+    mockJwtVerifier.mockReset();
 
     // Clear console.log/error to reduce test noise
     consoleLogSpy = console.log;
@@ -48,56 +59,56 @@ describe('Auth Middleware - checkJwt', () => {
   });
 
   describe('Valid Token Scenarios', () => {
-    it('should accept valid JWT token with sub claim', async () => {
-      const validToken = jwt.sign(
-        { sub: 'auth0|test-user-123', email: 'test@example.com' },
-        'test-secret',
-        { expiresIn: '1h' }
-      );
+    it('should accept valid JWT token verified by express-oauth2-jwt-bearer', async () => {
+      // Mock successful JWT verification
+      mockJwtVerifier.mockImplementation((req, res, callback) => {
+        req.auth = { payload: { sub: 'auth0|test-user-123' } };
+        callback(null);
+      });
 
-      mockReq.headers.authorization = `Bearer ${validToken}`;
+      mockReq.headers.authorization = 'Bearer valid-token';
 
       await checkJwt(mockReq, mockRes, mockNext);
 
-      expect(mockNext.wasCalled()).toBe(true);
+      expect(mockNext).toHaveBeenCalled();
       expect(mockReq.auth).toBeDefined();
       expect(mockReq.auth.payload.sub).toBe('auth0|test-user-123');
       expect(mockRes._getStatus()).toBeNull();
     });
 
-    it('should decode token and extract user ID', async () => {
+    it('should extract user ID from verified token', async () => {
       const userId = 'google-oauth2|987654321';
-      const token = jwt.sign(
-        { sub: userId, email: 'user@gmail.com', name: 'Test User' },
-        'secret-key'
-      );
+      mockJwtVerifier.mockImplementation((req, res, callback) => {
+        req.auth = { payload: { sub: userId } };
+        callback(null);
+      });
 
-      mockReq.headers.authorization = `Bearer ${token}`;
+      mockReq.headers.authorization = 'Bearer valid-token';
 
       await checkJwt(mockReq, mockRes, mockNext);
 
       expect(mockReq.auth.payload.sub).toBe(userId);
-      expect(mockNext.wasCalled()).toBe(true);
+      expect(mockNext).toHaveBeenCalled();
     });
 
     it('should handle token with additional claims', async () => {
-      const token = jwt.sign(
-        {
-          sub: 'auth0|user-456',
-          email: 'test@test.com',
-          email_verified: true,
-          name: 'John Doe',
-          picture: 'https://example.com/photo.jpg',
-        },
-        'secret'
-      );
+      mockJwtVerifier.mockImplementation((req, res, callback) => {
+        req.auth = {
+          payload: {
+            sub: 'auth0|user-456',
+            email: 'test@test.com',
+            email_verified: true,
+          },
+        };
+        callback(null);
+      });
 
-      mockReq.headers.authorization = `Bearer ${token}`;
+      mockReq.headers.authorization = 'Bearer valid-token';
 
       await checkJwt(mockReq, mockRes, mockNext);
 
       expect(mockReq.auth.payload.sub).toBe('auth0|user-456');
-      expect(mockNext.wasCalled()).toBe(true);
+      expect(mockNext).toHaveBeenCalled();
     });
   });
 
@@ -109,7 +120,7 @@ describe('Auth Middleware - checkJwt', () => {
       expect(mockRes._getJson()).toEqual({
         error: 'Authorization token required',
       });
-      expect(mockNext.wasCalled()).toBe(false);
+      expect(mockNext).not.toHaveBeenCalled();
     });
 
     it('should reject request with empty authorization header', async () => {
@@ -121,7 +132,7 @@ describe('Auth Middleware - checkJwt', () => {
       expect(mockRes._getJson()).toEqual({
         error: 'Authorization token required',
       });
-      expect(mockNext.wasCalled()).toBe(false);
+      expect(mockNext).not.toHaveBeenCalled();
     });
 
     it('should reject request with only "Bearer " prefix', async () => {
@@ -133,33 +144,47 @@ describe('Auth Middleware - checkJwt', () => {
       expect(mockRes._getJson()).toEqual({
         error: 'Authorization token required',
       });
-      expect(mockNext.wasCalled()).toBe(false);
+      expect(mockNext).not.toHaveBeenCalled();
     });
   });
 
-  describe('Invalid Token Scenarios', () => {
+  describe('Invalid Token Scenarios - JWT Verification Fails', () => {
+    beforeEach(() => {
+      // Mock JWT verification failure - will trigger userinfo fallback
+      mockJwtVerifier.mockImplementation((req, res, callback) => {
+        callback(new Error('Invalid token'));
+      });
+
+      // Mock fetch to simulate Auth0 userinfo failure
+      global.fetch = jest.fn(() =>
+        Promise.resolve({
+          ok: false,
+          status: 401,
+          text: () => Promise.resolve('Unauthorized'),
+        })
+      );
+    });
+
+    afterEach(() => {
+      delete global.fetch;
+    });
+
+    it('should reject forged/invalid token', async () => {
+      mockReq.headers.authorization = 'Bearer forged-token-without-valid-signature';
+
+      await checkJwt(mockReq, mockRes, mockNext);
+
+      expect(mockRes._getStatus()).toBe(401);
+      expect(mockNext).not.toHaveBeenCalled();
+    });
+
     it('should reject malformed token', async () => {
       mockReq.headers.authorization = 'Bearer invalid.token.here';
 
       await checkJwt(mockReq, mockRes, mockNext);
 
       expect(mockRes._getStatus()).toBe(401);
-      expect(mockNext.wasCalled()).toBe(false);
-    });
-
-    it('should reject token without sub claim', async () => {
-      // Create a token without 'sub' claim
-      const tokenWithoutSub = jwt.sign(
-        { email: 'test@example.com', name: 'Test User' },
-        'secret'
-      );
-
-      mockReq.headers.authorization = `Bearer ${tokenWithoutSub}`;
-
-      await checkJwt(mockReq, mockRes, mockNext);
-
-      expect(mockRes._getStatus()).toBe(401);
-      expect(mockNext.wasCalled()).toBe(false);
+      expect(mockNext).not.toHaveBeenCalled();
     });
 
     it('should reject random string as token', async () => {
@@ -168,27 +193,76 @@ describe('Auth Middleware - checkJwt', () => {
       await checkJwt(mockReq, mockRes, mockNext);
 
       expect(mockRes._getStatus()).toBe(401);
-      expect(mockNext.wasCalled()).toBe(false);
+      expect(mockNext).not.toHaveBeenCalled();
     });
   });
 
-  describe('Token Format Handling', () => {
-    it('should handle token without "Bearer " prefix', async () => {
-      const token = jwt.sign({ sub: 'user-123' }, 'secret');
-      mockReq.headers.authorization = token;
+  describe('Auth0 Userinfo Fallback (for JWE tokens)', () => {
+    beforeEach(() => {
+      // JWT verification fails (simulating JWE token that can't be verified locally)
+      mockJwtVerifier.mockImplementation((req, res, callback) => {
+        callback(new Error('Cannot verify JWE'));
+      });
+    });
+
+    afterEach(() => {
+      delete global.fetch;
+    });
+
+    it('should fall back to Auth0 userinfo and accept valid token', async () => {
+      global.fetch = jest.fn(() =>
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ sub: 'auth0|fallback-user' }),
+        })
+      );
+
+      mockReq.headers.authorization = 'Bearer encrypted-jwe-token';
 
       await checkJwt(mockReq, mockRes, mockNext);
 
-      // Should still work as it tries to decode what's after "Bearer " replacement
-      expect(mockNext.wasCalled()).toBe(true);
-      expect(mockReq.auth.payload.sub).toBe('user-123');
+      expect(mockNext).toHaveBeenCalled();
+      expect(mockReq.auth.payload.sub).toBe('auth0|fallback-user');
+    });
+
+    it('should reject token if Auth0 userinfo returns 401', async () => {
+      global.fetch = jest.fn(() =>
+        Promise.resolve({
+          ok: false,
+          status: 401,
+          text: () => Promise.resolve('Unauthorized'),
+        })
+      );
+
+      mockReq.headers.authorization = 'Bearer invalid-token';
+
+      await checkJwt(mockReq, mockRes, mockNext);
+
+      expect(mockRes._getStatus()).toBe(401);
+      expect(mockNext).not.toHaveBeenCalled();
+    });
+
+    it('should handle Auth0 userinfo fetch error', async () => {
+      global.fetch = jest.fn(() => Promise.reject(new Error('Network error')));
+
+      mockReq.headers.authorization = 'Bearer some-token';
+
+      await checkJwt(mockReq, mockRes, mockNext);
+
+      expect(mockRes._getStatus()).toBe(401);
+      expect(mockRes._getJson().error).toBe('Invalid token');
+      expect(mockNext).not.toHaveBeenCalled();
     });
   });
 
   describe('Request Object Modification', () => {
     it('should attach auth object to request', async () => {
-      const token = jwt.sign({ sub: 'test-user-id' }, 'secret');
-      mockReq.headers.authorization = `Bearer ${token}`;
+      mockJwtVerifier.mockImplementation((req, res, callback) => {
+        req.auth = { payload: { sub: 'test-user-id' } };
+        callback(null);
+      });
+
+      mockReq.headers.authorization = 'Bearer valid-token';
 
       await checkJwt(mockReq, mockRes, mockNext);
 
@@ -198,79 +272,57 @@ describe('Auth Middleware - checkJwt', () => {
     });
 
     it('should not modify request object on auth failure', async () => {
+      mockJwtVerifier.mockImplementation((req, res, callback) => {
+        callback(new Error('Invalid'));
+      });
+      global.fetch = jest.fn(() =>
+        Promise.resolve({
+          ok: false,
+          status: 401,
+          text: () => Promise.resolve('Unauthorized'),
+        })
+      );
+
       mockReq.headers.authorization = 'Bearer invalid-token';
 
       await checkJwt(mockReq, mockRes, mockNext);
 
       expect(mockReq.auth).toBeUndefined();
     });
-
-    it('should create auth.payload structure correctly', async () => {
-      const userId = 'auth0|complex-user-id-12345';
-      const token = jwt.sign({ sub: userId }, 'secret');
-      mockReq.headers.authorization = `Bearer ${token}`;
-
-      await checkJwt(mockReq, mockRes, mockNext);
-
-      expect(mockReq.auth).toEqual({
-        payload: {
-          sub: userId,
-        },
-      });
-    });
   });
 
   describe('Multiple Requests', () => {
     it('should handle multiple valid requests independently', async () => {
       // First request
-      const token1 = jwt.sign({ sub: 'user-1' }, 'secret');
-      const req1 = { headers: { authorization: `Bearer ${token1}` } };
-      let status1 = null;
-      let json1 = null;
-      const res1 = {
-        status: (code) => {
-          status1 = code;
-          return res1;
-        },
-        json: (data) => {
-          json1 = data;
-          return res1;
-        },
-      };
-      let next1Called = false;
-      const next1 = () => {
-        next1Called = true;
-      };
+      mockJwtVerifier.mockImplementationOnce((req, res, callback) => {
+        req.auth = { payload: { sub: 'user-1' } };
+        callback(null);
+      });
 
-      await checkJwt(req1, res1, next1);
+      const req1 = { headers: { authorization: 'Bearer token-1' } };
+      let next1Called = false;
+      const next1 = jest.fn(() => {
+        next1Called = true;
+      });
+
+      await checkJwt(req1, mockRes, next1);
 
       expect(req1.auth.payload.sub).toBe('user-1');
-      expect(next1Called).toBe(true);
+      expect(next1).toHaveBeenCalled();
 
       // Second request
-      const token2 = jwt.sign({ sub: 'user-2' }, 'secret');
-      const req2 = { headers: { authorization: `Bearer ${token2}` } };
-      let status2 = null;
-      let json2 = null;
-      const res2 = {
-        status: (code) => {
-          status2 = code;
-          return res2;
-        },
-        json: (data) => {
-          json2 = data;
-          return res2;
-        },
-      };
-      let next2Called = false;
-      const next2 = () => {
-        next2Called = true;
-      };
+      mockJwtVerifier.mockImplementationOnce((req, res, callback) => {
+        req.auth = { payload: { sub: 'user-2' } };
+        callback(null);
+      });
 
-      await checkJwt(req2, res2, next2);
+      const req2 = { headers: { authorization: 'Bearer token-2' } };
+      const next2 = jest.fn();
+
+      await checkJwt(req2, mockRes, next2);
 
       expect(req2.auth.payload.sub).toBe('user-2');
-      expect(next2Called).toBe(true);
+      expect(next2).toHaveBeenCalled();
 
       // Ensure requests are independent
       expect(req1.auth.payload.sub).not.toBe(req2.auth.payload.sub);
@@ -280,34 +332,75 @@ describe('Auth Middleware - checkJwt', () => {
   describe('Edge Cases', () => {
     it('should handle extremely long user IDs', async () => {
       const longUserId = 'auth0|' + 'a'.repeat(1000);
-      const token = jwt.sign({ sub: longUserId }, 'secret');
-      mockReq.headers.authorization = `Bearer ${token}`;
+      mockJwtVerifier.mockImplementation((req, res, callback) => {
+        req.auth = { payload: { sub: longUserId } };
+        callback(null);
+      });
+
+      mockReq.headers.authorization = 'Bearer valid-token';
 
       await checkJwt(mockReq, mockRes, mockNext);
 
       expect(mockReq.auth.payload.sub).toBe(longUserId);
-      expect(mockNext.wasCalled()).toBe(true);
+      expect(mockNext).toHaveBeenCalled();
     });
 
     it('should handle special characters in user ID', async () => {
       const specialUserId = 'google-oauth2|user+test@example.com';
-      const token = jwt.sign({ sub: specialUserId }, 'secret');
-      mockReq.headers.authorization = `Bearer ${token}`;
+      mockJwtVerifier.mockImplementation((req, res, callback) => {
+        req.auth = { payload: { sub: specialUserId } };
+        callback(null);
+      });
+
+      mockReq.headers.authorization = 'Bearer valid-token';
 
       await checkJwt(mockReq, mockRes, mockNext);
 
       expect(mockReq.auth.payload.sub).toBe(specialUserId);
-      expect(mockNext.wasCalled()).toBe(true);
+      expect(mockNext).toHaveBeenCalled();
     });
 
     it('should handle numeric user IDs', async () => {
-      const token = jwt.sign({ sub: '12345678901234567890' }, 'secret');
-      mockReq.headers.authorization = `Bearer ${token}`;
+      mockJwtVerifier.mockImplementation((req, res, callback) => {
+        req.auth = { payload: { sub: '12345678901234567890' } };
+        callback(null);
+      });
+
+      mockReq.headers.authorization = 'Bearer valid-token';
 
       await checkJwt(mockReq, mockRes, mockNext);
 
       expect(mockReq.auth.payload.sub).toBe('12345678901234567890');
-      expect(mockNext.wasCalled()).toBe(true);
+      expect(mockNext).toHaveBeenCalled();
+    });
+  });
+
+  describe('Security - Forged Token Prevention', () => {
+    it('should NOT accept a token that was only decoded (not verified)', async () => {
+      // This test ensures that simply decoding a token is not enough
+      // The token must be cryptographically verified
+      mockJwtVerifier.mockImplementation((req, res, callback) => {
+        // Simulate verification failure for forged token
+        callback(new Error('Signature verification failed'));
+      });
+
+      global.fetch = jest.fn(() =>
+        Promise.resolve({
+          ok: false,
+          status: 401,
+          text: () => Promise.resolve('Invalid token'),
+        })
+      );
+
+      // This is a self-signed token that would pass jwt.decode() but not jwt.verify()
+      mockReq.headers.authorization = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb3JnZWQtdXNlci1pZCJ9.forged-signature';
+
+      await checkJwt(mockReq, mockRes, mockNext);
+
+      expect(mockRes._getStatus()).toBe(401);
+      expect(mockNext).not.toHaveBeenCalled();
+      // Ensure the forged user ID was NOT accepted
+      expect(mockReq.auth?.payload?.sub).not.toBe('forged-user-id');
     });
   });
 });
