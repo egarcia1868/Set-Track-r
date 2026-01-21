@@ -9,7 +9,9 @@ import User from "../models/UserModel.js";
 export const getMessages = async (req, res) => {
   try {
     const { conversationId } = req.params;
-    const limit = parseInt(req.query.limit) || 50;
+    const MAX_LIMIT = 100;
+    const requestedLimit = parseInt(req.query.limit) || 50;
+    const limit = Math.min(Math.max(requestedLimit, 1), MAX_LIMIT); // Clamp between 1 and MAX_LIMIT
     const before = req.query.before; // Message ID to paginate from
 
     const currentUser = await User.findOne({ auth0Id: req.auth.payload.sub });
