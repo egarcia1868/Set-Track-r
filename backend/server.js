@@ -20,6 +20,9 @@ import messageRoutes from "./routes/messageRoutes.js";
 import blockRoutes from "./routes/blockRoutes.js";
 import cookieParser from "cookie-parser";
 import { checkJwt } from "./middleware/auth.js";
+import User from "./models/UserModel.js";
+import Conversation from "./models/ConversationModel.js";
+import { auth } from "express-oauth2-jwt-bearer";
 
 const app = express();
 const httpServer = createServer(app);
@@ -72,22 +75,76 @@ app.get("/", (req, res) => {
 
 // ==================== SOCKET.IO REAL-TIME MESSAGING ====================
 
-// Store connected users: Map of userId to socketId
+// Store connected users: Map of odBUserId to socketId
 const connectedUsers = new Map();
 
+// Socket.io authentication middleware - verify token before allowing connection
+io.use(async (socket, next) => {
+  try {
+    const token = socket.handshake.auth?.token;
+
+    if (!token) {
+      return next(new Error("Authentication token required"));
+    }
+
+    // Verify token with Auth0 userinfo endpoint (same approach as REST API)
+    const userinfoUrl = `https://${process.env.AUTH0_DOMAIN}/userinfo`;
+    const response = await fetch(userinfoUrl, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!response.ok) {
+      return next(new Error("Invalid authentication token"));
+    }
+
+    const userInfo = await response.json();
+    const auth0Id = userInfo.sub;
+
+    // Get the user's database ID
+    const user = await User.findOne({ auth0Id });
+    if (!user) {
+      return next(new Error("User not found"));
+    }
+
+    // Attach authenticated user info to socket
+    socket.auth0Id = auth0Id;
+    socket.userId = user._id.toString();
+    socket.user = user;
+
+    next();
+  } catch (error) {
+    console.error("Socket authentication error:", error);
+    next(new Error("Authentication failed"));
+  }
+});
+
 io.on("connection", (socket) => {
-  console.log("New socket connection:", socket.id);
+  console.log(`Authenticated socket connection: ${socket.id} (user: ${socket.userId})`);
 
-  // User joins with their userId
-  socket.on("user:join", (userId) => {
-    connectedUsers.set(userId, socket.id);
-    console.log(`User ${userId} connected with socket ${socket.id}`);
-  });
+  // Auto-register user on connection (no need for user:join event)
+  connectedUsers.set(socket.userId, socket.id);
 
-  // Join a conversation room
-  socket.on("conversation:join", (conversationId) => {
-    socket.join(conversationId);
-    console.log(`Socket ${socket.id} joined conversation ${conversationId}`);
+  // Join a conversation room - verify membership first
+  socket.on("conversation:join", async (conversationId) => {
+    try {
+      const conversation = await Conversation.findById(conversationId);
+      if (!conversation) {
+        socket.emit("error", { message: "Conversation not found" });
+        return;
+      }
+
+      // Verify user is a participant
+      if (!conversation.hasParticipant(socket.user._id)) {
+        socket.emit("error", { message: "Not authorized to join this conversation" });
+        return;
+      }
+
+      socket.join(conversationId);
+      console.log(`Socket ${socket.id} joined conversation ${conversationId}`);
+    } catch (error) {
+      console.error("Error joining conversation:", error);
+      socket.emit("error", { message: "Failed to join conversation" });
+    }
   });
 
   // Leave a conversation room
@@ -97,40 +154,41 @@ io.on("connection", (socket) => {
   });
 
   // Handle new message (broadcast to conversation room)
+  // Only broadcast if sender is in the room (already verified via conversation:join)
   socket.on("message:send", (data) => {
     const { conversationId, message } = data;
-    // Broadcast to all users in the conversation room except sender
-    socket.to(conversationId).emit("message:new", message);
+    // Verify socket is in the room before broadcasting
+    if (socket.rooms.has(conversationId)) {
+      socket.to(conversationId).emit("message:new", message);
+    }
   });
 
-  // Typing indicator
+  // Typing indicator - only emit if user is in the conversation
   socket.on("typing:start", (data) => {
-    const { conversationId, userId, displayName } = data;
-    socket.to(conversationId).emit("typing:update", {
-      userId,
-      displayName,
-      isTyping: true,
-    });
+    const { conversationId, displayName } = data;
+    if (socket.rooms.has(conversationId)) {
+      socket.to(conversationId).emit("typing:update", {
+        userId: socket.userId,
+        displayName,
+        isTyping: true,
+      });
+    }
   });
 
   socket.on("typing:stop", (data) => {
-    const { conversationId, userId } = data;
-    socket.to(conversationId).emit("typing:update", {
-      userId,
-      isTyping: false,
-    });
+    const { conversationId } = data;
+    if (socket.rooms.has(conversationId)) {
+      socket.to(conversationId).emit("typing:update", {
+        userId: socket.userId,
+        isTyping: false,
+      });
+    }
   });
 
   // Handle disconnect
   socket.on("disconnect", () => {
-    // Remove user from connected users
-    for (const [userId, socketId] of connectedUsers.entries()) {
-      if (socketId === socket.id) {
-        connectedUsers.delete(userId);
-        console.log(`User ${userId} disconnected`);
-        break;
-      }
-    }
+    connectedUsers.delete(socket.userId);
+    console.log(`User ${socket.userId} disconnected`);
   });
 });
 

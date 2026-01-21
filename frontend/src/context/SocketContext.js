@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState, useCallback } from "react";
 import { io } from "socket.io-client";
+import { useAuth0 } from "@auth0/auth0-react";
 import { BASE_URL } from "../utils/config";
 import { useAuth } from "./AuthContext";
 
@@ -8,11 +9,12 @@ const SocketContext = createContext();
 export const SocketProvider = ({ children }) => {
   const socketRef = useRef(null);
   const { userProfile } = useAuth();
+  const { getAccessTokenSilently, isAuthenticated } = useAuth0();
   const [isConnected, setIsConnected] = useState(false);
 
   // Initialize socket connection once
   useEffect(() => {
-    if (!userProfile?._id) return;
+    if (!userProfile?._id || !isAuthenticated) return;
 
     // Prevent duplicate socket creation - if socket already exists and is connected, reuse it
     if (socketRef.current && socketRef.current.connected) {
@@ -25,38 +27,53 @@ export const SocketProvider = ({ children }) => {
       socketRef.current = null;
     }
 
-    // Initialize socket connection
-    const socket = io(BASE_URL, {
-      transports: ["websocket", "polling"],
-      withCredentials: true,
-    });
+    // Get auth token and initialize socket connection
+    const initSocket = async () => {
+      try {
+        const token = await getAccessTokenSilently();
 
-    socketRef.current = socket;
+        // Initialize socket connection with auth token
+        const socket = io(BASE_URL, {
+          transports: ["websocket", "polling"],
+          withCredentials: true,
+          auth: { token }, // Send token for server-side verification
+        });
 
-    // Connection events
-    socket.on("connect", () => {
-      setIsConnected(true);
-      // Register user with their ID
-      socket.emit("user:join", userProfile._id);
-    });
+        socketRef.current = socket;
 
-    socket.on("disconnect", () => {
-      setIsConnected(false);
-    });
+        // Connection events
+        socket.on("connect", () => {
+          setIsConnected(true);
+          // User is auto-registered on server via auth middleware
+        });
 
-    socket.on("connect_error", (error) => {
-      console.error("Socket connection error:", error);
-      setIsConnected(false);
-    });
+        socket.on("connect_error", (error) => {
+          console.error("Socket connection error:", error.message);
+          setIsConnected(false);
+        });
+
+        socket.on("error", (error) => {
+          console.error("Socket error:", error.message);
+        });
+
+        socket.on("disconnect", () => {
+          setIsConnected(false);
+        });
+      } catch (error) {
+        console.error("Failed to get auth token for socket:", error);
+      }
+    };
+
+    initSocket();
 
     // Cleanup on unmount
     return () => {
-      if (socket) {
-        socket.disconnect();
+      if (socketRef.current) {
+        socketRef.current.disconnect();
         socketRef.current = null;
       }
     };
-  }, [userProfile]);
+  }, [userProfile, isAuthenticated, getAccessTokenSilently]);
 
   /**
    * Join a conversation room
