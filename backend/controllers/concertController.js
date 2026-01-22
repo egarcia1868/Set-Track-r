@@ -12,6 +12,44 @@ const escapeRegex = (string) => {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 };
 
+// Validate display name format and length
+const validateDisplayName = (displayName) => {
+  if (!displayName || typeof displayName !== "string") {
+    return { valid: false, error: "Display name is required" };
+  }
+
+  const trimmed = displayName.trim();
+
+  if (trimmed.length === 0) {
+    return { valid: false, error: "Display name cannot be empty" };
+  }
+
+  if (trimmed.length < 3) {
+    return { valid: false, error: "Display name must be at least 3 characters" };
+  }
+
+  if (trimmed.length > 30) {
+    return { valid: false, error: "Display name cannot exceed 30 characters" };
+  }
+
+  // Allow letters, numbers, underscores, hyphens, and spaces
+  // Also allow common unicode letters for international names
+  const validPattern = /^[\p{L}\p{N}_\- ]+$/u;
+  if (!validPattern.test(trimmed)) {
+    return {
+      valid: false,
+      error: "Display name can only contain letters, numbers, spaces, underscores, and hyphens",
+    };
+  }
+
+  // Disallow consecutive spaces
+  if (/\s{2,}/.test(trimmed)) {
+    return { valid: false, error: "Display name cannot contain consecutive spaces" };
+  }
+
+  return { valid: true, sanitized: trimmed };
+};
+
 export const getConcert = async (req, res) => {
   const params = req.query;
 
@@ -262,19 +300,23 @@ export const updateProfile = async (req, res) => {
       };
     }
 
-    // Check for display name uniqueness if displayName is being updated
-    if (
-      displayName &&
-      displayName.trim() &&
-      displayName !== user.profile.displayName
-    ) {
+    // Validate and check uniqueness if displayName is being updated
+    let validatedDisplayName = user.profile.displayName;
+    if (displayName && displayName !== user.profile.displayName) {
+      // Validate display name format
+      const validation = validateDisplayName(displayName);
+      if (!validation.valid) {
+        return res.status(400).json({ error: validation.error });
+      }
+      validatedDisplayName = validation.sanitized;
+
       console.log(
-        `Checking uniqueness for display name: "${displayName.trim()}"`,
+        `Checking uniqueness for display name: "${validatedDisplayName}"`,
       );
       console.log(`Current user's display name: "${user.profile.displayName}"`);
 
       const existingUser = await User.findOne({
-        "profile.displayName": displayName.trim(),
+        "profile.displayName": validatedDisplayName,
         auth0Id: { $ne: auth0Id }, // Exclude current user
       });
 
@@ -285,7 +327,7 @@ export const updateProfile = async (req, res) => {
 
       if (existingUser) {
         console.log(
-          `Rejecting duplicate display name: "${displayName.trim()}"`,
+          `Rejecting duplicate display name: "${validatedDisplayName}"`,
         );
         return res.status(400).json({
           error:
@@ -294,7 +336,7 @@ export const updateProfile = async (req, res) => {
       }
     }
 
-    user.profile.displayName = displayName || user.profile.displayName;
+    user.profile.displayName = validatedDisplayName;
     user.profile.name = name !== undefined ? name : user.profile.name;
     user.profile.bio = bio !== undefined ? bio : user.profile.bio;
     user.profile.isPublic =
@@ -321,6 +363,12 @@ export const followUser = async (req, res) => {
 
     const { displayName } = req.params;
 
+    // Validate display name from params
+    const decodedName = decodeURIComponent(displayName);
+    if (!decodedName || decodedName.length > 30) {
+      return res.status(400).json({ error: "Invalid display name" });
+    }
+
     // Find the current user
     const currentUser = await User.findOne({ auth0Id });
     if (!currentUser) {
@@ -329,7 +377,7 @@ export const followUser = async (req, res) => {
 
     // Find the user to follow by display name
     const userToFollow = await User.findOne({
-      "profile.displayName": displayName,
+      "profile.displayName": decodedName,
       "profile.isPublic": true,
     });
 
@@ -382,6 +430,12 @@ export const unfollowUser = async (req, res) => {
 
     const { displayName } = req.params;
 
+    // Validate display name from params
+    const decodedName = decodeURIComponent(displayName);
+    if (!decodedName || decodedName.length > 30) {
+      return res.status(400).json({ error: "Invalid display name" });
+    }
+
     // Find the current user
     const currentUser = await User.findOne({ auth0Id });
     if (!currentUser) {
@@ -390,7 +444,7 @@ export const unfollowUser = async (req, res) => {
 
     // Find the user to unfollow by display name
     const userToUnfollow = await User.findOne({
-      "profile.displayName": displayName,
+      "profile.displayName": decodedName,
     });
 
     if (!userToUnfollow) {
@@ -450,8 +504,16 @@ export const getFollowing = async (req, res) => {
 export const getFollowers = async (req, res) => {
   try {
     const { displayName } = req.params;
-    const decodedDisplayName = decodeURIComponent(displayName);
     const auth0Id = req.auth?.payload?.sub;
+
+    // Validate display name from params if provided
+    let decodedDisplayName = null;
+    if (displayName) {
+      decodedDisplayName = decodeURIComponent(displayName);
+      if (decodedDisplayName.length > 30) {
+        return res.status(400).json({ error: "Invalid display name" });
+      }
+    }
 
     let user;
 
@@ -504,13 +566,19 @@ export const getFollowStatus = async (req, res) => {
 
     const { displayName } = req.params;
 
+    // Validate display name from params
+    const decodedName = decodeURIComponent(displayName);
+    if (!decodedName || decodedName.length > 30) {
+      return res.status(400).json({ error: "Invalid display name" });
+    }
+
     const currentUser = await User.findOne({ auth0Id });
     if (!currentUser) {
       return res.status(404).json({ error: "User not found" });
     }
 
     const isFollowing = currentUser.following.some(
-      (follow) => follow.displayName === displayName,
+      (follow) => follow.displayName === decodedName,
     );
 
     res.json({ isFollowing });
