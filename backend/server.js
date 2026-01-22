@@ -13,6 +13,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import mongoose from "mongoose";
 import cors from "cors";
+import helmet from "helmet";
 import concertRoutes from "./routes/concertRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import conversationRoutes from "./routes/conversationRoutes.js";
@@ -56,6 +57,7 @@ const corsOptions = {
   credentials: true,
 };
 app.use(cors(corsOptions));
+app.use(helmet()); // Security headers
 app.use(express.json());
 app.use(cookieParser());
 

@@ -17,9 +17,9 @@ router.get("/:conversationId", checkJwt, getMessages);
 router.post("/:conversationId", checkBlockedInConversation, sendMessage);
 
 // Mark all messages in a conversation as read
-router.put("/:conversationId/read", markMessagesAsRead);
+router.put("/:conversationId/read", checkJwt, markMessagesAsRead);
 
 // Delete a specific message
-router.delete("/:messageId", deleteMessage);
+router.delete("/:messageId", checkJwt, deleteMessage);
 
 export default router;
